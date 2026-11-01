@@ -1,0 +1,50 @@
+/* Tutorial de bienvenida. Se monta fuera del zoom del teléfono: las medidas son de la ventana. */
+.tour-root { position: fixed; inset: 0; z-index: 9000; }
+.tour-area { position: absolute; overflow: hidden; }
+.tour-dim { position: absolute; inset: 0; background: rgb(0 0 0 / 65%); }
+.tour-spotlight {
+  position: absolute;
+  border-radius: 14px;
+  box-shadow: 0 0 0 2px var(--color-sport), 0 0 18px 4px rgb(255 100 55 / 55%), 0 0 0 200vmax rgb(0 0 0 / 65%);
+  transition: left .22s ease, top .22s ease, width .22s ease, height .22s ease;
+}
+.tour-spotlight::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border: 2px solid var(--color-sport);
+  border-radius: inherit;
+  animation: tour-pulse 1.8s ease-out infinite;
+}
+@keyframes tour-pulse {
+  from { opacity: .9; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.06); }
+}
+.tour-bubble {
+  position: absolute;
+  max-width: calc(100vw - 24px);
+  padding: 14px 16px 12px;
+  border-top: 4px solid var(--color-purple);
+  border-radius: 16px;
+  background: var(--color-panel);
+  color: var(--color-copy);
+  box-shadow: var(--shadow-panel);
+}
+.tour-progress { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.tour-progress > span { display: flex; flex-wrap: wrap; gap: 5px; }
+.tour-progress i { width: 7px; height: 7px; border-radius: 50%; background: var(--color-line); }
+.tour-progress i.done { background: var(--color-neon); }
+.tour-progress i.current { background: var(--color-purple); box-shadow: 0 0 0 2px rgb(107 73 217 / 22%); }
+.tour-progress small { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-purple); }
+.tour-bubble h2 { font-size: 16px; font-weight: 700; line-height: 1.25; }
+.tour-bubble p { margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--color-muted); }
+.tour-actions { display: flex; align-items: center; gap: 6px; margin-top: 12px; }
+.tour-actions button { min-height: 40px; padding: 0 12px; border-radius: 10px; font-size: 14px; font-weight: 650; }
+.tour-actions button:focus-visible { outline: 2px solid var(--color-purple); outline-offset: 2px; }
+.tour-skip { margin-right: auto; padding-left: 0 !important; color: var(--color-muted); }
+.tour-back { border: 1px solid var(--color-line); color: var(--color-copy); }
+.tour-next { min-width: 92px; background: var(--color-purple); color: #fff; }
+@media (prefers-reduced-motion: reduce) {
+  .tour-spotlight { transition: none; }
+  .tour-spotlight::after { animation: none; opacity: 0; }
+}

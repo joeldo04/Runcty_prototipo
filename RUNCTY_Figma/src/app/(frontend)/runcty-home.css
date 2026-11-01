@@ -1,0 +1,185 @@
+/* Portada pública: composición amplia y limpia con los colores de RUNCTY. */
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+.runcty-app .home { background: #fff; color: var(--color-copy); }
+.runcty-app .home-wrap { width: min(100%, 1180px); margin: 0 auto; padding: 0 24px; }
+.runcty-app .home-nav { position: sticky; top: 0; z-index: 900; border-bottom: 1px solid #0f1b3314; background: #ffffffd9; backdrop-filter: saturate(180%) blur(18px); }
+.runcty-app .home-nav > div { display: flex; align-items: center; justify-content: space-between; gap: 16px; width: min(100%, 1180px); min-height: 64px; margin: 0 auto; padding: 8px 24px; }
+.runcty-app .home-brand { display: inline-flex; align-items: center; gap: 10px; }
+.runcty-app .home-brand strong { font-family: var(--font-display); font-size: 24px; font-weight: 800; letter-spacing: .02em; }
+.runcty-app .home-nav nav { display: flex; gap: 28px; font-size: 14px; color: var(--color-muted); }
+.runcty-app .home-nav nav a { min-height: 40px; display: inline-flex; align-items: center; }
+.runcty-app .home-nav nav a:hover { color: var(--color-copy); }
+.runcty-app .home-access { display: flex; align-items: center; gap: 12px; }
+.runcty-app .home-access > button:first-child { min-height: 40px; font-size: 14px; font-weight: 600; color: var(--color-copy); }
+.runcty-app .home-access .button { min-height: 40px; padding: 8px 16px; }
+
+.runcty-app .home-hero { position: relative; overflow: hidden; padding: 72px 0 80px; background: radial-gradient(#3478f622 1px, transparent 1px) 0 0 / 32px 32px, #0b1020; }
+.runcty-app .home-hero-grid { display: grid; grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); align-items: center; gap: 56px; }
+.runcty-app .home-pill { display: inline-flex; align-items: center; gap: 8px; padding: 7px 14px; border: 1px solid #ffffff2e; border-radius: 99px; background: #ffffff12; font-size: 12px; font-weight: 600; }
+.runcty-app .home-pill i { width: 8px; height: 8px; border-radius: 50%; background: #ff6437; animation: pulse 2s infinite; }
+.runcty-app .home-hero h1 { margin: 22px 0 18px; font-family: var(--font-display); font-size: clamp(52px, 8vw, 92px); font-weight: 800; line-height: .96; letter-spacing: -.005em; text-transform: uppercase; }
+.runcty-app .home-hero h1 span { color: #ff7a4d; }
+.runcty-app .home-hero p { max-width: 500px; font-size: 18px; line-height: 1.6; color: var(--color-muted); }
+.runcty-app .home-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.runcty-app .home-actions .button { min-height: 50px; padding: 12px 24px; font-size: 15px; border-radius: 99px; }
+.runcty-app .home-outline { display: inline-flex; align-items: center; gap: 8px; min-height: 50px; padding: 12px 24px; border: 1px solid #ffffff4d; border-radius: 99px; font-size: 15px; font-weight: 600; color: #fff; transition: background .15s; }
+.runcty-app .home-outline:hover { background: #ffffff14; }
+.runcty-app .home-outline svg { width: 18px; height: 18px; }
+.runcty-app .home-tag { margin-top: 22px; }
+.runcty-app .home-art { position: relative; margin: 0; aspect-ratio: 420 / 500; overflow: hidden; border: 1px solid #ffffff24; border-radius: 32px; background: #0a1226; box-shadow: 0 30px 80px #0007; }
+.runcty-app .home-art figcaption { position: absolute; left: 14px; right: 14px; bottom: 14px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; padding: 12px 16px; border: 1px solid #ffffff24; border-radius: 18px; background: #0b1020b8; backdrop-filter: blur(14px); }
+.runcty-app .home-art figcaption strong { display: block; font-size: 15px; }
+.runcty-app .home-art figcaption small, .runcty-app .home-art figcaption span { font-size: 12px; color: var(--color-muted); }
+.runcty-app .loja-streets { display: block; width: 100%; height: 100%; }
+.runcty-app .street-paint { fill: none; stroke: #3478f6; stroke-opacity: .6; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.runcty-app .street-route-glow { fill: none; stroke: #f72585; stroke-opacity: .28; stroke-width: 15; stroke-linecap: round; stroke-linejoin: round; }
+.runcty-app .street-route { fill: none; stroke: #f72585; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; }
+.runcty-app .street-route-loop { animation: street-draw 7s ease-in-out infinite alternate; }
+@keyframes street-draw { from { stroke-dashoffset: 1; } 70%, to { stroke-dashoffset: 0; } }
+.runcty-app .street-pin-ring { fill: #ff643733; stroke: #ff6437; stroke-opacity: .5; }
+.runcty-app .loja-streets text { fill: #dbe5f5; font-size: 13px; font-weight: 600; }
+.runcty-app .loja-streets .street-city { fill: #fff; font-size: 17px; font-weight: 800; }
+
+.runcty-app .home-statement { padding: 96px 24px; text-align: center; }
+.runcty-app .home-statement p { max-width: 860px; margin: 0 auto; font-size: clamp(26px, 4vw, 42px); font-weight: 650; line-height: 1.2; letter-spacing: -.025em; color: var(--color-copy); }
+.runcty-app .home-statement span { color: var(--color-dim); }
+.runcty-app .home-section { padding: 88px 0; scroll-margin-top: 64px; }
+.runcty-app .home-soft { background: var(--color-ink); }
+.runcty-app .home-heading { max-width: 680px; margin: 0 auto 44px; text-align: center; }
+.runcty-app .home-heading > span { font-size: 14px; font-weight: 700; color: #e04a1c; }
+.runcty-app .home-heading h2 { margin: 8px 0 12px; font-size: clamp(32px, 5vw, 52px); font-weight: 750; line-height: 1.08; letter-spacing: -.03em; }
+.runcty-app .home-heading p { font-size: 18px; line-height: 1.55; color: var(--color-muted); }
+.runcty-app .home-video-grid { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,360px); align-items: center; justify-content: center; gap: 64px; max-width: 980px; }
+.runcty-app .home-video-grid .home-heading { margin: 0; text-align: left; }
+.runcty-app .home-video { display: block; width: 100%; aspect-ratio: 480 / 688; border-radius: 26px; background: #0b1020; object-fit: cover; box-shadow: 0 24px 60px #0f1b3326; }
+
+.runcty-app .sim { display: grid; grid-template-columns: minmax(0,1fr) 300px; align-items: center; gap: 64px; max-width: 900px; margin: 0 auto; }
+.runcty-app .sim-steps { display: flex; flex-direction: column; gap: 4px; }
+.runcty-app .sim-steps li > button { display: block; width: 100%; padding: 14px 16px; border-radius: 18px; text-align: left; transition: background .2s; }
+.runcty-app .sim-steps li.active > button { background: #fff; box-shadow: 0 8px 24px #0f1b330f; }
+.runcty-app .sim-steps strong { display: block; font-size: 18px; font-weight: 700; color: var(--color-dim); }
+.runcty-app .sim-steps .active strong { color: var(--color-copy); }
+.runcty-app .sim-steps li > button > span { display: none; margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--color-muted); }
+.runcty-app .sim-steps .active > button > span { display: block; }
+.runcty-app .sim-steps li > button > i { display: none; height: 3px; margin-top: 12px; overflow: hidden; border-radius: 99px; background: var(--color-raised); }
+.runcty-app .sim-steps .active > button > i { display: block; }
+.runcty-app .sim-steps b { display: block; height: 100%; border-radius: inherit; background: #f2592a; }
+.runcty-app .sim-control > button { display: inline-flex !important; align-items: center; gap: 8px; min-height: 44px; font-size: 14px; font-weight: 600; color: var(--color-accent); }
+.runcty-app .sim-control svg { width: 16px; height: 16px; }
+.runcty-app .sim-phone { width: 300px; height: 620px; padding: 9px; border-radius: 46px; background: #1b2230; box-shadow: 0 30px 70px #0f1b3340, 0 0 0 1px #60708a; }
+.runcty-app .sim-screen { position: relative; height: 100%; overflow: hidden; border-radius: 37px; background: var(--color-ink); animation: var(--animate-enter); }
+.runcty-app .sim-camera { position: absolute; top: 10px; left: 50%; z-index: 3; width: 12px; height: 12px; border-radius: 50%; background: #000; transform: translateX(-50%); }
+.runcty-app .sim-pad { display: flex; flex-direction: column; gap: 10px; height: 100%; padding: 34px 14px 16px; }
+.runcty-app .sim h4 { font-size: 17px; font-weight: 750; letter-spacing: -.02em; }
+.runcty-app .sim-map { height: 210px; overflow: hidden; border-radius: 18px; background: #0a1226; }
+.runcty-app .sim-map-tall { height: 100%; border-radius: 0; }
+.runcty-app .sim-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 12px; border: 1px solid var(--color-line); border-radius: 14px; background: #fff; transition: border-color .2s, box-shadow .2s; }
+.runcty-app .sim-card.picked { border-color: #f2592a; box-shadow: 0 0 0 3px #f2592a22; }
+.runcty-app .sim-card strong { display: block; font-size: 14px; }
+.runcty-app .sim-card small, .runcty-app .sim-buttons span { font-size: 12px; color: var(--color-muted); }
+.runcty-app .sim-card svg { width: 18px; height: 18px; color: var(--color-safe); }
+.runcty-app .sim-run { display: grid; grid-template-rows: minmax(0,1fr) auto auto; height: 100%; }
+.runcty-app .sim-live { padding: 14px; background: #0f1a30; color: #fff; }
+.runcty-app .sim-live > strong { display: block; font-family: var(--font-display); font-size: 54px; font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+.runcty-app .sim-live strong small { font-size: 20px; color: #ff8a5f; }
+.runcty-app .sim-live > div, .runcty-app .sim-summary > div { display: flex; gap: 22px; margin-top: 8px; }
+.runcty-app .sim-live span, .runcty-app .sim-summary span { font-size: 18px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.runcty-app .sim-live span small, .runcty-app .sim-summary span small { display: block; font-size: 11px; font-weight: 500; color: #b4c0d4; }
+.runcty-app .sim-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 14px 18px; background: #0f1a30; }
+.runcty-app .sim-buttons span { padding: 11px; border-radius: 12px; background: #2f6fe8; text-align: center; font-weight: 700; color: #fff; }
+.runcty-app .sim-buttons span + span { background: #2c3c55; }
+.runcty-app .sim-survey { position: relative; height: 100%; }
+.runcty-app .sim-sheet { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 14px 26px; border-radius: 22px 22px 0 0; background: #fff; text-align: center; }
+.runcty-app .sim-stars { display: flex; justify-content: center; gap: 6px; margin: 12px 0 6px; color: #b8c3d4; }
+.runcty-app .sim-stars svg { width: 32px; height: 32px; transition: color .15s; }
+.runcty-app .sim-stars .on { color: #f5a623; }
+.runcty-app .sim-sheet small { font-size: 13px; font-weight: 600; color: var(--color-muted); }
+.runcty-app .sim-summary { padding: 14px; border-radius: 18px; background: #0f1a30; color: #fff; }
+.runcty-app .sim-summary > strong { font-family: var(--font-display); font-size: 50px; font-weight: 800; line-height: 1; }
+.runcty-app .sim-summary > strong small { font-size: 20px; color: #ff8a5f; }
+.runcty-app .sim-share { display: flex; flex-direction: column; gap: 12px; height: 100%; padding: 34px 14px 16px; }
+.runcty-app .sim-post { display: flex; flex: 1; flex-direction: column; gap: 6px; min-height: 0; padding: 12px; border-radius: 16px; background: #fff; box-shadow: 0 10px 26px #0f1b331f; }
+.runcty-app .sim-post > small { font-size: 11px; font-weight: 800; letter-spacing: .08em; color: #e04a1c; }
+.runcty-app .sim-post .sim-map { flex: 1; min-height: 0; height: auto; }
+.runcty-app .sim-post > strong { font-family: var(--font-display); font-size: 42px; font-weight: 800; line-height: 1; }
+.runcty-app .sim-post em { font-size: 18px; font-style: normal; color: #e04a1c; }
+.runcty-app .sim-post footer { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 16px; font-weight: 800; }
+.runcty-app .sim-share-button { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border-radius: 14px; background: #f2592a; font-size: 14px; font-weight: 700; color: #fff; }
+.runcty-app .sim-share-button.done { background: #0b8a57; }
+.runcty-app .sim-share-button svg { width: 16px; height: 16px; }
+
+.runcty-app .home-cards, .runcty-app .home-modes { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 20px; }
+.runcty-app .home-cards article, .runcty-app .home-modes article { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; padding: 28px; border-radius: 26px; background: #fff; box-shadow: 0 1px 2px #0f1b330f, 0 10px 28px #0f1b330a; }
+.runcty-app .home-modes article { border: 1px solid var(--color-line); box-shadow: none; }
+.runcty-app .home-modes .featured { border-color: #0f1a30; background: #0f1a30; }
+.runcty-app .home-cards span, .runcty-app .home-modes span { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 14px; background: #3478f614; color: var(--color-accent); }
+.runcty-app .home-modes .featured span { background: #ff643726; color: #ff8a5f; }
+.runcty-app .home-cards svg, .runcty-app .home-modes span svg { width: 22px; height: 22px; }
+.runcty-app .home-cards h3, .runcty-app .home-modes h3 { margin-top: 6px; font-size: 21px; font-weight: 700; letter-spacing: -.02em; }
+.runcty-app .home-cards p, .runcty-app .home-modes p { flex: 1; font-size: 15px; line-height: 1.55; color: var(--color-muted); }
+.runcty-app .home-modes .button { margin-top: 8px; }
+
+.runcty-app .home-club { padding: 64px 0; background: #0f1a30; scroll-margin-top: 64px; }
+.runcty-app .home-club .home-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; }
+.runcty-app .home-club .gacelas-brand { font-size: 15px; font-weight: 700; color: #ff5ca8; }
+.runcty-app .home-club h2 { margin: 6px 0 10px; font-size: clamp(26px, 3.5vw, 36px); font-weight: 750; letter-spacing: -.025em; }
+.runcty-app .home-club p { max-width: 560px; font-size: 15px; line-height: 1.6; color: var(--color-muted); }
+.runcty-app .home-footer { padding: 32px 0; border-top: 1px solid #ffffff1a; background: #0b1020; }
+.runcty-app .home-footer .home-wrap { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; font-size: 14px; color: var(--color-muted); }
+.runcty-app .home-footer span { display: inline-flex; align-items: center; gap: 6px; }
+.runcty-app .home-footer span svg { width: 18px; height: 18px; color: #ff8a5f; }
+.runcty-app .home-footer small { font-size: 12px; }
+
+@media (max-width: 900px) {
+  .runcty-app .home-nav nav { display: none; }
+  .runcty-app .home-hero { padding: 48px 0 56px; }
+  .runcty-app .home-hero-grid, .runcty-app .home-cards, .runcty-app .home-modes, .runcty-app .home-video-grid { grid-template-columns: minmax(0,1fr); }
+  .runcty-app .home-video { max-width: 340px; margin: 0 auto; }
+  .runcty-app .home-video-grid { gap: 32px; }
+  .runcty-app .home-art { width: min(100%, 460px); margin: 0 auto; }
+  .runcty-app .sim { grid-template-columns: minmax(0,1fr); gap: 32px; justify-items: center; }
+  .runcty-app .sim-steps { width: 100%; }
+  .runcty-app .home-section { padding: 64px 0; }
+  .runcty-app .home-statement { padding: 64px 24px; }
+}
+@media (max-width: 480px) {
+  .runcty-app .home-wrap, .runcty-app .home-nav > div { padding-left: 16px; padding-right: 16px; }
+  .runcty-app .home-brand strong { font-size: 20px; }
+  .runcty-app .home-actions > * { flex: 1 1 100%; justify-content: center; }
+  .runcty-app .home-cards article, .runcty-app .home-modes article { padding: 22px; }
+}
+
+/* Roles y recuperación de contraseña dentro del acceso. */
+.runcty-app .account-options { display: grid; gap: 6px; }
+.runcty-app .account-options button { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 46px; padding: 8px 12px; border: 1px solid var(--color-line); border-radius: 12px; text-align: left; }
+.runcty-app .account-options button.selected { border-color: #f2592a; background: #f2592a12; }
+.runcty-app .account-options strong { font-size: 14px; }
+.runcty-app .account-options small { font-size: 12px; font-weight: 500; color: var(--color-muted); }
+.runcty-app .auth-copy { font-size: 14px; line-height: 1.5; color: var(--color-muted); }
+.runcty-app .auth-copy strong { color: var(--color-copy); overflow-wrap: anywhere; }
+.runcty-app .auth-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.runcty-app .auth-steps i { height: 4px; border-radius: 99px; background: var(--color-raised); }
+.runcty-app .auth-steps i.active { background: #f2592a; }
+.runcty-app .auth-done { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.runcty-app .auth-done > span { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 50%; background: #16d98a1f; color: var(--color-safe); }
+.runcty-app .auth-done p { font-size: 13px; line-height: 1.5; color: var(--color-muted); }
+.runcty-app .auth-done .button { margin-top: 6px; }
+.runcty-app .role-options { display: grid; gap: 8px; }
+.runcty-app .role-options button { display: flex; align-items: center; gap: 12px; min-height: 72px; padding: 12px 14px; border: 1px solid var(--color-line); border-radius: 16px; text-align: left; transition: border-color .15s, background .15s; }
+.runcty-app .role-options button:hover { border-color: #2f6fe8; background: #3478f60a; }
+.runcty-app .role-options span { display: grid; place-items: center; flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; background: #f2592a; color: #fff; }
+.runcty-app .role-options button + button span { background: #0f1a30; }
+.runcty-app .role-options span svg { width: 22px; height: 22px; }
+.runcty-app .role-options div { flex: 1; min-width: 0; }
+.runcty-app .role-options strong { display: block; font-size: 15px; }
+.runcty-app .role-options small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
+.runcty-app .role-options button > svg { flex-shrink: 0; width: 16px; height: 16px; color: var(--color-dim); }
+.runcty-app .role-switch { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 12px; border: 1px solid var(--color-line); border-radius: 99px; font-size: 12px; font-weight: 600; color: var(--color-copy); }
+.runcty-app .role-switch:hover { border-color: #2f6fe8; }
+.runcty-app .role-switch svg { width: 15px; height: 15px; color: var(--color-accent); }
+.runcty-app .role-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+.runcty-app .role-chips span { padding: 3px 9px; border-radius: 99px; background: var(--color-raised); font-size: 12px; font-weight: 600; color: var(--color-muted); }
+.runcty-app .role-chips span.admin { background: #0f1a30; color: #fff; }
+.runcty-app .table-actions-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (width < 760px) { .runcty-app .role-switch span { display: none; } .runcty-app .role-switch { padding: 0 10px; } }

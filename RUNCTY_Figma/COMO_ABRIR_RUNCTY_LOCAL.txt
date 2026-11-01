@@ -1,0 +1,30 @@
+RUNCTY ORIGINAL EN REACT / NEXT.JS — MODO DEMOSTRACION LOCAL
+
+Esta version NO es un HTML recreado: utiliza el proyecto React/Next.js
+original, con todos los componentes y CSS del ZIP de Figma.
+
+PASOS EN WINDOWS:
+1. Deten el servidor anterior en VS Code con Ctrl+C.
+2. Descomprime este ZIP en otra carpeta (p. ej. RUNCTY_React_Local_Preview).
+3. VS Code -> Archivo -> Abrir carpeta -> carpeta donde esta package.json.
+4. Terminal:
+     pnpm.cmd install
+     pnpm.cmd dev
+5. Navegador -> http://localhost:3000
+6. Elige Web o Movil y pulsa Entrar como Carlos (modo demo).
+
+Si el puerto 3000 esta ocupado, termina el servidor anterior.
+Si Next muestra archivos antiguos, para con Ctrl+C y borra SOLO .next
+con: Remove-Item -Recurse -Force .next
+
+LIMITACIONES IMPORTANTES:
+- Se desactiva temporalmente la integracion con el servidor de Figma
+  para que la UI React original pueda abrir localmente.
+- Payload /admin, login real, API y base de datos NO estan habilitados
+  en este modo. Las acciones del modo Carlos funcionan en memoria,
+  no se sincronizan ni persistiran con una base de datos real.
+- Los indices y rutas mostrados son datos ficticios para la demostracion.
+- Las 18 colecciones y el codigo CMS original siguen en el ZIP, sin borrar.
+- Para backend real habra que sustituir buildFigmaConfig por buildConfig,
+  instalar un adaptador DB compatible y configurar el CMS.
+- No se verifico build ni navegador: se requiere ejecucion en tu Windows.
