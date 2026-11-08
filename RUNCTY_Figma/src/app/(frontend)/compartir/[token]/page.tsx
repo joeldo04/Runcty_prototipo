@@ -17,7 +17,7 @@ export default async function SharePage({ params }: { params: Promise<{ token: s
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-5 py-12">
       <ContactView token={token} initialShare={share} />
-      <Link href="/explorar" className="mt-6 inline-flex font-semibold text-violet-700">Volver a RUNCTY</Link>
+      <Link href="/explorar" className="mt-6 inline-flex font-semibold text-accent">Volver a RUNCTY</Link>
     </main>
   )
 }

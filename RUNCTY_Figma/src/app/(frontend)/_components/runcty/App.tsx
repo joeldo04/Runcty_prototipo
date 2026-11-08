@@ -366,7 +366,7 @@ function WebApp({
             {user && user.role !== 'corredor' && (
               <nav
                 aria-label="Espacios de tu cuenta"
-                className="flex items-center gap-3 text-xs font-semibold text-violet-700"
+                className="flex items-center gap-3 text-xs font-semibold text-accent"
               >
                 {isDemo ? (
                   <Link href="/demo/administracion">Panel</Link>

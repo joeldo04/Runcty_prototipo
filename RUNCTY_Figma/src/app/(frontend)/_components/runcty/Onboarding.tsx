@@ -259,7 +259,7 @@ export function AccountPreview({ create, close, proceed }: {
 }) {
   const { user, isDemo, logout } = useDemo()
   return <Modal title={user ? 'Tu cuenta RUNCTY' : create ? 'Crear cuenta RUNCTY' : 'Acceso a RUNCTY'} onClose={close}>
-    {user ? <div className="space-y-5"><h3 className="text-2xl font-bold">Hola, {user.name}.</h3><p className="text-sm leading-6 text-muted">{isDemo ? 'Estás en una demostración local. La actividad solo dura en esta pestaña.' : 'Tienes una sesión activa. Tus permisos se gestionan en el servidor.'}</p><Button className="w-full" onClick={close}>Continuar explorando <ArrowRight /></Button><Button variant="secondary" className="w-full" onClick={async () => { if (await logout()) close() }}>{isDemo ? 'Salir de la demostración' : 'Cerrar sesión'}</Button></div> : <DemoAccess createInitially={create} proceed={proceed} />}
+    {user ? <div className="space-y-5"><h3 className="text-2xl font-bold">Hola, {user.name}.</h3><p className="text-sm leading-6 text-muted">{isDemo ? 'Estás en una demostración local. La actividad solo dura en esta pestaña.' : 'Tienes una sesión activa. Tus permisos se gestionan en el servidor.'}</p><Button className="w-full" onClick={close}>Continuar explorando <ArrowRight /></Button><Button variant="secondary" className="w-full" onClick={() => void logout()}>Cambiar de cuenta</Button><Button variant="ghost" className="w-full" onClick={async () => { if (await logout()) close() }}>Cerrar sesión</Button></div> : <DemoAccess createInitially={create} proceed={proceed} />}
   </Modal>
 }
 

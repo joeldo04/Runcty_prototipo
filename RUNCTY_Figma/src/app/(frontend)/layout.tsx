@@ -7,6 +7,7 @@ import { makeSiteSettings, sanitizeHtmlAttribute } from '@/lib/make-site-setting
 import './styles.css'
 import { getPublicRuncty } from '@/lib/runcty-queries'
 import { DemoProvider } from './_components/runcty/store'
+import { PwaRegister } from './_components/runcty/PwaRegister'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -35,7 +36,9 @@ export const metadata: Metadata = {
   title,
   description,
   robots: makeSiteSettings.robots?.index === false ? { follow: false, index: false } : undefined,
-  icons: favicon ? { icon: favicon } : undefined,
+  icons: { ...(favicon ? { icon: favicon } : {}), apple: '/icons/apple-touch-icon.png' },
+  // En iPhone: «Añadir a pantalla de inicio» abre RUNCTY a pantalla completa.
+  appleWebApp: { capable: true, title: 'RUNCTY', statusBarStyle: 'default' },
   openGraph: {
     title,
     description,
@@ -78,6 +81,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         )}
         <div id="root" tabIndex={-1}>
           <DemoProvider initialData={publicData}>{children}</DemoProvider>
+          <PwaRegister />
         </div>
         {googleAnalyticsId && (
           <>

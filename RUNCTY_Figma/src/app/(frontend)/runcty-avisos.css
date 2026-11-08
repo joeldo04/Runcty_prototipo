@@ -5,9 +5,11 @@
 .runcty-app .club-notice p { margin: 2px 0 0; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
 .runcty-app .club-notice.danger { border-color: rgb(217 45 63 / 35%); background: rgb(217 45 63 / 8%); }
 .runcty-app .club-notice.danger > svg { color: var(--color-risk); }
-.runcty-app .route-flag { display: inline-flex; align-items: center; width: fit-content; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: rgb(255 212 59 / 22%); color: var(--color-caution-ink); font-size: 11px; font-weight: 650; }
+.runcty-app .route-flag { display: inline-flex; align-items: center; width: fit-content; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: var(--color-raised); color: var(--color-muted); font-size: 11px; font-weight: 650; }
 .runcty-app .route-flag.danger { background: rgb(217 45 63 / 10%); color: var(--color-risk); }
-.runcty-app .route-flag.inside { background: rgb(11 138 87 / 10%); color: var(--color-safe); }
+.runcty-app .route-flag.info { background: rgb(37 99 217 / 10%); color: var(--color-accent); }
+.runcty-app .club-notice.info { border-color: rgb(37 99 217 / 30%); background: rgb(37 99 217 / 7%); }
+.runcty-app .club-notice.info > svg { color: var(--color-accent); }
 .runcty-app .alert-fields { margin: 12px 0; padding: 12px; border: 1px solid var(--color-line); border-radius: 12px; }
 .runcty-app .space-routes { margin-top: 12px; }
 .runcty-app .space-routes h3 { margin-bottom: 6px; font-size: 13px; font-weight: 700; }
@@ -28,7 +30,7 @@
 .runcty-app .lock-notification p { margin-top: 2px; font-size: 14px; font-variant-numeric: tabular-nums; color: #e2e8f0; }
 .runcty-app .lock-preview > small { max-width: 280px; margin-top: 14px; text-align: center; font-size: 12px; line-height: 1.45; color: #cbd5e1; }
 .runcty-app .lock-preview > button { margin-top: auto; min-height: 48px; padding: 0 22px; border-radius: 999px; background: #fff; font-size: 14px; font-weight: 700; color: #0f1a30; }
-.runcty-app .sync-pending { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0; padding: 12px; border: 1px solid rgb(138 90 0 / 35%); border-radius: 12px; background: rgb(255 212 59 / 16%); font-size: 13px; }
+.runcty-app .sync-pending { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 12px 0; padding: 12px; border: 1px solid rgb(37 99 217 / 30%); border-radius: 12px; background: rgb(37 99 217 / 7%); font-size: 13px; }
 .runcty-app .sync-pending button { min-height: 36px; padding: 0 12px; border-radius: 10px; background: var(--color-panel); font-size: 13px; font-weight: 650; }
 .runcty-app .gps-quality { margin-top: 6px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
 .runcty-app .mail-list { display: grid; gap: 8px; margin: 12px 0; }
@@ -59,3 +61,7 @@
 .runcty-app .phone-frame .profile-numbers > span { justify-content: flex-start; }
 .runcty-app .phone-frame .profile-heading .eyebrow { white-space: nowrap; }
 .runcty-app .phone-frame .profile-heading .edit-profile { flex: 1 1 100%; justify-content: center; margin-left: 0; }
+
+/* Cuenta en el panel y fin de ruta con una sola acción. */
+.runcty-app .admin-account { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-panel); font-weight: 600; }
+.runcty-app .recording-controls .finish-training.is-done { flex: 1; border-color: #f2592a; background: #f2592a; color: #fff; }

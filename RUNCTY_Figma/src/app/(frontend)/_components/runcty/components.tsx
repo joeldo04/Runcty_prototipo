@@ -190,10 +190,10 @@ export function Notice({
 }: {
   title: string
   children: ReactNode
-  tone?: 'caution' | 'danger'
+  tone?: 'caution' | 'danger' | 'info'
 }) {
   return (
-    <div className={`club-notice ${tone === 'danger' ? 'danger' : ''}`} role="status">
+    <div className={`club-notice ${tone === 'caution' ? '' : tone}`} role="status">
       <AlertTriangle />
       <div>
         <strong>{title}</strong>
@@ -213,9 +213,8 @@ export function ClubAlerts({ item, hours }: { item: { alert?: ClubAlert }; hours
         </Notice>
       )}
       {schedule && !schedule.inside && (
-        <Notice title="Fuera del horario recomendado">
-          El club la recomienda desde las {schedule.from}. Es una sugerencia, no una garantía de
-          seguridad.
+        <Notice tone="info" title="Fuera del horario recomendado">
+          El club la recomienda desde las {schedule.from}.
         </Notice>
       )}
     </>
@@ -226,7 +225,7 @@ export function SpaceSchedule({ hours }: { hours: string }) {
   const schedule = scheduleStatus(hours, state.time)
   if (!schedule) return null
   return (
-    <span className={`route-flag ${schedule.inside ? 'inside' : ''}`}>
+    <span className={`route-flag ${schedule.inside ? 'info' : ''}`}>
       {schedule.inside ? 'Dentro del horario recomendado' : 'Fuera del horario recomendado'}
     </span>
   )

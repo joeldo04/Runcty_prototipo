@@ -623,9 +623,7 @@ export default function Training({
               <div>
                 <strong>Ubicación de demostración</strong>
                 <p>
-                  Simularemos la señal y el movimiento sobre el trazado. No se solicita GPS real.
-                  En Android se pediría la ubicación «Todo el tiempo» para seguir grabando con la
-                  pantalla bloqueada.
+                  La señal y el movimiento se simulan sobre el trazado.
                 </p>
               </div>
             </div>
@@ -722,9 +720,9 @@ export default function Training({
             <SosButton />
           </div>
           <div className="recording-controls">
+            {!completed && (
             <button
               className="pause-training"
-              disabled={completed}
               onClick={() =>
                 update((s) => ({
                   ...s,
@@ -738,9 +736,13 @@ export default function Training({
               {session.phase === 'paused' ? <Play /> : <Pause />}
               <span>{session.phase === 'paused' ? 'Continuar' : 'Pausar'}</span>
             </button>
-            <button className="finish-training" onClick={() => setFinish(true)}>
-              <Square />
-              Finalizar
+            )}
+            <button
+              className={`finish-training ${completed ? 'is-done' : ''}`}
+              onClick={() => setFinish(true)}
+            >
+              {completed ? <Check /> : <Square />}
+              {completed ? 'Terminar y ver resumen' : 'Finalizar'}
             </button>
           </div>
         </>
