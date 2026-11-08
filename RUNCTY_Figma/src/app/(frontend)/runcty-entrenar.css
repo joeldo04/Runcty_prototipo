@@ -1,0 +1,59 @@
+/* Bienvenida: foto del club arriba; mensaje, beneficios y acciones juntos abajo. */
+.runcty-app .welcome-screen { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: 100%; overflow: hidden; background: #0b1020; color: #f8fafc; }
+.runcty-app .welcome-photo { position: absolute; inset: 0 0 auto; z-index: -1; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 96%); mask-image: linear-gradient(180deg, #000 52%, transparent 96%); }
+.runcty-app .welcome-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 16 32 / 35%) 0%, rgb(11 16 32 / 0%) 22%); }
+.runcty-app .welcome-top { display: flex; align-items: center; gap: 10px; padding: 16px 20px; }
+.runcty-app .welcome-top strong { font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: .05em; text-shadow: 0 1px 8px rgb(11 16 32 / 45%); }
+.runcty-app .welcome-body { display: flex; flex-direction: column; gap: 14px; margin-top: auto; padding: 0 20px 18px; }
+.runcty-app .welcome-body h1 { font-family: var(--font-display); font-size: 42px; font-weight: 800; line-height: .94; letter-spacing: .005em; text-transform: uppercase; }
+.runcty-app .welcome-body h1 span { color: #ff8a5f; }
+.runcty-app .welcome-body > p { max-width: 300px; font-size: 15px; line-height: 1.45; color: #cbd5e1; }
+.runcty-app .welcome-features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 2px 0 4px; }
+.runcty-app .welcome-features li { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; line-height: 1.3; text-align: center; color: #e2e8f0; }
+.runcty-app .welcome-features li > span { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 10%); border-radius: 12px; background: rgb(255 255 255 / 6%); color: #ff8a5f; }
+.runcty-app .welcome-features svg { width: 20px; height: 20px; }
+.runcty-app .welcome-actions { display: flex; flex-direction: column; gap: 10px; }
+.runcty-app .welcome-actions .button-secondary { border-color: rgb(255 255 255 / 28%); background: transparent; color: #f8fafc; }
+.runcty-app .welcome-actions .button-secondary:hover { background: rgb(255 255 255 / 8%); }
+.runcty-app .welcome-foot { font-size: 11px; text-align: center; color: #94a3b8; }
+
+/* Entrenar: elegir ruta, iniciar, pausar y terminar desde una sola pantalla. */
+.runcty-app .training-top-tools { display: flex; align-items: center; gap: 4px; }
+.runcty-app .training-top-tools > button { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; color: var(--color-muted); }
+.runcty-app .training-top-tools > button[aria-pressed='true'] { background: rgb(255 212 59 / 22%); color: var(--color-caution-ink); }
+.runcty-app .gps-tag.offline { background: rgb(255 212 59 / 22%); color: var(--color-caution-ink); }
+.runcty-app .record-sheet { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px 18px; }
+.runcty-app .record-sheet .club-notice { margin: 0; }
+.runcty-app .route-picker { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); text-align: left; }
+.runcty-app .route-picker-icon { display: grid; flex: 0 0 40px; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgb(242 89 42 / 10%); color: var(--color-sport-ink); }
+.runcty-app .route-picker-icon svg { width: 20px; height: 20px; }
+.runcty-app .route-picker-text { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.runcty-app .route-picker-text small { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent); }
+.runcty-app .route-picker-text strong { overflow: hidden; font-size: 16px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.runcty-app .route-picker-text em { font-size: 12px; font-style: normal; color: var(--color-muted); }
+.runcty-app .record-dock { display: flex; align-items: flex-end; justify-content: space-between; gap: 8px; padding-top: 4px; }
+.runcty-app .record-dock button { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--color-muted); }
+.runcty-app .record-dock button > span { display: grid; place-items: center; border-radius: 50%; }
+.runcty-app .dock-side { width: 76px; }
+.runcty-app .dock-side > span { width: 52px; height: 52px; border: 1px solid var(--color-line); background: var(--color-panel); color: var(--color-copy); }
+.runcty-app .dock-side svg { width: 20px; height: 20px; }
+.runcty-app .record-dock .dock-main { color: var(--color-copy); }
+.runcty-app .dock-main > span { width: 76px; height: 76px; background: #0f1a30; color: #fff; }
+.runcty-app .dock-main svg { width: 28px; height: 28px; }
+.runcty-app .dock-go > span { background: #f2592a; box-shadow: 0 10px 24px rgb(242 89 42 / 35%); }
+.runcty-app .record-dock .dock-main:active > span { transform: scale(.96); }
+.runcty-app .dock-pair { display: flex; gap: 14px; }
+.runcty-app .recording-dock { padding: 10px 16px max(16px, env(safe-area-inset-bottom)); }
+.runcty-app .dock-sos { display: flex; justify-content: center; width: 76px; padding-bottom: 18px; }
+.runcty-app .record-dock .sos-button { position: relative; flex-direction: column; justify-content: center; width: 56px; height: 56px; min-height: 0; padding: 0; overflow: visible; border: 0; border-radius: 50%; background: var(--color-risk); color: #fff; box-shadow: 0 8px 18px rgb(217 45 63 / 32%); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.runcty-app .record-dock .sos-button::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #9f1c2b; transform: scale(0); }
+.runcty-app .record-dock .sos-button.holding::before { transform: scale(1); transition: transform 3s linear; }
+.runcty-app .record-dock .sos-button > span { position: relative; font-size: 14px; font-weight: 800; letter-spacing: .05em; }
+.runcty-app .record-dock .sos-button > small { position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); font-size: 11px; font-weight: 600; white-space: nowrap; color: var(--color-muted); }
+.runcty-app .record-dock .sos-button:focus-visible { outline: 2px solid var(--color-copy); outline-offset: 3px; }
+.runcty-app .route-pick-list { display: grid; gap: 8px; margin-top: 8px; }
+.runcty-app .route-pick-list > button { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 10px 12px; border: 1px solid var(--color-line); border-radius: 12px; text-align: left; }
+.runcty-app .route-pick-list > button[aria-pressed='true'] { border-color: #f2592a; background: rgb(242 89 42 / 6%); }
+.runcty-app .route-pick-list strong { display: block; font-size: 14px; }
+.runcty-app .route-pick-list small { display: block; margin-top: 2px; font-size: 12px; color: var(--color-muted); }
+.runcty-app .route-pick-list svg { flex: 0 0 18px; width: 18px; height: 18px; color: #f2592a; }

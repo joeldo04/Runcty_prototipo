@@ -3,12 +3,13 @@
 import { useId, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight, Check, Eye, EyeOff, MapPin, Monitor, ShieldCheck } from 'lucide-react'
+import { ArrowRight, Check, Eye, EyeOff, MapPin, Monitor, Route, ShieldCheck, Users } from 'lucide-react'
 import { BackButton, Button, IconButton, Modal, RunnerIcon } from './components'
 import { isAdminUser, withEmails, type DemoUser } from './data'
 import { DEMO_USERS } from './demo-seed'
 import { useDemo } from './store'
 import brandMark from '../../../../../imagenes/logo_runcty.png'
+import welcomePhoto from '../../../../../imagenes/corredores_login.webp'
 
 // El PNG original es cuadrado con margen negro: el círculo solo recorta ese margen.
 export function BrandMark({ size = 56 }: { size?: number }) {
@@ -264,23 +265,59 @@ export function AccountPreview({ create, close, proceed }: {
 }
 
 export function MobileWelcome({ login, register }: { login: () => void; register: () => void }) {
-  const { state } = useDemo()
   return (
-    <section className="auth-screen navy-zone">
-      {state.heroImage && <Image src={state.heroImage.url} alt="" fill sizes="393px" className="-z-10 object-cover opacity-25" priority />}
-      <div className="auth-top"><BrandHeader /></div>
-      <div className="auth-body">
-        <div className="auth-intro">
-          <span className="eyebrow"><MapPin /> LOJA, ECUADOR</span>
-          <AuthIntro />
-        </div>
-        <div className="auth-card">
-          <p>Elige rutas y horarios con información de seguridad. Registra tu entrenamiento y comparte solo lo que tú decidas.</p>
-          <Button variant="orange" className="w-full" onClick={register}>Comenzar <ArrowRight /></Button>
-          <Button variant="secondary" className="w-full" onClick={login}>Ya tengo una cuenta</Button>
-        </div>
+    <section className="welcome-screen">
+      <div className="welcome-photo">
+        <Image
+          src={welcomePhoto}
+          alt="Corredores del club frente a la catedral de Loja"
+          fill
+          sizes="(max-width: 520px) 100vw, 393px"
+          className="object-cover object-top"
+          priority
+        />
       </div>
-      <p className="auth-foot">Prototipo Android · acceso de demostración</p>
+      <header className="welcome-top">
+        <BrandMark size={40} />
+        <strong>RUNCTY</strong>
+      </header>
+      <div className="welcome-body">
+        <h1>
+          Cada ruta,
+          <br />
+          <span>más confianza.</span>
+        </h1>
+        <p>Tu próxima carrera empieza con una mejor decisión.</p>
+        <ul className="welcome-features">
+          <li>
+            <span>
+              <Route />
+            </span>
+            Rutas informadas
+          </li>
+          <li>
+            <span>
+              <RunnerIcon />
+            </span>
+            Registra tu entrenamiento
+          </li>
+          <li>
+            <span>
+              <Users />
+            </span>
+            Comparte con tu club
+          </li>
+        </ul>
+        <div className="welcome-actions">
+          <Button variant="orange" className="w-full" onClick={register}>
+            Comenzar <ArrowRight />
+          </Button>
+          <Button variant="secondary" className="w-full" onClick={login}>
+            Ya tengo una cuenta
+          </Button>
+        </div>
+        <p className="welcome-foot">Prototipo · acceso de demostración</p>
+      </div>
     </section>
   )
 }

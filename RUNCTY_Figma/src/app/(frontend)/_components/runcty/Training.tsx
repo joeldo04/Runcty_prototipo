@@ -14,6 +14,7 @@ import {
   Pause,
   Play,
   Radio,
+  Route as RouteIcon,
   Save,
   Share2,
   Shield,
@@ -55,7 +56,7 @@ import {
   type RouteData,
   type SurveyAnswers,
 } from './data'
-import { useDemo } from './store'
+import { useDemo, useRoutes } from './store'
 import RouteQuestionnaire, {
   FeedbackStars,
   RouteFeedbackCard,
@@ -95,8 +96,10 @@ export default function Training({
     [share, setShare] = useState<ShareCardData | null>(null),
     [warning, setWarning] = useState(false),
     [locked, setLocked] = useState(false),
-    [offline, setOffline] = useState(false)
+    [offline, setOffline] = useState(false),
+    [picker, setPicker] = useState(false)
   const route = session.route
+  const allRoutes = useRoutes()
   useEffect(() => {
     if (session.phase === 'permission') {
       const t = setTimeout(
@@ -185,6 +188,12 @@ export default function Training({
   const acknowledge = () => {
     update((s) => ({ ...s, reportsSeen: [...s.reportsSeen, ...nearbyReports.map(({ id }) => id)] }))
     setWarning(false)
+  }
+  const setPhase = (phase: 'running' | 'paused') =>
+    update((s) => ({ ...s, session: { ...s.session, phase } }))
+  const choose = (next: RouteData) => {
+    update((s) => ({ ...s, session: { ...s.session, route: next, seconds: 0, km: 0 } }))
+    setPicker(false)
   }
   const start = () => {
     setSavedId(null)
@@ -595,52 +604,78 @@ export default function Training({
         >
           <ArrowLeft />
         </button>
-        <span>{active ? 'ENTRENAMIENTO' : 'PREPARA TU SALIDA'}</span>
-        <span className="gps-tag">
-          <Radio />
-          GPS Demo
-        </span>
+        <span>{active ? 'ENTRENAMIENTO' : 'NUEVA SALIDA'}</span>
+        <div className="training-top-tools">
+          {active && isDemo && (
+            <>
+              <button
+                type="button"
+                aria-label="Bloquear pantalla (simulación)"
+                onClick={() => setLocked(true)}
+              >
+                <Lock />
+              </button>
+              <button
+                type="button"
+                aria-label="Simular sin señal"
+                aria-pressed={offline}
+                onClick={() => setOffline(!offline)}
+              >
+                <WifiOff />
+              </button>
+            </>
+          )}
+          <span className={`gps-tag ${offline ? 'offline' : ''}`}>
+            <Radio />
+            {offline ? 'Sin señal' : 'GPS Demo'}
+          </span>
+        </div>
       </header>
       {!active ? (
         <>
           <div className="training-prepare-map">
             <SafetyMap route={route} fitRoute guide />
           </div>
-          <section className="training-preparation">
-            <span className="eyebrow">TU RUTA ESTÁ LISTA</span>
-            <h1>{route.name}</h1>
-            <div className="preparation-metrics">
-              <span>
-                <strong>{route.km.toFixed(1)}</strong>km planificados
+          <section className="record-sheet">
+            <button type="button" className="route-picker" onClick={() => setPicker(true)}>
+              <span className="route-picker-icon">
+                <RouteIcon />
               </span>
-              <span>
-                <strong>{route.min}</strong>min aprox.
+              <span className="route-picker-text">
+                <small>Ruta</small>
+                <strong>{route.name}</strong>
+                <em>
+                  {route.km.toFixed(1)} km · {route.min} min · {route.difficulty}
+                </em>
               </span>
               <Score value={score.score} />
-            </div>
-            <div className="gps-permission">
-              <LocateFixed />
-              <div>
-                <strong>Ubicación de demostración</strong>
-                <p>
-                  La señal y el movimiento se simulan sobre el trazado.
-                </p>
-              </div>
-            </div>
+            </button>
             <ClubAlerts item={route} hours={route.recommended} />
-            <Button
-              variant="orange"
-              className="full"
-              data-tour="start-training"
-              onClick={() => (nearbyReports.length ? setWarning(true) : start())}
-            >
-              <Play />
-              Iniciar entrenamiento
-            </Button>
-            <Button variant="ghost" className="full" onClick={() => setSecurity(true)}>
-              <Shield />
-              Herramientas de seguridad
-            </Button>
+            <div className="record-dock">
+              <button type="button" className="dock-side" onClick={() => setSecurity(true)}>
+                <span>
+                  <Shield />
+                </span>
+                Seguridad
+              </button>
+              <button
+                type="button"
+                className="dock-main dock-go"
+                data-tour="start-training"
+                onClick={() => (nearbyReports.length ? setWarning(true) : start())}
+              >
+                <span>
+                  <Play />
+                </span>
+                Iniciar
+              </button>
+              <button type="button" className="dock-side" onClick={() => setPicker(true)}>
+                <span>
+                  <RouteIcon />
+                </span>
+                Cambiar ruta
+              </button>
+            </div>
           </section>
         </>
       ) : (
@@ -699,53 +734,82 @@ export default function Training({
               Recorrido GPS simulado · rosa
             </span>
           </div>
-          {isDemo && (
-            <div className="training-demo-tools" role="group" aria-label="Simulaciones de la demo">
-              <button type="button" onClick={() => setLocked(true)}>
-                <Lock />
-                Bloquear pantalla
-              </button>
-              <button type="button" aria-pressed={offline} onClick={() => setOffline(!offline)}>
-                <WifiOff />
-                {offline ? 'Sin señal · guardando' : 'Simular sin señal'}
-              </button>
-            </div>
-          )}
-          <div className="training-sharing">
-            <button data-tour="share-live" onClick={() => setSecurity(true)}>
-              <Users />
-              {shareValid(state.sharing) ? 'Compartiendo' : 'Compartir ubicación'}
-              <ChevronRight />
-            </button>
-            <SosButton />
-          </div>
-          <div className="recording-controls">
-            {!completed && (
+          <div className="record-dock recording-dock">
             <button
-              className="pause-training"
-              onClick={() =>
-                update((s) => ({
-                  ...s,
-                  session: {
-                    ...s.session,
-                    phase: s.session.phase === 'paused' ? 'running' : 'paused',
-                  },
-                }))
-              }
+              type="button"
+              className="dock-side"
+              data-tour="share-live"
+              onClick={() => setSecurity(true)}
             >
-              {session.phase === 'paused' ? <Play /> : <Pause />}
-              <span>{session.phase === 'paused' ? 'Continuar' : 'Pausar'}</span>
+              <span>
+                <Users />
+              </span>
+              {shareValid(state.sharing) ? 'Compartiendo' : 'Compartir'}
             </button>
+            {session.phase === 'running' ? (
+              <button type="button" className="dock-main dock-go" onClick={() => setPhase('paused')}>
+                <span>
+                  <Pause />
+                </span>
+                Pausar
+              </button>
+            ) : (
+              <div className="dock-pair">
+                {!completed && (
+                  <button
+                    type="button"
+                    className="dock-main dock-go"
+                    onClick={() => setPhase('running')}
+                  >
+                    <span>
+                      <Play />
+                    </span>
+                    Reanudar
+                  </button>
+                )}
+                <button
+                  type="button"
+                  className={`dock-main dock-finish ${completed ? 'dock-go' : ''}`}
+                  onClick={() => setFinish(true)}
+                >
+                  <span>{completed ? <Check /> : <Square />}</span>
+                  Terminar
+                </button>
+              </div>
             )}
-            <button
-              className={`finish-training ${completed ? 'is-done' : ''}`}
-              onClick={() => setFinish(true)}
-            >
-              {completed ? <Check /> : <Square />}
-              {completed ? 'Terminar y ver resumen' : 'Finalizar'}
-            </button>
+            <div className="dock-sos">
+              <SosButton />
+            </div>
           </div>
         </>
+      )}
+      {picker && (
+        <Modal title="Elige tu ruta" onClose={() => setPicker(false)}>
+          <div className="route-pick-list">
+            {allRoutes
+              .filter(
+                (r) =>
+                  r.geometry.length > 1 && r.km > 0 && (r.owned || !r.private || r.status === 'Aprobado'),
+              )
+              .map((r) => (
+                <button
+                  type="button"
+                  key={r.id}
+                  aria-pressed={r.id === route.id}
+                  onClick={() => choose(r)}
+                >
+                  <span>
+                    <strong>{r.name}</strong>
+                    <small>
+                      {r.km.toFixed(1)} km · {r.min} min{r.owned ? ' · Mi ruta' : ''}
+                    </small>
+                    {r.alert && <span className="route-flag danger">No recomendado</span>}
+                  </span>
+                  {r.id === route.id && <Check />}
+                </button>
+              ))}
+          </div>
+        </Modal>
       )}
       {warning && (
         <Modal title="Reportes cerca de tu ruta" onClose={() => setWarning(false)}>
