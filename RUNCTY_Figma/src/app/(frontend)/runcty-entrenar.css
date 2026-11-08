@@ -57,3 +57,9 @@
 .runcty-app .route-pick-list strong { display: block; font-size: 14px; }
 .runcty-app .route-pick-list small { display: block; margin-top: 2px; font-size: 12px; color: var(--color-muted); }
 .runcty-app .route-pick-list svg { flex: 0 0 18px; width: 18px; height: 18px; color: #f2592a; }
+
+/* Salir: mismo botón en la web de corredor y en el panel. */
+.runcty-app .exit-button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px; font-size: 14px; font-weight: 600; color: var(--color-muted); }
+.runcty-app .exit-button:hover { color: var(--color-copy); }
+.runcty-app .exit-button svg { width: 16px; height: 16px; }
+.runcty-app .mobile-app-header > div { display: flex; align-items: center; gap: 2px; }

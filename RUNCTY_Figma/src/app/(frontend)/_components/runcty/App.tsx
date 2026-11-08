@@ -18,6 +18,7 @@ import {
   Heart,
   History as HistoryIcon,
   Home,
+  LogOut,
   Map,
   MapPin,
   Menu,
@@ -163,7 +164,7 @@ function WebApp({
   initialRoute?: RouteData
   initialPage?: string
 }) {
-  const { state, user, isDemo, loading, update, openAccount } = useDemo(),
+  const { state, user, isDemo, loading, update, openAccount, logout } = useDemo(),
     all = useRoutes()
   const router = useRouter()
   const page = initialPage
@@ -382,6 +383,18 @@ function WebApp({
             <Button variant="secondary" onClick={openAccount}>
               {isDemo ? `${user?.name} · demo` : (user?.name ?? 'Ver demo')}
             </Button>
+            {user && (
+              <button
+                type="button"
+                className="exit-button"
+                onClick={async () => {
+                  if (await logout()) router.push('/')
+                }}
+              >
+                <LogOut />
+                Salir
+              </button>
+            )}
           </div>
         </header>
         <main className="web-content">
@@ -472,7 +485,7 @@ function MobileApp({
   startPage?: string
   initialRoute?: RouteData
 }) {
-  const { state, user, isDemo, update, notify, openAccount, startDemo } = useDemo(),
+  const { state, user, isDemo, update, notify, openAccount, startDemo, logout } = useDemo(),
     all = useRoutes()
   const [entry, setEntry] = useState<'welcome' | 'login' | 'register'>('welcome')
   const [page, setPage] = useState(startPage),
@@ -491,6 +504,14 @@ function MobileApp({
   const recording = page === 'train' && (active || state.session.phase === 'survey')
   const resolved = selected ? (all.find((r) => r.id === selected.id) ?? selected) : null
   const scrollTop = () => document.querySelector('.mobile-scroll')?.scrollTo({ top: 0 })
+  // Salir lleva a la bienvenida, igual que en la web y en el panel.
+  const exitAccount = async () => {
+    if (!(await logout())) return
+    setEntry('welcome')
+    setPage('explore')
+    setTrail([])
+    setSelected(null)
+  }
   const stage = useRef<HTMLDivElement>(null)
   const tour = useTour(state.newAccount && page === 'explore' && !selected)
   const beforeTour = useRef({ page, trail, selected, session: state.session, mode: state.draft.mode })
@@ -630,6 +651,9 @@ function MobileApp({
                 <div>
                   <IconButton label="Novedades" onClick={() => setNotification(true)}>
                     <Bell />
+                  </IconButton>
+                  <IconButton label="Salir" onClick={exitAccount}>
+                    <LogOut />
                   </IconButton>
                 </div>
               </header>
