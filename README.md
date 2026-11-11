@@ -4,7 +4,7 @@
 RUNCTY es un **prototipo  web y móvil** que busca ayudar a los corredores a explorar y planificar rutas teniendo en cuenta las condiciones de seguridad según el lugar y el horario.   
 El prototipo presenta mapas, rutas, información de seguridad, seguimiento de entrenamientos y funciones de reporte y gestión. Algunas interacciones utilizan datos de demostración; no se presenta como un servicio terminado.
 
-## Prototipos
+## Historia del Prototipo
 
 ### 1. Primer prototipo — Figma Make
 
