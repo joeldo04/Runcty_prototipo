@@ -85,7 +85,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 .runcty-app .sim-live strong small { font-size: 20px; color: #ff8a5f; }
 .runcty-app .sim-live > div, .runcty-app .sim-summary > div { display: flex; gap: 22px; margin-top: 8px; }
 .runcty-app .sim-live span, .runcty-app .sim-summary span { font-size: 18px; font-weight: 750; font-variant-numeric: tabular-nums; }
-.runcty-app .sim-live span small, .runcty-app .sim-summary span small { display: block; font-size: 11px; font-weight: 500; color: #b4c0d4; }
+.runcty-app .sim-live span small, .runcty-app .sim-summary span small { display: block; font-size: 12px; font-weight: 500; color: #b4c0d4; }
 .runcty-app .sim-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 14px 18px; background: #0f1a30; }
 .runcty-app .sim-buttons span { padding: 11px; border-radius: 12px; background: #2f6fe8; text-align: center; font-weight: 700; color: #fff; }
 .runcty-app .sim-buttons span + span { background: #2c3c55; }
@@ -100,7 +100,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 76px; }
 .runcty-app .sim-summary > strong small { font-size: 20px; color: #ff8a5f; }
 .runcty-app .sim-share { display: flex; flex-direction: column; gap: 12px; height: 100%; padding: 34px 14px 16px; }
 .runcty-app .sim-post { display: flex; flex: 1; flex-direction: column; gap: 6px; min-height: 0; padding: 12px; border-radius: 16px; background: #fff; box-shadow: 0 10px 26px #0f1b331f; }
-.runcty-app .sim-post > small { font-size: 11px; font-weight: 800; letter-spacing: .08em; color: #e04a1c; }
+.runcty-app .sim-post > small { font-size: 12px; font-weight: 800; letter-spacing: .08em; color: #e04a1c; }
 .runcty-app .sim-post .sim-map { flex: 1; min-height: 0; height: auto; }
 .runcty-app .sim-post > strong { font-family: var(--font-display); font-size: 42px; font-weight: 800; line-height: 1; }
 .runcty-app .sim-post em { font-size: 18px; font-style: normal; color: #e04a1c; }

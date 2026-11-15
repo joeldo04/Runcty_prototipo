@@ -110,7 +110,7 @@ function RecoverPassword({ back }: { back: () => void }) {
         {step === 2 && (
           <>
             <p className="auth-copy">Simulamos el envío a <strong>{email.trim()}</strong>.</p>
-            <p className="auth-note"><strong>Código de ejemplo: {sample}</strong>. En esta demostración no se envía ningún correo.</p>
+            <p className="auth-note"><strong>Código de ejemplo: {sample}</strong>.</p>
             <label className="field">Código de 6 dígitos<input inputMode="numeric" maxLength={6} autoFocus value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} placeholder="000000" autoComplete="one-time-code" /></label>
           </>
         )}
@@ -216,15 +216,15 @@ export function DemoAccess({ createInitially = false, mobile = false, back, proc
         <div className="field">
           <label htmlFor={passwordId}>Contraseña</label>
           <div className="auth-password">
-            <input id={passwordId} type={visible ? 'text' : 'password'} placeholder="Opcional en esta demostración" autoComplete="off" />
+            <input id={passwordId} type={visible ? 'text' : 'password'} placeholder="Tu contraseña" autoComplete="off" />
             <IconButton label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={visible} onClick={() => setVisible(!visible)}>
               {visible ? <EyeOff /> : <Eye />}
             </IconButton>
           </div>
         </div>
         {error && <p role="alert" className="form-error">{error}</p>}
-        <p className="auth-note"><strong>Acceso de demostración.</strong> Puedes dejar los campos vacíos.</p>
-        <Button type="submit" variant="orange" className="w-full">{create ? 'Crear cuenta · demo' : 'Iniciar sesión · demo'}<ArrowRight /></Button>
+        <p className="auth-note">Puedes dejar los campos vacíos.</p>
+        <Button type="submit" variant="orange" className="w-full">{create ? 'Crear cuenta' : 'Iniciar sesión'}<ArrowRight /></Button>
       </form>
       <div className="auth-links">
         {!create && <button type="button" onClick={() => setView('recover')}>Recuperar contraseña</button>}
@@ -234,14 +234,14 @@ export function DemoAccess({ createInitially = false, mobile = false, back, proc
   )
   if (!mobile)
     return (
-      <section className="auth-card auth-modal" aria-label="Acceso de demostración">
+      <section className="auth-card auth-modal" aria-label="Acceso a RUNCTY">
         {form}
         <p className="auth-legal">No se verifican credenciales ni se crean cuentas reales. Entrenamiento, GPS, enlaces y SOS son simulados.</p>
         <Link href="/demo/administracion" className="auth-admin"><Monitor className="size-4" /> Ver administración de demostración <ArrowRight className="size-4" /></Link>
       </section>
     )
   return (
-    <section className="auth-screen navy-zone" aria-label="Acceso de demostración">
+    <section className="auth-screen navy-zone" aria-label="Acceso a RUNCTY">
       <div className="auth-top">
         {back && <BackButton onClick={back}>Volver</BackButton>}
         <BrandHeader />
@@ -316,7 +316,7 @@ export function MobileWelcome({ login, register }: { login: () => void; register
             Ya tengo una cuenta
           </Button>
         </div>
-        <p className="welcome-foot">Prototipo · acceso de demostración</p>
+        <p className="welcome-foot">Prototipo</p>
       </div>
     </section>
   )

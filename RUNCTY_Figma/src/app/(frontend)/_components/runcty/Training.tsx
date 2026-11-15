@@ -258,7 +258,7 @@ export default function Training({
     if (answers?.puntuacion)
       notify(
         isDemo
-          ? 'Valoración guardada en esta demostración.'
+          ? 'Valoración guardada.'
           : 'Valoración conservada en esta sesión. Tu comentario pasa a revisión.',
       )
   }
@@ -298,8 +298,8 @@ export default function Training({
     notify(
       isDemo
         ? propose
-          ? 'Propuesta de demostración guardada en esta pestaña. No se envía al club.'
-          : 'Recorrido guardado como ruta privada en esta demo local.'
+          ? 'Propuesta guardada en Mis rutas.'
+          : 'Recorrido guardado como ruta privada.'
         : propose
           ? 'Sincronizando tu propuesta con revisión de privacidad para el club.'
           : 'Sincronizando el recorrido como ruta privada en tu cuenta.',
@@ -364,8 +364,7 @@ export default function Training({
                   day: 'numeric',
                   month: 'long',
                   year: 'numeric',
-                })}{' '}
-                · GPS de demostración
+                })}
               </p>
             </header>
             <div className="summary-hero">
@@ -583,13 +582,13 @@ export default function Training({
           <>
             <LocateFixed />
             <h2>Comprobando ubicación.</h2>
-            <p>Esperando señal GPS de demostración…</p>
+            <p>Esperando señal GPS…</p>
           </>
         ) : (
           <>
             <strong key={session.count}>{session.count}</strong>
             <h2>Vamos a por ello.</h2>
-            <p>GPS de demostración · No es seguimiento real</p>
+            <p>GPS simulado</p>
           </>
         )}
       </div>
@@ -627,7 +626,7 @@ export default function Training({
           )}
           <span className={`gps-tag ${offline ? 'offline' : ''}`}>
             <Radio />
-            {offline ? 'Sin señal' : 'GPS Demo'}
+            {offline ? 'Sin señal' : 'GPS'}
           </span>
         </div>
       </header>

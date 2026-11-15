@@ -56,23 +56,25 @@ function exampleRoute(id: string, name: string, roadIndices: number[], difficult
     official: false, status:'Aprobado', recommended:'08:00–10:00 · 14:00–17:00',
   }
 }
-export const DEMO_ROUTES: RouteData[] = [
-  exampleRoute('demo-jipiro','Circuito Jipiro',[0,1,5], 'Principiante',2.6,17,'Un recorrido de demostración por el entorno de Jipiro.'),
+// Las tres primeras son rutas oficiales del club.
+const OFFICIAL = new Set(['demo-jipiro', 'demo-zamora', 'demo-pucara'])
+export const DEMO_ROUTES: RouteData[] = ([
+  exampleRoute('demo-jipiro','Circuito Jipiro',[0,1,5], 'Principiante',2.6,17,'Vuelta por el entorno del Parque Jipiro, plana y con buena iluminación.'),
   exampleRoute('demo-zamora','Parque Lineal Zamora',[1,2,3,10], 'Intermedio',5.2,34,'Una opción de entrenamiento junto a corredores urbanos.'),
-  exampleRoute('demo-pucara','Sendero Pucará',[8,9], 'Intermedio',4.8,38,'Recorrido panorámico de demostración.'),
+  exampleRoute('demo-pucara','Sendero Pucará',[8,9], 'Intermedio',4.8,38,'Recorrido panorámico por el sendero del Pucará.'),
   exampleRoute('demo-centro','Loja urbana',[2,3,4], 'Principiante',3.7,28,'Ruta urbana ilustrativa con condiciones que cambian según la hora.'),
   exampleRoute('demo-sancayetano','San Cayetano',[5,6,11], 'Avanzado',6.3,46,'Alternativa urbana para consultar horarios y tramos.'),
-]
+] as RouteData[]).map((route) => (OFFICIAL.has(route.id) ? { ...route, official: true, verified: true } : route))
 export const DEMO_SPACES: Space[] = [
-  {id:'demo-space-1',name:'Parque Jipiro',type:'Parque',location:'Norte de Loja',hours:'05:30–19:00',coordinate:[-3.9736,-79.2027],description:'Espacio de ejemplo para explorar rutas.'},
-  {id:'demo-space-2',name:'Parque Lineal Zamora',type:'Parque',location:'Ribera del Zamora',hours:'05:30–19:00',coordinate:[-3.9857,-79.2027],description:'Espacio de demostración para entrenar.'},
-  {id:'demo-space-3',name:'Sendero Pucará',type:'Sendero',location:'Sector occidental',hours:'06:00–18:00',coordinate:[-3.9902,-79.2131],description:'Sendero de ejemplo para la planificación.'},
+  {id:'demo-space-1',name:'Parque Jipiro',type:'Parque',location:'Norte de Loja',hours:'05:30–19:00',coordinate:[-3.9736,-79.2027],description:'Pista y senderos dentro del parque.'},
+  {id:'demo-space-2',name:'Parque Lineal Zamora',type:'Parque',location:'Ribera del Zamora',hours:'05:30–19:00',coordinate:[-3.9857,-79.2027],description:'Ribera del río Zamora, ideal para rodajes suaves.'},
+  {id:'demo-space-3',name:'Sendero Pucará',type:'Sendero',location:'Sector occidental',hours:'06:00–18:00',coordinate:[-3.9902,-79.2131],description:'Sendero con desnivel moderado y vista a la ciudad.'},
 ]
 export const DEMO_CITY = {id:'catamayo',name:'Catamayo · ejemplo',networkReady:false,enabled:false}
 // Reporte ficticio ya aprobado: permite ver el aviso de reportes cercanos a una ruta.
 export const demoReport = (): Incident => {
   const createdAt = Date.now() - 3 * 86400000
-  return {id:'demo-report-perros',type:'Perros',location:'Entorno de Jipiro · ejemplo',coordinate:[-3.9792,-79.2020],date:new Date(createdAt).toISOString().slice(0,10),time:'07:10',description:'Reporte ficticio para demostrar los avisos de la ruta.',status:'Aprobado',owner:'Corredor de demostración',owned:false,createdAt}
+  return {id:'demo-report-perros',type:'Perros',location:'Entorno de Jipiro',coordinate:[-3.9792,-79.2020],date:new Date(createdAt).toISOString().slice(0,10),time:'07:10',description:'Reporte ficticio para demostrar los avisos de la ruta.',status:'Aprobado',owner:'Luis Ordóñez',owned:false,createdAt}
 }
 export const DEMO_USERS: DemoUser[] = [
   {id:'runcty-demo-carlos',name:'Carlos',role:'corredor',active:true,admin:true},

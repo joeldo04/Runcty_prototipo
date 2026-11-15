@@ -60,7 +60,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
           body: `${current.profile.name} te envió un enlace temporal para ver su recorrido en vivo. No necesitas instalar la app.\n\nEl enlace deja de funcionar al terminar el entrenamiento, si lo revoca o en cuatro horas.`,
         })))
       })
-      notify(valid ? 'Enlace de demostración revocado en esta pestaña.' : 'Enlace de demostración preparado. No publica tu ubicación.')
+      notify(valid ? 'Enlace revocado.' : 'Enlace temporal listo.')
       return
     }
     if (valid) {
@@ -138,7 +138,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
           <h2>Comparte tu recorrido.</h2>
           <p>
             {valid
-              ? 'Compartiendo ubicación de demostración.'
+              ? 'Compartiendo tu ubicación.'
               : 'Activa un enlace temporal solo cuando tú quieras.'}
           </p>
         </div>
@@ -157,7 +157,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
         )}
         {isDemo && (
           <p className="info-strip">
-            Demo local: abre la vista del familiar en esta misma pestaña. Otra pestaña o dispositivo muestra un escenario ficticio. No se publica tu ubicación.
+            Abre la vista del familiar en esta misma pestaña.
           </p>
         )}
         {(pending > 0 || syncError) && (
@@ -207,7 +207,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
         </div>
         <Button variant="secondary" onClick={() => setCall(true)}>
           <Phone />
-          911 · Demo
+          911
         </Button>
       </div>
       {state.sos.length > 0 && (
@@ -301,7 +301,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
       )}
       {whatsapp && (
         <Confirm
-          title="Compartir por WhatsApp · demostración"
+          title="Compartir por WhatsApp"
           message="No se abrirá WhatsApp ni se enviará un mensaje real. Puedes copiar el enlace y decidir con quién compartirlo."
           label="Copiar enlace"
           onClose={() => setWhatsapp(false)}
@@ -324,7 +324,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
         </Modal>
       )}
       {call && (
-        <Modal title="911 · Demostración" onClose={() => setCall(false)}>
+        <Modal title="911" onClose={() => setCall(false)}>
           <Phone />
           <p>
             En Android, esta acción abriría el marcador con 911. El prototipo no inicia llamadas ni
@@ -370,7 +370,7 @@ function DemoContactView({ embedded }: { embedded: boolean }) {
   const trainingStatus = example ? 'En movimiento' : state.session.phase === 'paused' ? 'En pausa' : state.session.phase === 'summary' ? 'Finalizado' : 'En movimiento'
   return (
     <div className={`contact-view ${embedded ? 'embedded-contact' : ''}`}>
-      <span className="eyebrow">SEGUIMIENTO COMPARTIDO · DEMOSTRACIÓN</span>
+      <span className="eyebrow">SEGUIMIENTO COMPARTIDO</span>
       <h2>Un recorrido compartido contigo.</h2>
       <p className="info-strip">{example ? 'Escenario ficticio: esta pestaña no recibió un entrenamiento compartido. ' : 'Vista del entrenamiento simulado en esta pestaña. '}Sin GPS real ni enlace público. No se muestran contactos, correo ni datos de cuenta.</p>
       <div className="flex flex-wrap gap-2 py-4" aria-label="Estados demostrativos del enlace">
@@ -379,11 +379,11 @@ function DemoContactView({ embedded }: { embedded: boolean }) {
       {status !== 'activo' ? <div className="expired-link"><Shield /><h2>{status === 'caducado' ? 'Este enlace ha caducado' : 'El corredor revocó este enlace'}</h2><p>El acceso terminó. La ubicación, el recorrido y las métricas ya no se muestran.</p><span>Estado de demostración · no se consultó un servidor</span></div> : <>
         <div className="flex flex-wrap items-center justify-between gap-3 py-3"><strong>{route.name}</strong><Status value="Activo" /></div>
         <div className="contact-map"><SafetyMap route={route} track={track} tracking={position} focus={position} fitRoute guide showReports={false} /></div>
-        <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-1 w-7 rounded-full bg-[#F72585]" />Rosa: recorrido GPS simulado. Los colores de los tramos describen condiciones de demostración.</p>
+        <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-1 w-7 rounded-full bg-[#F72585]" />Rosa: recorrido GPS simulado.</p>
         <div className="activity-totals"><span><strong>{km.toFixed(2)}<small> km</small></strong>Distancia</span><span><strong>{formatTime(seconds)}</strong>Duración simulada</span><span><strong className="!text-lg">{trainingStatus}</strong>Estado del entrenamiento</span></div>
         <p>Última ubicación recibida: {position[0].toFixed(5)}, {position[1].toFixed(5)}</p>
         <p className="muted">Última actualización: {new Date(updatedAt).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })} · Datos simulados</p>
-        <small>Vigencia de ejemplo hasta las {new Date(expires).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })}. Finalizar o revocar cierra el acceso en la demo.</small>
+        <small>Vigencia de ejemplo hasta las {new Date(expires).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })}.</small>
       </>}
     </div>
   )
@@ -467,7 +467,7 @@ function ServerContactView({
       {share.alert && (
         <div className="form-error">
           <AlertTriangle />
-          Hay una alerta SOS de demostración activa.
+          Hay una alerta SOS activa.
         </div>
       )}
       <small>Disponible hasta las {new Date(share.expires).toLocaleTimeString('es')}</small>
@@ -558,7 +558,7 @@ export function SosButton() {
         <small>{holding ? 'Sigue presionando' : 'Mantén 3 s'}</small>
       </button>
       {count !== null && (
-        <Modal title="Alerta SOS de demostración" onClose={() => setCount(null)}>
+        <Modal title="Alerta SOS" onClose={() => setCount(null)}>
           <div className="sos-count">{count}</div>
           <p>
             Se simulará una alerta a tus {state.contacts.length} contactos. No se envían mensajes ni
@@ -606,12 +606,12 @@ export function SosButton() {
           <div className="modal-actions">
             <Button variant="secondary" onClick={() => setPhone(true)}>
               <Phone />
-              911 · Demo
+              911
             </Button>
             <Button
               onClick={() => {
                 navigator.clipboard
-                  ?.writeText(`Alerta RUNCTY de demostración · ${user?.name ?? 'Corredor'}`)
+                  ?.writeText(`Alerta RUNCTY · ${user?.name ?? 'Corredor'}`)
                   .catch(() => {})
                 setSent(false)
               }}
@@ -622,7 +622,7 @@ export function SosButton() {
           </div>
           {phone && (
             <p className="info-strip">
-              Demostración del marcador 911. No se ha iniciado una llamada.
+              Se abriría el marcador con el 911.
             </p>
           )}
         </Modal>

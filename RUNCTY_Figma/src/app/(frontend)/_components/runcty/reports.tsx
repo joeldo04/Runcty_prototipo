@@ -261,11 +261,11 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
                 variant="secondary"
                 onClick={() => {
                   setCoordinate([[-3.9833, -79.202]])
-                  setLocation('Sector El Valle · ubicación de demostración')
+                  setLocation('Sector El Valle')
                 }}
               >
                 <MapPin />
-                Usar ubicación de demostración
+                Usar ubicación de ejemplo
               </Button>
               <span>
                 {coordinate.length

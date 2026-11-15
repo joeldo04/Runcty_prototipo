@@ -11,6 +11,7 @@ import {
   colorHex,
   safety,
   publicIncidents,
+  distance,
   pointAlong,
   type Coordinate,
   type RouteData,
@@ -73,6 +74,8 @@ export default function SafetyMap(props: Props) {
   const [recalculating, setRecalculating] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   const [showContext, setShowContext] = useState(props.context ?? true)
+  const [touchDevice, setTouchDevice] = useState(false)
+  const [mapActive, setMapActive] = useState(false)
   const lastAnimation = useRef<number | undefined>(undefined)
   const streetLines = useRef<Map<string, L.Polyline>>(new Map())
   const night = time === '19:00' || time === '05:30'
@@ -102,9 +105,11 @@ export default function SafetyMap(props: Props) {
       markerZoomAnimation: false,
     })
     map.current = m
+    if (!props.preview && window.matchMedia('(pointer: coarse)').matches) setTouchDevice(true)
     // Real pannable map background. Overlays and local geometry still work if tiles fail.
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '© OpenStreetMap contributors © CARTO',
+      subdomains: 'abcd',
       maxZoom: 19,
       crossOrigin: true,
     }).on('tileerror', () => setTileState('local')).on('tileload', () => setTileState('osm')).addTo(m)
@@ -231,7 +236,7 @@ export default function SafetyMap(props: Props) {
       if (!line) {
         line = L.polyline(s.points, {
           color,
-          weight: 5,
+          weight: 3,
           opacity: 0.9,
           className: 'safety-street',
           lineCap: 'round',
@@ -247,7 +252,7 @@ export default function SafetyMap(props: Props) {
       line.setLatLngs(s.points)
       line.setStyle({
         color,
-        weight: selected?.id === s.id ? 8 : 5,
+        weight: selected?.id === s.id ? 6 : 3,
         opacity: showContext ? 0.9 : 0.25,
       })
       const tooltip = document.createElement('span')
@@ -336,13 +341,19 @@ export default function SafetyMap(props: Props) {
           .addTo(group)
           .bindTooltip(tooltip)
       })
+    // Elige en cada trazado el punto más alejado de los marcadores ya puestos.
+    const placed: Coordinate[] = []
+    const gap = (p: Coordinate) => Math.min(Infinity, ...placed.map((q) => distance(p, q)))
     if (props.onRoute && !props.drawing)
       state.catalog
         .filter((route) => route.geometry.length && !route.private)
         .forEach((route, index) => {
           const label = document.createElement('span')
           label.textContent = String(index + 1)
-          L.marker(pointAlong(route.geometry, Math.min(0.72, 0.16 + index * 0.12)), {
+          const options = Array.from({ length: 11 }, (_, k) => pointAlong(route.geometry, 0.15 + k * 0.07))
+          const spot = options.find((p) => gap(p) > 0.25) ?? options.reduce((a, b) => (gap(b) > gap(a) ? b : a))
+          placed.push(spot)
+          L.marker(spot, {
             icon: L.divIcon({
               className: 'catalog-map-marker',
               html: label,
@@ -498,6 +509,19 @@ export default function SafetyMap(props: Props) {
     if (props.focus && !props.fitRoute)
       map.current?.setView(props.focus, 16, { animate: false })
   }, [props.focus, props.fitRoute])
+  // Bloqueado: un dedo desplaza la página; activo o ampliado: el mapa se mueve.
+  const locked = touchDevice && !mapActive && !fullscreen
+  useEffect(() => {
+    const m = map.current
+    if (!m || props.preview) return
+    if (locked) {
+      m.dragging.disable()
+      m.touchZoom.disable()
+    } else {
+      m.dragging.enable()
+      m.touchZoom.enable()
+    }
+  }, [locked, props.preview])
   useEffect(() => {
     const timer = setTimeout(() => map.current?.invalidateSize(), 50)
     return () => clearTimeout(timer)
@@ -516,7 +540,6 @@ export default function SafetyMap(props: Props) {
       <div className="map-location">
         <MapPin size={12} />
         <strong>Loja</strong>
-        <span>DEMO</span>
       </div>
       <div className="map-actions">
         <button
@@ -560,15 +583,24 @@ export default function SafetyMap(props: Props) {
         <span className={tileState === 'local' ? 'offline-dot' : 'online-dot'} />
         {tileState === 'local'
           ? state.roads.length
-            ? 'Red esquemática local · demo'
+            ? 'Red esquemática local'
             : 'Sin teselas ni red local publicada'
           : 'Mapa interactivo · OpenStreetMap'}
-        <span>{state.roads.length ? 'Condiciones demo' : 'Sin información de condiciones'}</span>
+        <span>{state.roads.length ? 'Condiciones por tramo' : 'Sin información de condiciones'}</span>
       </div>
       {recalculating && (
         <div className="map-recalculating" role="status">
           <LoaderCircle /> Actualizando condiciones · {time}
         </div>
+      )}
+      {touchDevice && !fullscreen && !props.preview && (
+        <button
+          type="button"
+          className={`map-activate ${locked ? '' : 'active'}`}
+          onClick={() => setMapActive(!mapActive)}
+        >
+          {locked ? 'Activar mapa' : 'Listo'}
+        </button>
       )}
       <div className="safety-legend" data-tour="map-legend">
         <span>
@@ -613,7 +645,7 @@ export default function SafetyMap(props: Props) {
           <p>
             {date} · {time}
             <br />
-            Información de demostración. Comprueba el entorno antes de salir.
+            Información referencial. Comprueba el entorno antes de salir.
           </p>
         </aside>
       )}

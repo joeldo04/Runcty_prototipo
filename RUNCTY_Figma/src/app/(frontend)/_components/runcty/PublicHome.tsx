@@ -17,7 +17,7 @@ import {
   Smartphone,
   Star,
 } from 'lucide-react'
-import { Button, DemoTag, RunnerIcon } from './components'
+import { Button, DemoTag, RunnerIcon, useThemeColor } from './components'
 import { averageSpeed, formatDuration, formatPace, JIPIRO, LOJA, type Coordinate } from './data'
 import { DEMO_ROADS, DEMO_ROUTES } from './demo-seed'
 import { BrandMark } from './Onboarding'
@@ -202,6 +202,7 @@ function AppSimulation() {
 
 export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') => void }) {
   const { state, user, openAccount, openRegistration } = useDemo()
+  useThemeColor('#0b1020')
   const router = useRouter()
   const routes = (state.catalog.length ? state.catalog : DEMO_ROUTES).length
   const streets = (state.roads.length ? state.roads : DEMO_ROADS).length

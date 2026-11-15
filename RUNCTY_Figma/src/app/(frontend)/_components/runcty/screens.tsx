@@ -38,6 +38,7 @@ import {
   DemoTag,
   EmptyState,
   FilterChip,
+  OfficialBadge,
   Modal,
   PageTitle,
   RouteCard,
@@ -119,20 +120,7 @@ export function Explore({
   const selectedSpace = state.spaces.find((s) => s.id === spaceDetail)
   return (
     <div className={`explore-screen ${mobile ? 'explore-mobile' : ''}`}>
-      {mobile ? (
-        <div className="mobile-intro">
-          <p>{user ? `Hola, ${user.name}.` : 'Tu ciudad. Tu ritmo.'}</p>
-          <h1>
-            ¿Por dónde
-            <br />
-            correrás hoy<span>?</span>
-          </h1>
-          <span className="locality">
-            <MapPin />
-            Loja, Ecuador
-          </span>
-        </div>
-      ) : full ? (
+      {mobile ? null : full ? (
         <PageTitle
           eyebrow="LOJA, ECUADOR · TU CIUDAD, A TU RITMO"
           title="Elige con más información."
@@ -183,7 +171,7 @@ export function Explore({
               <Button variant="secondary" data-tour="recommend" onClick={() => go('recommend')}>
                 <Sparkles /> Inspírame
               </Button>
-              <span className="ml-auto hidden items-center gap-2 text-[11px] font-medium tracking-wide text-muted xl:flex">
+              <span className="ml-auto hidden items-center gap-2 text-xs font-medium tracking-wide text-muted xl:flex">
                 <RouteIcon className="size-4 text-lilac" /> {all.length} RUTAS POR DESCUBRIR
                 <span className="mx-2 h-3 w-px bg-line" />
                 <MapPin className="size-4 text-lilac" /> LOJA
@@ -231,12 +219,12 @@ export function Explore({
         </button>
         {!mobile && <TimeControl />}
       </div>
-      {mobile && <TimeControl compact />}
       {!full && (
         <div
-          className={`mb-4 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] ${mobile ? 'mx-5' : ''}`}
+          className={`quick-filters mb-4 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] ${mobile ? 'mx-5' : ''}`}
           aria-label="Filtros rápidos"
         >
+          {mobile && <TimeControl select />}
           <FilterChip
             selected={km === 'Todos' && source === 'Todas'}
             onClick={() => {
@@ -264,6 +252,20 @@ export function Explore({
           >
             <Shield className="size-3!" /> Del club
           </FilterChip>
+        </div>
+      )}
+      {mobile && (
+        <div className="mobile-intro">
+          <p>{user ? `Hola, ${user.name}.` : 'Tu ciudad. Tu ritmo.'}</p>
+          <h1>
+            ¿Por dónde
+            <br />
+            correrás hoy<span>?</span>
+          </h1>
+          <span className="locality">
+            <MapPin />
+            Loja, Ecuador
+          </span>
         </div>
       )}
       {filters && (
@@ -668,15 +670,12 @@ export function RouteDetail({
           <h1>{route.name}</h1>
           <div className="detail-badges">
             {route.official && (
-              <span className="verified">
-                <Check />
-                Oficial Gacelas · demostración
-              </span>
+              <OfficialBadge />
             )}
             {route.verified && !route.official && (
               <span className="verified">
                 <Check />
-                Revisión del club · demostración
+                Verificada por el club
               </span>
             )}
             <DemoTag />
@@ -778,7 +777,7 @@ export function RouteDetail({
               <h3>Horarios recomendados</h3>
               <p>{route.recommended ?? '08:00–10:00 · 14:00–17:00'}</p>
               <small>
-                Horarios de demostración; comprueba las condiciones reales antes de salir.
+                Horarios referenciales; comprueba las condiciones reales antes de salir.
               </small>
             </div>
           </div>
@@ -959,8 +958,7 @@ export function History({
                 <div className="training-info">
                   <h3>{t.route.name}</h3>
                   <p>
-                    {new Date(t.date).toLocaleDateString('es', { weekday: 'long' })} · GPS de
-                    demostración
+                    {new Date(t.date).toLocaleDateString('es', { weekday: 'long' })} · GPS
                   </p>
                   {t.pendingSync && <span className="route-flag">Pendiente de sincronizar</span>}
                 </div>
@@ -1328,7 +1326,7 @@ export function PublicClub({ open, go, run, mobile = false }: ScreenProps) {
         <figcaption className="max-w-sm text-sm leading-6 text-muted"><strong className="mb-2 block text-copy">Gacelas Running Team · referencia del proyecto</strong>Material visual proporcionado por el equipo. Esta pieza no anuncia un evento vigente ni implica un patrocinio confirmado.</figcaption>
       </figure>
       <div className="section-heading">
-        <h2>{state.catalog.some((route) => route.official) ? 'Rutas oficiales' : 'Rutas de ejemplo · demostración'}</h2>
+        <h2>{state.catalog.some((route) => route.official) ? 'Rutas oficiales' : 'Rutas del club'}</h2>
       </div>
       <div className="route-grid">
         {(state.catalog.some((route) => route.official)
@@ -1343,7 +1341,7 @@ export function PublicClub({ open, go, run, mobile = false }: ScreenProps) {
       <div className="future-features">
         <span>PRÓXIMAMENTE</span>
         <h3>Noticias y salidas grupales</h3>
-        <p>Módulos futuros. No se incluyen eventos ni horarios reales en esta demostración.</p>
+        <p>Módulos futuros.</p>
       </div>
       {detail && (
         <Modal title={detail} onClose={() => setDetail(null)}>

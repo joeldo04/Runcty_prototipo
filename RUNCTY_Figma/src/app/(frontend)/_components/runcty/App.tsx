@@ -37,7 +37,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { BackButton, Button, EmptyState, IconButton, Logo, Modal, PageTitle, RunnerIcon } from './components'
+import { BackButton, Button, EmptyState, IconButton, Logo, Modal, PageTitle, RunnerIcon, useThemeColor } from './components'
 import { isAdminUser, type Role, type RouteData } from './data'
 import { useDemo, useRoutes } from './store'
 import SafetyMap from './SafetyMap'
@@ -111,7 +111,7 @@ function RunModal({ close, mobile }: { close: () => void; mobile: () => void }) 
         <>
           <div className="download-art">
             <QrCode />
-            <span>QR VISUAL DE DEMOSTRACIÓN</span>
+            <span>CÓDIGO QR</span>
           </div>
           <p>
             La aplicación Android todavía no está publicada. No existe una descarga de APK ni un
@@ -271,6 +271,7 @@ function WebApp({
             >
               <Icon />
               <span>{label}</span>
+              {id === 'planner' && <em className="soon-badge">Próxima versión</em>}
               {id === 'moderate' && state.incidents.some((i) => i.status === 'Pendiente') && (
                 <b>{state.incidents.filter((i) => i.status === 'Pendiente').length}</b>
               )}
@@ -315,9 +316,9 @@ function WebApp({
               </strong>
               <span>
                 {isDemo
-                  ? 'Demo local · esta pestaña'
+                  ? 'Corredor'
                   : user
-                    ? 'Demo en esta pestaña'
+                    ? 'Corredor'
                     : 'Exploración pública'}
               </span>
             </div>
@@ -381,7 +382,7 @@ function WebApp({
               </nav>
             )}
             <Button variant="secondary" onClick={openAccount}>
-              {isDemo ? `${user?.name} · demo` : (user?.name ?? 'Ver demo')}
+              {user?.name ?? 'Iniciar sesión'}
             </Button>
             {user && (
               <button
@@ -435,7 +436,7 @@ function WebApp({
           <span>RUNCTY · LOJA, ECUADOR</span>
           <p>
             {isDemo
-              ? 'Demo local · no guarda en el servidor'
+              ? 'Prototipo'
               : 'Información referencial · Entrenamiento y SOS simulados'}
           </p>
           <button onClick={exit}>
@@ -488,6 +489,7 @@ function MobileApp({
   const { state, user, isDemo, update, notify, openAccount, startDemo, logout } = useDemo(),
     all = useRoutes()
   const [entry, setEntry] = useState<'welcome' | 'login' | 'register'>('welcome')
+  useThemeColor(user ? '#f3f6fa' : '#0b1020')
   const [page, setPage] = useState(startPage),
     [selected, setSelected] = useState<RouteData | null>(
       startPage === 'explore' ? (initialRoute ?? null) : null,
@@ -546,8 +548,8 @@ function MobileApp({
     ...mapSteps.map((step) => ({ ...step, prepare: () => tourPage('explore') })),
     { id: 'recommend', target: 'recommend', title: 'Recomendaciones', text: 'Dinos distancia y hora, y te sugerimos las mejores rutas.', prepare: () => tourPage('recommend') },
     { id: 'start', target: 'start-training', title: 'Iniciar entrenamiento', text: 'Graba tu recorrido paso a paso. En este prototipo el GPS se simula.', prepare: () => tourPage('train', 'ready') },
-    { id: 'share', target: 'share-live', title: 'Compartir en vivo', text: 'Prepara un enlace temporal para tus contactos de confianza. En esta demo es simulado.', prepare: () => tourPage('train', 'paused') },
-    { id: 'sos', target: 'sos', title: 'Botón SOS', text: 'Mantén presionado 3 segundos para alertar a tus contactos. En esta demo no se envía nada.', prepare: () => tourPage('train', 'paused') },
+    { id: 'share', target: 'share-live', title: 'Compartir en vivo', text: 'Prepara un enlace temporal para tus contactos de confianza.', prepare: () => tourPage('train', 'paused') },
+    { id: 'sos', target: 'sos', title: 'Botón SOS', text: 'Mantén presionado 3 segundos para alertar a tus contactos.', prepare: () => tourPage('train', 'paused') },
     { id: 'report', target: 'report', title: 'Reportar', text: 'Avisa a la comunidad de un incidente. El club lo revisa antes de publicarlo.', prepare: () => tourPage('reports') },
     { id: 'profile', target: 'nav-profile', title: 'Perfil', text: 'Tu nivel, tu privacidad y tus contactos de confianza.', prepare: () => tourPage('profile') },
   ]
@@ -646,7 +648,7 @@ function MobileApp({
                 <span>
                   {resolved
                     ? 'DETALLE DE RUTA'
-                    : (mobileTitles[page] ?? (isDemo ? 'DEMO LOCAL' : ''))}
+                    : (mobileTitles[page] ?? '')}
                 </span>
                 <div>
                   <IconButton label="Novedades" onClick={() => setNotification(true)}>

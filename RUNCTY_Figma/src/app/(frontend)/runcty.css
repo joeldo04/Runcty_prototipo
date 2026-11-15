@@ -15,11 +15,11 @@
   --color-info: #2563d9;
   --color-accent: #2563d9;
   --color-sport: #ff6437;
-  --color-sport-ink: #d9480f;
+  --color-sport-ink: #d1440d;
   --color-energy: #ffd43b;
   --color-copy: #0f1b33;
   --color-muted: #4f5d75;
-  --color-dim: #64728a;
+  --color-dim: #5f6c82;
   --color-safe: #0b8a57;
   --color-caution: #a86a00;
   --color-caution-ink: #8a5a00;
@@ -87,7 +87,7 @@
 /* Compatibility layer for the migrated screens. Shared primitives keep their existing API. */
 @layer components {
   .eyebrow {
-    @apply block text-[11px] font-bold uppercase tracking-[.18em] text-lilac;
+    @apply block text-xs font-bold uppercase tracking-[.18em] text-lilac;
   }
   .muted {
     @apply text-muted;
@@ -96,7 +96,7 @@
     @apply w-full;
   }
   .demo-tag {
-    @apply inline-flex shrink-0 items-center gap-2 rounded-full border border-line bg-panel/70 px-3 py-1.5 text-[11px] font-medium tracking-wide text-muted;
+    @apply inline-flex shrink-0 items-center gap-2 rounded-full border border-line bg-panel/70 px-3 py-1.5 text-xs font-medium tracking-wide text-muted;
   }
   .demo-tag > span {
     @apply size-1.5 rounded-full bg-neon;
@@ -148,7 +148,7 @@
     @apply mt-0.5 size-4 shrink-0 text-lilac;
   }
   .safety-note {
-    @apply mt-4 border-0 bg-transparent px-0 text-[11px] text-dim;
+    @apply mt-4 border-0 bg-transparent px-0 text-xs text-dim;
   }
   .empty-state,
   .account-disabled {
@@ -176,12 +176,12 @@
     @apply border-neon text-lilac;
   }
   .tabs > button > span {
-    @apply rounded-md bg-raised px-1.5 py-0.5 text-[11px];
+    @apply rounded-md bg-raised px-1.5 py-0.5 text-xs;
   }
   .status,
   .verified,
   .level-badge {
-    @apply inline-flex w-fit items-center gap-1.5 rounded-md px-2 py-1 text-[11px] font-semibold;
+    @apply inline-flex w-fit items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold;
   }
   .status > i {
     @apply size-1 rounded-full bg-current;
@@ -224,7 +224,7 @@
     @apply text-2xl font-bold leading-none tracking-tight tabular-nums;
   }
   .index-score > span {
-    @apply mt-1 text-[11px] font-semibold tracking-wider opacity-70;
+    @apply mt-1 text-xs font-semibold tracking-wider opacity-70;
   }
   .index-score.high {
     @apply border-safe/20 bg-safe/5 text-safe;
@@ -245,7 +245,7 @@
     @apply text-5xl;
   }
   .index-large > span {
-    @apply text-[11px];
+    @apply text-xs;
   }
   .field {
     @apply flex min-w-0 flex-col gap-2 text-xs font-medium text-muted;
@@ -259,7 +259,7 @@
     @apply min-h-24 resize-y;
   }
   .field small {
-    @apply text-[11px] font-normal text-dim;
+    @apply text-xs font-normal text-dim;
   }
   .form-grid {
     @apply grid grid-cols-2 gap-4;
@@ -299,7 +299,7 @@
     @apply mt-3;
   }
   .modal > small {
-    @apply mt-4 block text-center text-[11px] text-dim;
+    @apply mt-4 block text-center text-xs text-dim;
   }
   .modal-actions {
     @apply mt-6 flex justify-end gap-3;
@@ -318,10 +318,10 @@
     @apply flex h-24 shrink-0 flex-col justify-center gap-1.5 px-3;
   }
   .sidebar-brand > span:last-child {
-    @apply pl-10 text-[11px] font-medium tracking-[.22em] text-dim;
+    @apply pl-10 text-xs font-medium tracking-[.22em] text-dim;
   }
   .experience-switch {
-    @apply mb-7 flex w-full items-center gap-2 rounded-lg border border-line/70 px-3 py-2.5 text-[11px] text-muted transition-colors hover:bg-raised;
+    @apply mb-7 flex w-full items-center gap-2 rounded-lg border border-line/70 px-3 py-2.5 text-xs text-muted transition-colors hover:bg-raised;
   }
   .experience-switch svg {
     @apply size-3;
@@ -330,7 +330,7 @@
     @apply ml-auto;
   }
   .nav-section-label {
-    @apply mb-3 px-3 text-[11px] font-bold tracking-[.18em] text-dim;
+    @apply mb-3 px-3 text-xs font-bold tracking-[.18em] text-dim;
   }
   .sidebar nav {
     @apply flex flex-col gap-1 overflow-y-auto;
@@ -351,7 +351,7 @@
     @apply text-info;
   }
   .sidebar nav b {
-    @apply ml-auto rounded bg-risk/15 px-1.5 py-0.5 text-[11px] text-risk;
+    @apply ml-auto rounded bg-risk/15 px-1.5 py-0.5 text-xs text-risk;
   }
   .sidebar-bottom {
     @apply mt-auto shrink-0 pt-7;
@@ -366,10 +366,10 @@
   }
   .guest-invite p,
   .sidebar-safety p {
-    @apply mb-4 mt-2 text-[11px] leading-relaxed text-dim;
+    @apply mb-4 mt-2 text-xs leading-relaxed text-dim;
   }
   .guest-invite .button {
-    @apply min-h-9 w-full px-2 py-2 text-[11px];
+    @apply min-h-9 w-full px-2 py-2 text-xs;
   }
   .sidebar-safety > svg {
     @apply mb-3 size-5 text-lilac;
@@ -384,10 +384,10 @@
     @apply flex min-w-0 flex-col gap-1;
   }
   .sidebar-account strong {
-    @apply truncate text-[11px] font-semibold;
+    @apply truncate text-xs font-semibold;
   }
   .sidebar-account div > span {
-    @apply text-[11px] text-dim;
+    @apply text-xs text-dim;
   }
   .sidebar-account > svg {
     @apply ml-auto size-4 text-dim;
@@ -402,10 +402,10 @@
     @apply hidden;
   }
   .topbar-breadcrumb {
-    @apply flex shrink-0 items-center gap-3 text-[11px] text-muted;
+    @apply flex shrink-0 items-center gap-3 text-xs text-muted;
   }
   .topbar-breadcrumb > span {
-    @apply text-[11px] font-semibold tracking-widest text-dim;
+    @apply text-xs font-semibold tracking-widest text-dim;
   }
   .topbar-breadcrumb > svg {
     @apply size-3 text-line;
@@ -414,11 +414,11 @@
     @apply flex items-center gap-4;
   }
   .topbar-actions > .button {
-    @apply min-h-9 px-3 py-2 text-[11px];
+    @apply min-h-9 px-3 py-2 text-xs;
   }
   .catalog-search-shortcut,
   .mobile-preview-shortcut {
-    @apply inline-flex items-center gap-2 text-[11px] text-dim transition-colors hover:text-lilac;
+    @apply inline-flex items-center gap-2 text-xs text-dim transition-colors hover:text-lilac;
   }
   .catalog-search-shortcut > svg,
   .mobile-preview-shortcut > svg {
@@ -428,7 +428,7 @@
     @apply mx-auto w-full max-w-[1600px] flex-1 animate-enter px-8 pb-8 pt-7;
   }
   .web-footer {
-    @apply flex items-center justify-between gap-4 border-t border-line/50 px-8 py-5 text-[11px] tracking-wide text-dim;
+    @apply flex items-center justify-between gap-4 border-t border-line/50 px-8 py-5 text-xs tracking-wide text-dim;
   }
   .web-footer > span {
     @apply font-semibold tracking-widest;
@@ -456,7 +456,7 @@
     @apply mt-3 max-w-xl text-xs leading-5;
   }
   .explore-hero .page-heading .eyebrow {
-    @apply mb-3 text-[11px];
+    @apply mb-3 text-xs;
   }
   .search-box {
     @apply flex min-h-11 min-w-40 flex-1 items-center gap-3 rounded-xl border border-line/80 bg-shell/80 px-4 shadow-sm focus-within:border-electric/70 focus-within:shadow-[0_0_24px_rgb(37_99_235_/_0.12)];
@@ -471,7 +471,7 @@
     @apply text-lg text-dim;
   }
   .filter-toggle {
-    @apply flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line bg-panel/60 px-3 text-[11px] text-muted;
+    @apply flex min-h-11 items-center justify-center gap-2 rounded-xl border border-line bg-panel/60 px-3 text-xs text-muted;
   }
   .filter-toggle > svg {
     @apply size-4;
@@ -489,13 +489,13 @@
     @apply size-3.5 text-dim;
   }
   .date-control input {
-    @apply max-w-28 bg-transparent text-[11px] text-muted outline-none;
+    @apply max-w-28 bg-transparent text-xs text-muted outline-none;
   }
   .time-slots {
     @apply flex gap-1 rounded-xl border border-line/80 bg-shell p-1;
   }
   .time-slots > button {
-    @apply flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-2.5 text-[11px] font-medium tabular-nums text-dim transition-all duration-200 hover:text-copy;
+    @apply flex min-h-9 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-medium tabular-nums text-dim transition-all duration-200 hover:text-copy;
   }
   .time-slots svg {
     @apply size-3;
@@ -516,10 +516,10 @@
     @apply relative mt-3 rounded-xl border border-line/50 bg-panel/50 px-4 py-3;
   }
   .scenario-caption > span {
-    @apply text-[11px] font-semibold tracking-widest text-lilac;
+    @apply text-xs font-semibold tracking-widest text-lilac;
   }
   .scenario-caption > p {
-    @apply mt-1 text-[11px] text-dim;
+    @apply mt-1 text-xs text-dim;
   }
   .scenario-caption > svg {
     @apply absolute right-4 top-4 size-5 text-lilac/40;
@@ -528,13 +528,13 @@
     @apply min-w-0;
   }
   .recommended-panel .eyebrow {
-    @apply text-[11px];
+    @apply text-xs;
   }
   .recommended-panel .section-heading h2 {
     @apply text-base;
   }
   .recommended-panel .text-action {
-    @apply text-[11px];
+    @apply text-xs;
   }
   .recommended-list {
     @apply flex flex-col gap-3;
@@ -549,7 +549,7 @@
     @apply block text-xs font-semibold;
   }
   .planning-prompt p {
-    @apply mt-1 text-[11px] text-dim;
+    @apply mt-1 text-xs text-dim;
   }
   .planning-prompt button {
     @apply ml-auto text-lilac;
@@ -570,7 +570,7 @@
     @apply absolute bottom-2 right-2 h-9 w-12 rounded-md border border-line/50 bg-ink/80 p-1 text-line;
   }
   .route-preview > span {
-    @apply absolute bottom-1 left-2 text-[11px] font-semibold tracking-widest text-dim/70;
+    @apply absolute bottom-1 left-2 text-xs font-semibold tracking-widest text-dim/70;
   }
   .route-card-content {
     @apply min-w-0 flex-1;
@@ -579,7 +579,7 @@
     @apply flex flex-wrap items-center gap-2;
   }
   .route-area {
-    @apply inline-flex items-center gap-1 text-[11px] text-dim;
+    @apply inline-flex items-center gap-1 text-xs text-dim;
   }
   .route-area svg {
     @apply size-2.5;
@@ -588,13 +588,13 @@
     @apply my-2 text-[13px] font-semibold leading-snug tracking-tight;
   }
   .route-metrics {
-    @apply flex flex-wrap items-center gap-2 text-[11px] text-dim;
+    @apply flex flex-wrap items-center gap-2 text-xs text-dim;
   }
   .route-metrics > strong {
     @apply text-sm font-bold text-copy;
   }
   .route-metrics small {
-    @apply text-[11px] font-medium text-dim;
+    @apply text-xs font-medium text-dim;
   }
   .route-metrics > span {
     @apply inline-flex items-center gap-1;
@@ -609,13 +609,13 @@
     @apply text-lg;
   }
   .route-card > .index-score > span {
-    @apply text-[11px];
+    @apply text-xs;
   }
   .route-arrow {
     @apply hidden size-4 text-dim;
   }
   .route-recommended {
-    @apply mt-3 text-[11px] text-info;
+    @apply mt-3 text-xs text-info;
   }
   .places-section {
     @apply mt-7;
@@ -634,7 +634,7 @@
   }
   .place-item small,
   .place-item p {
-    @apply mt-1 block text-[11px] text-dim;
+    @apply mt-1 block text-xs text-dim;
   }
   .place-item > svg {
     @apply ml-auto size-4 text-dim;
@@ -691,19 +691,19 @@
     @apply hidden!;
   }
   .leaflet-control-attribution {
-    @apply bg-shell/80! text-[11px]! text-dim!;
+    @apply bg-shell/80! text-xs! text-dim!;
   }
   .leaflet-control-attribution a {
     @apply text-muted!;
   }
   .map-location {
-    @apply pointer-events-none absolute left-4 top-4 z-[450] flex items-center gap-1.5 rounded-lg border border-line/70 bg-shell/90 px-3 py-2 text-[11px] backdrop-blur-md;
+    @apply pointer-events-none absolute left-4 top-4 z-[450] flex items-center gap-1.5 rounded-lg border border-line/70 bg-shell/90 px-3 py-2 text-xs backdrop-blur-md;
   }
   .map-location svg {
     @apply text-lilac;
   }
   .map-location span {
-    @apply ml-1 text-[11px] tracking-widest text-dim;
+    @apply ml-1 text-xs tracking-widest text-dim;
   }
   .map-actions {
     @apply absolute right-3 top-4 z-[450] flex flex-col gap-1.5;
@@ -718,7 +718,7 @@
     @apply border-neon/40 bg-primary/20 text-lilac;
   }
   .cartography-status {
-    @apply pointer-events-none absolute bottom-11 left-4 z-[450] flex items-center gap-1.5 rounded-md bg-shell/90 px-2 py-1 text-[11px] text-muted;
+    @apply pointer-events-none absolute bottom-11 left-4 z-[450] flex items-center gap-1.5 rounded-md bg-shell/90 px-2 py-1 text-xs text-muted;
   }
   .cartography-status > span:last-child {
     @apply ml-1 border-l border-line pl-2 text-dim;
@@ -731,7 +731,7 @@
     @apply bg-caution;
   }
   .safety-legend {
-    @apply absolute bottom-3 left-4 z-[450] flex flex-wrap items-center gap-3 rounded-lg border border-line/80 bg-shell/95 px-3 py-2 text-[11px] text-muted backdrop-blur-md;
+    @apply absolute bottom-3 left-4 z-[450] flex flex-wrap items-center gap-3 rounded-lg border border-line/80 bg-shell/95 px-3 py-2 text-xs text-muted backdrop-blur-md;
   }
   .safety-legend > span {
     @apply inline-flex items-center gap-1.5;
@@ -740,7 +740,7 @@
     @apply size-1.5 rounded-full;
   }
   .safety-legend b {
-    @apply text-[11px] font-normal text-dim;
+    @apply text-xs font-normal text-dim;
   }
   .safety-legend .high {
     @apply bg-safe;
@@ -755,7 +755,7 @@
     @apply bg-unknown;
   }
   .map-recalculating {
-    @apply pointer-events-none absolute left-1/2 top-4 z-[460] flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-neon/20 bg-shell/95 px-3 py-2 text-[11px] text-lilac shadow-neon;
+    @apply pointer-events-none absolute left-1/2 top-4 z-[460] flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-neon/20 bg-shell/95 px-3 py-2 text-xs text-lilac shadow-neon;
   }
   .map-recalculating svg {
     @apply size-3 animate-spin;
@@ -764,19 +764,19 @@
     @apply fixed inset-0 z-[1500] rounded-none;
   }
   .drawing-hint {
-    @apply pointer-events-none absolute left-1/2 top-16 z-[450] w-max max-w-[85%] -translate-x-1/2 rounded-lg bg-primary px-3 py-2 text-center text-[11px] text-white shadow-neon;
+    @apply pointer-events-none absolute left-1/2 top-16 z-[450] w-max max-w-[85%] -translate-x-1/2 rounded-lg bg-primary px-3 py-2 text-center text-xs text-white shadow-neon;
   }
   .local-map-label {
-    @apply whitespace-nowrap text-[11px] font-semibold tracking-wide text-muted/60;
+    @apply whitespace-nowrap text-xs font-semibold tracking-wide text-muted/60;
   }
   .local-map-label.local-street-name {
-    @apply text-[11px] font-normal tracking-normal text-muted/40;
+    @apply text-xs font-normal tracking-normal text-muted/40;
   }
   .map-night .local-map-label {
     @apply text-muted/50;
   }
   .street-index {
-    @apply flex items-center justify-center rounded-md border border-current bg-shell text-[11px] font-bold shadow-sm;
+    @apply flex items-center justify-center rounded-md border border-current bg-shell text-xs font-bold shadow-sm;
   }
   .street-index.high {
     @apply text-safe;
@@ -791,7 +791,7 @@
     @apply text-unknown;
   }
   .route-point {
-    @apply flex items-center justify-center rounded-full border-2 border-white bg-primary text-[11px] font-bold text-white shadow-neon;
+    @apply flex items-center justify-center rounded-full border-2 border-white bg-primary text-xs font-bold text-white shadow-neon;
   }
   .route-point.start {
     @apply bg-copy text-primary;
@@ -800,7 +800,7 @@
     @apply rounded-full border-[5px] border-copy bg-neon shadow-[0_0_0_8px_#a855f72b,0_0_20px_#a855f7];
   }
   .catalog-map-marker {
-    @apply flex items-center justify-center rounded-lg border border-lilac/60 bg-primary text-[11px] font-semibold text-copy shadow-neon;
+    @apply flex items-center justify-center rounded-lg border border-lilac/60 bg-primary text-xs font-semibold text-copy shadow-neon;
   }
   .incident-marker {
     @apply flex items-center justify-center rounded-full rounded-bl-none border-2 border-shell bg-sport text-sm font-bold text-ink;
@@ -832,7 +832,7 @@
     @apply size-4;
   }
   .street-detail .eyebrow {
-    @apply text-[11px];
+    @apply text-xs;
   }
   .street-detail h3 {
     @apply mb-3 mt-2 text-sm font-bold;
@@ -847,14 +847,14 @@
     @apply text-xs text-dim;
   }
   .street-detail ul {
-    @apply my-3 space-y-1 text-[11px] text-muted;
+    @apply my-3 space-y-1 text-xs text-muted;
   }
   .street-detail li::before {
     content: '— ';
     color: var(--color-lilac);
   }
   .street-detail p {
-    @apply text-[11px] leading-relaxed text-dim;
+    @apply text-xs leading-relaxed text-dim;
   }
 
   .mobile-stage {
@@ -891,16 +891,16 @@
     @apply w-[390px] max-w-full;
   }
   .phone-caption {
-    @apply mb-3 flex justify-between px-2 text-[11px] font-medium tracking-widest text-dim;
+    @apply mb-3 flex justify-between px-2 text-xs font-medium tracking-widest text-dim;
   }
   .phone-frame {
     @apply relative flex h-[844px] w-[390px] max-w-full flex-col overflow-hidden rounded-[40px] border-[6px] border-line bg-ink shadow-panel;
   }
   .android-status {
-    @apply relative z-10 flex h-8 shrink-0 items-center justify-between bg-ink px-6 text-[11px] font-semibold;
+    @apply relative z-10 flex h-8 shrink-0 items-center justify-between bg-ink px-6 text-xs font-semibold;
   }
   .android-status > span:last-child {
-    @apply flex items-center gap-1.5 text-[11px];
+    @apply flex items-center gap-1.5 text-xs;
   }
   .camera-dot {
     @apply absolute left-1/2 top-2.5 size-2 -translate-x-1/2 rounded-full bg-black;
@@ -925,7 +925,7 @@
     @apply size-7;
   }
   .mobile-app-header > span {
-    @apply text-[11px] font-semibold tracking-widest text-dim;
+    @apply text-xs font-semibold tracking-widest text-dim;
   }
   .mobile-app-header > div {
     @apply flex items-center gap-1;
@@ -940,7 +940,7 @@
     @apply z-[700] flex h-[70px] shrink-0 items-center justify-around border-t border-line/70 bg-shell/95 px-1 backdrop-blur-xl;
   }
   .mobile-nav > button {
-    @apply relative flex flex-1 flex-col items-center gap-1.5 rounded-xl py-2 text-[11px] font-medium text-dim transition-all;
+    @apply relative flex flex-1 flex-col items-center gap-1.5 rounded-xl py-2 text-xs font-medium text-dim transition-all;
   }
   .mobile-nav > button > svg {
     @apply size-4;
@@ -970,7 +970,7 @@
     @apply absolute left-1/2 top-1 h-1 w-24 -translate-x-1/2 rounded-full bg-muted/40 content-[''];
   }
   .phone-footer {
-    @apply mt-4 flex flex-col items-center gap-3 text-center text-[11px] text-dim;
+    @apply mt-4 flex flex-col items-center gap-3 text-center text-xs text-dim;
   }
   .phone-footer button {
     @apply flex items-center gap-1.5 text-muted;
@@ -994,7 +994,7 @@
     @apply text-neon;
   }
   .locality {
-    @apply absolute right-5 top-2 inline-flex items-center gap-1.5 text-[11px] text-dim;
+    @apply absolute right-5 top-2 inline-flex items-center gap-1.5 text-xs text-dim;
   }
   .locality > svg {
     @apply size-3 text-lilac;
@@ -1018,7 +1018,7 @@
     @apply w-full justify-between p-1;
   }
   .scenario-compact .time-slots > button {
-    @apply flex-1 gap-2 text-[11px];
+    @apply flex-1 gap-2 text-xs;
   }
   .explore-mobile .explore-grid {
     @apply block;
@@ -1030,7 +1030,7 @@
     @apply mx-5 mb-6 mt-2 border-0 bg-transparent px-0 py-0;
   }
   .explore-mobile .scenario-caption > p {
-    @apply max-w-[90%] text-[11px];
+    @apply max-w-[90%] text-xs;
   }
   .explore-mobile .scenario-caption > svg {
     @apply right-0 top-0 size-3.5;
@@ -1067,13 +1067,13 @@
     @apply gap-2;
   }
   .editorial-route .route-metrics {
-    @apply gap-3 text-[11px];
+    @apply gap-3 text-xs;
   }
   .editorial-route .route-metrics > strong {
     @apply text-lg;
   }
   .explore-mobile > .safety-note {
-    @apply mx-5 text-[11px];
+    @apply mx-5 text-xs;
   }
   .explore-mobile .places-section {
     @apply px-5;
@@ -1091,7 +1091,7 @@
     @apply mx-5;
   }
   .floating-create {
-    @apply absolute bottom-16 left-3 z-[500] min-h-8 rounded-lg px-3 py-2 text-[11px];
+    @apply absolute bottom-16 left-3 z-[500] min-h-8 rounded-lg px-3 py-2 text-xs;
   }
   .mobile-map-expanded {
     @apply fixed inset-0 z-[1000] bg-ink;
@@ -1121,13 +1121,13 @@
     @apply text-2xl;
   }
   .phone-frame .profile-heading .eyebrow {
-    @apply max-w-32 text-[11px];
+    @apply max-w-32 text-xs;
   }
   .phone-frame .profile-avatar {
     @apply size-16 rounded-xl text-2xl;
   }
   .phone-frame .edit-profile {
-    @apply absolute right-3 top-3 px-2 py-1.5 text-[11px];
+    @apply absolute right-3 top-3 px-2 py-1.5 text-xs;
   }
   .phone-frame .privacy-label {
     @apply mt-2;
@@ -1145,7 +1145,7 @@
     @apply text-2xl;
   }
   .phone-frame .profile-numbers b {
-    @apply text-[11px] leading-tight;
+    @apply text-xs leading-tight;
   }
   .phone-frame .weekly-activity {
     @apply p-4;
@@ -1169,13 +1169,13 @@
     @apply col-span-1;
   }
   .phone-frame .safety-legend {
-    @apply left-2 gap-2 px-2 text-[11px];
+    @apply left-2 gap-2 px-2 text-xs;
   }
   .phone-frame .safety-legend b {
     @apply hidden;
   }
   .phone-frame .cartography-status {
-    @apply left-2 text-[11px];
+    @apply left-2 text-xs;
   }
 
   .allies-section {
@@ -1218,7 +1218,7 @@
     @apply absolute text-7xl font-black text-copy/20;
   }
   .ad-label {
-    @apply text-[11px] font-medium tracking-widest text-muted;
+    @apply text-xs font-medium tracking-widest text-muted;
   }
   .sponsor-banner h3 {
     @apply my-2 text-xl font-bold;
@@ -1233,7 +1233,7 @@
     @apply size-4;
   }
   .ad-pagination {
-    @apply absolute bottom-3 right-4 z-20 text-[11px] tabular-nums text-muted;
+    @apply absolute bottom-3 right-4 z-20 text-xs tabular-nums text-muted;
   }
 
   .planner-layout {
@@ -1264,7 +1264,7 @@
     @apply flex items-center gap-3 rounded-lg bg-shell p-3 text-xs text-muted;
   }
   .point-row > span:first-child {
-    @apply flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-white;
+    @apply flex size-6 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-white;
   }
   .point-row button {
     @apply ml-auto text-dim;
@@ -1293,7 +1293,7 @@
   .planner-metrics small,
   .detail-metrics small,
   .stat-card > span {
-    @apply mt-1 block text-[11px] text-dim;
+    @apply mt-1 block text-xs text-dim;
   }
   .route-detail-header {
     @apply mb-6 flex items-end justify-between gap-6;
@@ -1353,10 +1353,10 @@
     @apply overflow-x-auto rounded-2xl border border-line bg-panel/50;
   }
   .runcty-app table {
-    @apply w-full border-collapse text-left text-[11px];
+    @apply w-full border-collapse text-left text-xs;
   }
   .runcty-app thead {
-    @apply bg-raised/50 text-[11px] font-medium uppercase tracking-wider text-dim;
+    @apply bg-raised/50 text-xs font-medium uppercase tracking-wider text-dim;
   }
   .runcty-app th {
     @apply whitespace-nowrap px-5 py-4 font-medium;
@@ -1368,7 +1368,7 @@
     @apply font-semibold text-copy;
   }
   .runcty-app td .button {
-    @apply min-h-8 rounded-lg px-3 py-2 text-[11px];
+    @apply min-h-8 rounded-lg px-3 py-2 text-xs;
   }
   .table-actions {
     @apply flex items-center gap-2;
@@ -1405,7 +1405,7 @@
     @apply text-xs;
   }
   .notification-item p {
-    @apply mt-1 text-[11px] text-dim;
+    @apply mt-1 text-xs text-dim;
   }
 
   .reports-summary {
@@ -1448,13 +1448,13 @@
     @apply size-3;
   }
   .incident-item-main small {
-    @apply text-[11px] text-dim;
+    @apply text-xs text-dim;
   }
   .incident-item > svg {
     @apply size-4 text-dim;
   }
   .rejection-reason {
-    @apply mt-2 block text-[11px] text-risk;
+    @apply mt-2 block text-xs text-risk;
   }
   .report-map {
     @apply mb-5 h-96 overflow-hidden rounded-2xl border border-line;
@@ -1521,13 +1521,13 @@
     @apply relative z-10 flex size-20 shrink-0 items-center justify-center rounded-2xl border border-info/25 bg-electric/15 text-3xl font-bold text-info shadow-[0_12px_35px_rgb(37_99_235_/_0.2)];
   }
   .privacy-label {
-    @apply mt-3 inline-flex items-center gap-1.5 rounded-full border border-line bg-shell/70 px-2.5 py-1 text-[11px] text-muted;
+    @apply mt-3 inline-flex items-center gap-1.5 rounded-full border border-line bg-shell/70 px-2.5 py-1 text-xs text-muted;
   }
   .privacy-label svg {
     @apply size-3 text-info;
   }
   .edit-profile {
-    @apply relative z-10 ml-auto inline-flex shrink-0 items-center gap-1 rounded-lg border border-line/70 bg-shell/60 px-3 py-2 text-[11px] font-semibold text-muted transition-colors hover:border-info/40 hover:text-copy;
+    @apply relative z-10 ml-auto inline-flex shrink-0 items-center gap-1 rounded-lg border border-line/70 bg-shell/60 px-3 py-2 text-xs font-semibold text-muted transition-colors hover:border-info/40 hover:text-copy;
   }
   .edit-profile svg {
     @apply size-3;
@@ -1566,13 +1566,13 @@
     @apply text-sm font-medium text-muted;
   }
   .profile-numbers b {
-    @apply mt-2 text-[11px] font-medium text-dim;
+    @apply mt-2 text-xs font-medium text-dim;
   }
   .weekly-activity {
     @apply rounded-2xl border border-line/70 bg-shell/60 p-5;
   }
   .weekly-total {
-    @apply text-right text-[11px] uppercase tracking-wider text-dim;
+    @apply text-right text-xs uppercase tracking-wider text-dim;
   }
   .weekly-total strong {
     @apply mb-1 block text-lg font-bold tracking-tight text-copy;
@@ -1621,10 +1621,10 @@
     @apply bg-linear-to-t from-electric to-info shadow-[0_0_16px_rgb(37_99_235_/_0.2)];
   }
   .weekly-chart b {
-    @apply absolute -top-6 whitespace-nowrap text-[11px] font-medium text-info;
+    @apply absolute -top-6 whitespace-nowrap text-xs font-medium text-info;
   }
   .weekly-chart small {
-    @apply text-[11px] font-medium uppercase text-dim;
+    @apply text-xs font-medium uppercase text-dim;
   }
   .profile-navigation {
     @apply grid grid-cols-2 gap-3;
@@ -1645,7 +1645,7 @@
     @apply block text-xs font-semibold;
   }
   .profile-navigation p {
-    @apply mt-1 truncate text-[11px] text-dim;
+    @apply mt-1 truncate text-xs text-dim;
   }
   .profile-navigation > button > svg {
     @apply size-4 text-dim;
@@ -1681,7 +1681,7 @@
     @apply text-xs;
   }
   .contact-item p {
-    @apply mb-0 mt-1 text-[11px] text-dim;
+    @apply mb-0 mt-1 text-xs text-dim;
   }
   .contact-item button {
     @apply ml-auto;
@@ -1712,7 +1712,7 @@
   }
 
   .training-top {
-    @apply flex h-14 items-center justify-between px-5 text-[11px] font-semibold tracking-widest;
+    @apply flex h-14 items-center justify-between px-5 text-xs font-semibold tracking-widest;
   }
   .training-top > button {
     @apply text-muted;
@@ -1721,7 +1721,7 @@
     @apply size-4;
   }
   .gps-tag {
-    @apply flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-[11px] text-lilac;
+    @apply flex items-center gap-1 rounded-md bg-primary/10 px-2 py-1 text-xs text-lilac;
   }
   .gps-tag svg {
     @apply size-3;
@@ -1739,7 +1739,7 @@
     @apply my-5 flex items-center justify-between gap-3;
   }
   .preparation-metrics > span {
-    @apply text-[11px] text-dim;
+    @apply text-xs text-dim;
   }
   .preparation-metrics strong {
     @apply mb-1 block text-3xl font-bold tracking-tight text-copy;
@@ -1751,10 +1751,10 @@
     @apply mt-0.5 size-5 text-lilac;
   }
   .gps-permission strong {
-    @apply text-[11px] text-copy;
+    @apply text-xs text-copy;
   }
   .gps-permission p {
-    @apply mt-1 text-[11px] leading-relaxed;
+    @apply mt-1 text-xs leading-relaxed;
   }
   .training-preparation > .button {
     @apply mt-3;
@@ -1763,13 +1763,13 @@
     @apply bg-linear-to-b from-electric/5 to-transparent px-5 py-4 text-center;
   }
   .recording-state {
-    @apply flex items-center justify-center gap-2 text-[11px] font-semibold tracking-widest text-muted;
+    @apply flex items-center justify-center gap-2 text-xs font-semibold tracking-widest text-muted;
   }
   .recording-state > i {
     @apply size-1.5 rounded-full bg-sport;
   }
   .recording-state small {
-    @apply text-[11px] text-dim;
+    @apply text-xs text-dim;
   }
   .distance-numeral {
     @apply my-2 block text-7xl font-bold leading-tight tracking-tighter tabular-nums;
@@ -1781,19 +1781,19 @@
     @apply flex justify-around gap-5;
   }
   .recording-secondary > span {
-    @apply text-[11px] text-dim;
+    @apply text-xs text-dim;
   }
   .recording-secondary strong {
     @apply mb-1 block text-2xl font-semibold tabular-nums text-copy;
   }
   .recording-secondary small {
-    @apply text-[11px] font-normal text-dim;
+    @apply text-xs font-normal text-dim;
   }
   .recording-map {
     @apply relative h-64;
   }
   .follow-runner {
-    @apply absolute right-3 top-3 z-[500] flex items-center gap-1.5 rounded-lg border border-line bg-shell/90 px-2 py-2 text-[11px] text-muted;
+    @apply absolute right-3 top-3 z-[500] flex items-center gap-1.5 rounded-lg border border-line bg-shell/90 px-2 py-2 text-xs text-muted;
   }
   .follow-runner svg {
     @apply size-3;
@@ -1802,7 +1802,7 @@
     @apply border-neon/30 text-lilac;
   }
   .training-trace-legend {
-    @apply flex justify-center gap-5 py-3 text-[11px] text-dim;
+    @apply flex justify-center gap-5 py-3 text-xs text-dim;
   }
   .training-trace-legend > span {
     @apply flex items-center gap-1.5;
@@ -1817,7 +1817,7 @@
     @apply flex items-center justify-between gap-3 px-5 py-2;
   }
   .training-sharing > button:first-child {
-    @apply flex items-center gap-2 text-[11px] text-muted;
+    @apply flex items-center gap-2 text-xs text-muted;
   }
   .training-sharing svg {
     @apply size-4;
@@ -1871,7 +1871,7 @@
     @apply mt-4 text-sm font-semibold;
   }
   .summary-main > .muted {
-    @apply mt-1 block text-[11px];
+    @apply mt-1 block text-xs;
   }
   .summary-metrics {
     @apply my-5 grid grid-cols-3 gap-2;
@@ -1883,7 +1883,7 @@
     @apply block text-xl font-bold tracking-tight tabular-nums text-copy;
   }
   .summary-metrics > span {
-    @apply text-[11px] text-dim;
+    @apply text-xs text-dim;
   }
   .summary-index {
     @apply flex items-center gap-4 rounded-2xl border border-electric/20 bg-electric/5 p-4;
@@ -1898,7 +1898,7 @@
     @apply text-xs font-semibold;
   }
   .summary-index p {
-    @apply mt-1 text-[11px] leading-relaxed text-dim;
+    @apply mt-1 text-xs leading-relaxed text-dim;
   }
   .safety-spectrum {
     @apply mt-5 flex h-2 overflow-hidden rounded-full bg-raised;
@@ -1928,7 +1928,7 @@
     @apply mb-2 h-1 w-5 rounded-full;
   }
   .safety-distribution > div > span:nth-child(2) {
-    @apply truncate text-[11px] uppercase tracking-wide text-dim;
+    @apply truncate text-xs uppercase tracking-wide text-dim;
   }
   .safety-distribution strong {
     @apply mt-1 text-sm font-bold tabular-nums;
@@ -1956,7 +1956,7 @@
     @apply size-28;
   }
   .download-art > span {
-    @apply text-[11px] tracking-widest;
+    @apply text-xs tracking-widest;
   }
   .handoff-icon > svg {
     @apply size-12;
@@ -2040,14 +2040,14 @@
     @apply flex size-8;
   }
   .topbar-breadcrumb {
-    @apply mr-auto text-[11px];
+    @apply mr-auto text-xs;
   }
   .topbar-breadcrumb > span,
   .topbar-breadcrumb > svg {
     @apply hidden;
   }
   .mobile-preview-shortcut {
-    @apply text-[11px];
+    @apply text-xs;
   }
   .topbar-actions > .icon-button {
     @apply size-8;

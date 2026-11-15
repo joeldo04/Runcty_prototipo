@@ -5,7 +5,7 @@
 .runcty-app .club-notice p { margin: 2px 0 0; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
 .runcty-app .club-notice.danger { border-color: rgb(217 45 63 / 35%); background: rgb(217 45 63 / 8%); }
 .runcty-app .club-notice.danger > svg { color: var(--color-risk); }
-.runcty-app .route-flag { display: inline-flex; align-items: center; width: fit-content; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: var(--color-raised); color: var(--color-muted); font-size: 11px; font-weight: 650; }
+.runcty-app .route-flag { display: inline-flex; align-items: center; width: fit-content; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: var(--color-raised); color: var(--color-muted); font-size: 12px; font-weight: 650; }
 .runcty-app .route-flag.danger { background: rgb(217 45 63 / 10%); color: var(--color-risk); }
 .runcty-app .route-flag.info { background: rgb(37 99 217 / 10%); color: var(--color-accent); }
 .runcty-app .club-notice.info { border-color: rgb(37 99 217 / 30%); background: rgb(37 99 217 / 7%); }

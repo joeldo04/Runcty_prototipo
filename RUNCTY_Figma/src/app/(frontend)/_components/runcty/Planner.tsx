@@ -171,7 +171,11 @@ export default function Planner({
     <div className={`planner-screen ${mobile ? 'planner-mobile' : ''}`}>
       <PageTitle
         eyebrow="TU PRÓXIMO KILÓMETRO"
-        title="Crea tu ruta"
+        title={
+          <>
+            Crea tu ruta <span className="soon-badge">Próxima versión</span>
+          </>
+        }
         subtitle={
           mobile
             ? undefined

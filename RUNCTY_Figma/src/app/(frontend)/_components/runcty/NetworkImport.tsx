@@ -78,7 +78,7 @@ export function NetworkImport({ city, close }: { city: City; close: () => void }
           value.id === city.id ? { ...value, networkReady: true } : value,
         ),
       }))
-      notify(`Red de ${city.name} cargada en esta demostración.`)
+      notify(`Red de ${city.name} cargada.`)
     } catch (problem) {
       setResult(null)
       setError((problem as Error).message)
@@ -88,7 +88,7 @@ export function NetworkImport({ city, close }: { city: City; close: () => void }
   return (
     <Modal title={`Cargar red de calles · ${city.name}`} onClose={close}>
       <p className="muted">
-        Sube un GeoJSON de datos abiertos, como OpenStreetMap. La demo lo valida en este navegador y
+        Sube un GeoJSON de datos abiertos, como OpenStreetMap. Se valida en este navegador y
         no cambia las calles del mapa.
       </p>
       <label className="field">

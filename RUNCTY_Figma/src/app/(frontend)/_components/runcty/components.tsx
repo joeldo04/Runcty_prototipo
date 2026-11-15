@@ -8,6 +8,7 @@ import {
   type SVGProps,
 } from 'react'
 import Image from 'next/image'
+import gacelasLogo from '../../../../../imagenes/gacelas_logo.webp'
 import {
   AlertTriangle,
   ArrowLeft,
@@ -95,7 +96,7 @@ export function FilterChip({
     <Button
       variant="secondary"
       aria-pressed={selected}
-      className={`min-h-8 rounded-full px-3 py-1.5 text-[11px] ${selected ? 'border-electric/40 bg-electric/10 text-info' : 'text-dim'}`}
+      className={`min-h-8 rounded-full px-3 py-1.5 text-xs ${selected ? 'border-electric/40 bg-electric/10 text-info' : 'text-dim'}`}
       {...props}
     >
       {children}
@@ -139,13 +140,9 @@ export function Logo() {
     </span>
   )
 }
+// Ya no se muestran etiquetas de demostración en las pantallas.
 export function DemoTag() {
-  const { isDemo, user } = useDemo()
-  return (
-    <span className="demo-tag">
-      <span /> {isDemo ? `${user?.name ?? 'Carlos'} · demo local` : 'Prototipo interactivo'}
-    </span>
-  )
+  return null
 }
 export function PageTitle({
   eyebrow,
@@ -179,8 +176,29 @@ export function SafetyNote() {
   return (
     <p className="safety-note">
       <Shield />
-      Condiciones de demostración. Comprueba el entorno antes de salir; no garantizan seguridad.
+      Condiciones referenciales. Comprueba el entorno antes de salir; no garantizan seguridad.
     </p>
+  )
+}
+// Iguala la barra del navegador con el fondo de la pantalla que se muestra.
+export function useThemeColor(color: string) {
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="theme-color"]')
+    if (!meta) return
+    const before = meta.getAttribute('content')
+    meta.setAttribute('content', color)
+    return () => {
+      if (before) meta.setAttribute('content', before)
+    }
+  }, [color])
+}
+// Distintivo de las rutas oficiales del club, con su logo.
+export function OfficialBadge() {
+  return (
+    <span className="official-badge">
+      <Image src={gacelasLogo} alt="" width={22} height={22} />
+      Oficial Gacelas
+    </span>
   )
 }
 export function Notice({
@@ -246,9 +264,11 @@ export function Status({ value }: { value: string }) {
 export function TimeControl({
   date = true,
   compact = false,
+  select = false,
 }: {
   date?: boolean
   compact?: boolean
+  select?: boolean
 }) {
   const { state, update } = useDemo()
   const descriptions: Record<TimeSlot, string> = {
@@ -257,6 +277,23 @@ export function TimeControl({
     '14:00': 'Tarde',
     '19:00': 'Noche',
   }
+  if (select)
+    return (
+      <label className="time-select" data-tour="time">
+        <Clock3 aria-hidden="true" />
+        <select
+          aria-label="Horario de seguridad"
+          value={state.time}
+          onChange={(e) => update((s) => ({ ...s, time: e.target.value as TimeSlot }))}
+        >
+          {TIMES.map((time) => (
+            <option key={time} value={time}>
+              {time} · {descriptions[time]}
+            </option>
+          ))}
+        </select>
+      </label>
+    )
   return (
     <div className={`scenario-control ${compact ? 'scenario-compact' : ''}`} data-tour="time">
       {date && (
@@ -523,11 +560,15 @@ export function RouteCard({
             <MapPin />
             {route.area}
           </span>
-          {(route.official || route.verified) && (
-            <span className="verified">
-              <Check />
-              {route.official ? 'Oficial · demo' : 'Revisión · demo'}
-            </span>
+          {route.official ? (
+            <OfficialBadge />
+          ) : (
+            route.verified && (
+              <span className="verified">
+                <Check />
+                Verificada
+              </span>
+            )
           )}
         </div>
         <h3>{route.name}</h3>
@@ -630,7 +671,7 @@ export function AdCarousel({
       >
         <SponsorArt sponsor={sponsor} />
         <div>
-          <span className="ad-label">PUBLICIDAD · DEMOSTRACIÓN VISUAL</span>
+          <span className="ad-label">PUBLICIDAD</span>
           <h3>{sponsor.name}</h3>
           <p>{ad.title}</p>
           <button onClick={() => setDetail(true)}>
@@ -652,7 +693,7 @@ export function AdCarousel({
           <p>{sponsor.message}</p>
           <div className="info-strip">
             <Shield />
-            Campaña conceptual de demostración. No confirma un patrocinio ni modifica las condiciones de
+            Campaña conceptual. No confirma un patrocinio ni modifica las condiciones de
             las rutas.
           </div>
           <p className="muted">{sponsor.contact}</p>
@@ -678,7 +719,7 @@ export function SaveButton({ route }: { route: RouteData }) {
           saved
             ? 'Ruta retirada de guardadas'
             : isDemo
-              ? 'Ruta guardada en la demo de esta pestaña.'
+              ? 'Ruta guardada en Mis rutas.'
               : 'Sincronizando tu ruta guardada con tu cuenta.',
         )
       }}

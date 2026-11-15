@@ -67,7 +67,7 @@ export function StarRating({ value, onChange }: { value: number; onChange: (star
 }
 
 export function FeedbackStars({ value }: { value: number }) {
-  return <span className="feedback-stars" role="img" aria-label={`${value} de 5 estrellas · experiencia de demostración`}>
+  return <span className="feedback-stars" role="img" aria-label={`${value} de 5 estrellas`}>
     {Array.from({ length: 5 }, (_, i) => <Star key={i} aria-hidden="true" fill={i < value ? 'currentColor' : 'none'} className={i < value ? 'filled' : ''} />)}
   </span>
 }
@@ -104,7 +104,7 @@ export default function RouteQuestionnaire({ route, close }: { route: RouteData;
   const completed = state.trainings.some(training => training.route.id === route.id)
   const eligible = !!user && isDemo && completed
   return <Modal title={saved ? 'Gracias por compartir tu experiencia' : 'Cuéntanos cómo fue tu ruta'} onClose={close}>
-    {saved ? <div className="feedback-confirmation" role="status"><span className="feedback-confirmed-icon"><Check /></span><h3>Tu experiencia quedó registrada en esta demo.</h3><FeedbackStars value={stars} /><p>{comment.trim() ? 'Tu comentario está pendiente de revisión. ' : ''}Puedes actualizar tus respuestas desde el detalle de la ruta. Este resultado no certifica su seguridad.</p><Button className="full" onClick={close}>Continuar</Button></div> : <form className="route-questionnaire" onSubmit={event => {
+    {saved ? <div className="feedback-confirmation" role="status"><span className="feedback-confirmed-icon"><Check /></span><h3>Tu experiencia quedó registrada.</h3><FeedbackStars value={stars} /><p>{comment.trim() ? 'Tu comentario está pendiente de revisión. ' : ''}Puedes actualizar tus respuestas desde el detalle de la ruta. Este resultado no certifica su seguridad.</p><Button className="full" onClick={close}>Continuar</Button></div> : <form className="route-questionnaire" onSubmit={event => {
       event.preventDefault()
       if (!eligible || !answered || !user) return
       const feedback = {
@@ -114,10 +114,10 @@ export default function RouteQuestionnaire({ route, close }: { route: RouteData;
         puntuacion: stars, comentario: comment.trim(), fecha_valoracion: new Date().toISOString(),
       }
       if (update(current => withRouteFeedback(current, feedback))) setSaved(true)
-      else setError('No se pudieron guardar tus respuestas en la demostración.')
+      else setError('No se pudieron guardar tus respuestas.')
     }}>
       <p className="feedback-route-name">{route.name}</p><p className="feedback-intro">Responde según lo que observaste en este recorrido.</p>
-      {!eligible && <p className="info-strip">Puedes conocer el cuestionario aquí. Para enviarlo, completa antes un entrenamiento con el acceso de demostración.</p>}
+      {!eligible && <p className="info-strip">Puedes conocer el cuestionario aquí. Para enviarlo, completa antes un entrenamiento.</p>}
       {questions.map(question => <fieldset className="feedback-question" key={question.key}>
         <legend>{question.text}</legend><p id={`${formId}-${question.key}-help`}>{question.help}</p>
         <div className="feedback-options">{[true, false].map(value => <label key={String(value)} className={`feedback-choice ${answers[question.key] === value ? 'selected' : ''}`}>
@@ -130,7 +130,7 @@ export default function RouteQuestionnaire({ route, close }: { route: RouteData;
       {error && <p role="alert" className="form-error">{error}</p>}
       {!answered && <p className="feedback-helper">Responde las cuatro preguntas y elige tus estrellas para continuar.</p>}
       <div className="feedback-actions"><Button variant="ghost" onClick={close}>Ahora no</Button><Button type="submit" variant="orange" disabled={!answered || !eligible}>Guardar respuestas</Button></div>
-      <p className="feedback-privacy"><Shield />Tus respuestas se conservan solo en esta pestaña de demostración.</p>
+      <p className="feedback-privacy"><Shield />Tus respuestas se conservan solo en esta pestaña.</p>
     </form>}
   </Modal>
 }

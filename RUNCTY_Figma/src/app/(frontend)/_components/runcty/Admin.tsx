@@ -36,6 +36,7 @@ import {
   RoutePreview,
   Score,
   Status,
+  OfficialBadge,
 } from './components'
 import {
   routeScore,
@@ -646,7 +647,7 @@ function SponsorAdmin({ initialTab }: { initialTab: string }) {
               />
             </label>
             <label className="field">
-              Identidad visual de demostración
+              Identidad visual
               <select
                 value={edit.visual}
                 onChange={(e) => setEdit({ ...edit, visual: e.target.value })}
@@ -839,10 +840,7 @@ function OfficialRoutes() {
                   </td>
                   <td>
                     {r.official ? (
-                      <span className="verified">
-                        <Check />
-                        Oficial Gacelas
-                      </span>
+                      <OfficialBadge />
                     ) : (
                       <span className="muted">Sin distintivo</span>
                     )}
@@ -1396,7 +1394,7 @@ export function SystemAdmin({ page }: { page: string }) {
     return (
       <>
         <PageTitle
-          eyebrow="FÓRMULA DOCUMENTADA · DEMOSTRACIÓN V2"
+          eyebrow="FÓRMULA DOCUMENTADA"
           title="Información, no certezas."
         />
         <div className="parameters-grid">

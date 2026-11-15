@@ -37,7 +37,7 @@
 .runcty-app .mobile-app-header > span {min-width:0;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .runcty-app .mobile-app-header .wordmark {white-space:nowrap;}
 .runcty-app .mobile-nav {position:relative; flex-shrink:0; height:auto; min-height:69px; padding:6px 5px max(7px,env(safe-area-inset-bottom));border-top:1px solid var(--color-line);background:var(--color-panel);backdrop-filter:blur(18px);}
-.runcty-app .mobile-nav > button {gap:5px; min-width:0; padding:8px 2px 5px; font-size:11px; letter-spacing:.01em; line-height:1.25;}
+.runcty-app .mobile-nav > button {gap:5px; min-width:0; padding:8px 2px 5px; font-size:12px; letter-spacing:.01em; line-height:1.25;}
 .runcty-app .mobile-nav > button > svg {width:21px;height:21px;}
 .runcty-app .mobile-nav > button.active {color:var(--color-accent);background:var(--color-panel);}
 .runcty-app .mobile-nav > button.active::before {background:#60c5ff; box-shadow:0 0 11px #3478f655;}
@@ -51,16 +51,16 @@
 .runcty-app .profile-heading > div {flex:1 1 175px;min-width:0;}
 .runcty-app .profile-heading .profile-avatar {width:62px;height:62px;flex:0 0 62px;border-radius:18px;border:1px solid #ff643769;background:linear-gradient(135deg,#ff64372d,#7048cd24);color:var(--color-sport-ink);font-size:26px;}
 .runcty-app .profile-heading h1 {font-size:clamp(22px,5.5vw,28px);line-height:1.1;margin:5px 0 4px;}
-.runcty-app .profile-heading .eyebrow {font-size:11px;}
-.runcty-app .profile-heading .edit-profile {position:static;margin-left:auto;min-height:33px;padding:7px 10px;font-size:11px;color:var(--color-accent);}
+.runcty-app .profile-heading .eyebrow {font-size:12px;}
+.runcty-app .profile-heading .edit-profile {position:static;margin-left:auto;min-height:33px;padding:7px 10px;font-size:12px;color:var(--color-accent);}
 .runcty-app .profile-heading .privacy-label {margin-top:8px;background:var(--color-panel);}
 .runcty-app .profile-numbers {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;width:100%;}
 .runcty-app .profile-numbers > span {display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;min-width:0;min-height:125px;gap:8px;padding:13px 10px;background:linear-gradient(155deg,var(--color-panel),var(--color-panel));border:1px solid var(--color-line);border-radius:15px;}
 .runcty-app .profile-numbers i {position:static;width:28px;height:28px;flex:0 0 28px;display:grid;place-items:center;border-radius:9px;background:var(--color-raised);color:var(--color-sport-ink);}
 .runcty-app .profile-numbers i svg {width:16px;height:16px;}
 .runcty-app .profile-numbers strong {font-size:clamp(18px,4.6vw,24px);line-height:1.06;letter-spacing:-.045em;font-variant-numeric:tabular-nums;white-space:nowrap;}
-.runcty-app .profile-numbers strong small {font-size:11px;letter-spacing:0;}
-.runcty-app .profile-numbers b {font-size:11px;line-height:1.32;font-weight:500;color:var(--color-muted);}
+.runcty-app .profile-numbers strong small {font-size:12px;letter-spacing:0;}
+.runcty-app .profile-numbers b {font-size:12px;line-height:1.32;font-weight:500;color:var(--color-muted);}
 .runcty-app .weekly-activity {margin:0;padding:17px;border:1px solid var(--color-line);border-radius:18px;background:var(--color-panel);}
 .runcty-app .weekly-activity .section-heading {display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;}
 .runcty-app .weekly-activity .section-heading h2 {font-size:18px;line-height:1.2;}
@@ -70,10 +70,10 @@
 .runcty-app .weekly-chart > div > span {flex:1;min-height:48px;display:flex;align-items:flex-end;justify-content:center;width:100%;}
 .runcty-app .weekly-chart > div > span::after {content:"";width:min(24px,78%);height:var(--bar-height,5%);min-height:5px;border-radius:5px 5px 3px 3px;background:var(--color-raised);}
 .runcty-app .weekly-chart > div > span.has-activity::after {background:linear-gradient(to top,#ff6437,#ffb05c);}
-.runcty-app .weekly-chart small {color:var(--color-muted);font-size:11px;}
+.runcty-app .weekly-chart small {color:var(--color-muted);font-size:12px;}
 .runcty-app .weekly-empty {display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:0 0 13px;padding:11px 13px;background:var(--color-panel);border:1px solid var(--color-line);border-radius:12px;}
 .runcty-app .weekly-empty p {flex:1 1 140px;color:var(--color-muted);font-size:12px;line-height:1.5;margin:0;}
-.runcty-app .weekly-empty button {display:inline-flex;align-items:center;gap:5px;background:#ff6437;color:#fff;border-radius:9px;padding:8px 10px;font-size:11px;font-weight:750;}
+.runcty-app .weekly-empty button {display:inline-flex;align-items:center;gap:5px;background:#ff6437;color:#fff;border-radius:9px;padding:8px 10px;font-size:12px;font-weight:750;}
 .runcty-app .profile-navigation {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
 .runcty-app .profile-navigation > button {display:flex;align-items:center;min-width:0;gap:11px;min-height:74px;text-align:left;padding:12px;background:var(--color-panel);border:1px solid var(--color-line);border-radius:13px;transition:background .15s,border-color .15s;}
 .runcty-app .profile-navigation > button:hover {border-color:var(--color-line);background:var(--color-panel);}
@@ -81,14 +81,14 @@
 .runcty-app .profile-navigation > button > span svg {width:17px;height:17px;}
 .runcty-app .profile-navigation > button > div {min-width:0;flex:1;}
 .runcty-app .profile-navigation strong {font-size:12px;line-height:1.3;}
-.runcty-app .profile-navigation p {margin-top:4px;font-size:11px;line-height:1.35;color:var(--color-muted);}
+.runcty-app .profile-navigation p {margin-top:4px;font-size:12px;line-height:1.35;color:var(--color-muted);}
 .runcty-app .profile-navigation > button > svg {flex:0 0 16px;width:16px;height:16px;color:var(--color-muted);}
 /* Incidents: readable four-stepper + selectable list of categories */
 .runcty-app .report-wizard {display:flex;flex-direction:column;gap:0;width:100%;max-width:960px;margin:0 auto;}
 .runcty-app .report-wizard .page-heading {margin-bottom:12px;}
 .runcty-app .report-wizard .page-heading h1 {font-size:clamp(24px,6vw,34px);}
 .runcty-app .wizard-progress {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin:10px 0 22px;}
-.runcty-app .wizard-progress > span {display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;text-align:center;padding:0 1px 10px;border-bottom:3px solid var(--color-line);font-size:clamp(11px,2.6vw,11px);line-height:1.15;color:var(--color-muted);}
+.runcty-app .wizard-progress > span {display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;text-align:center;padding:0 1px 10px;border-bottom:3px solid var(--color-line);font-size:clamp(12px,2.6vw,11px);line-height:1.15;color:var(--color-muted);}
 .runcty-app .wizard-progress > span > b {width:28px;height:28px;display:grid;place-items:center;border-radius:50%;border:1px solid var(--color-line);background:var(--color-panel);font-size:12px;color:var(--color-accent);}
 .runcty-app .wizard-progress > span.current {color:var(--color-sport-ink);border-bottom-color:#ff6437;}
 .runcty-app .wizard-progress > span.current > b {color:#fff;background:#ff6437;border-color:#ff6437;}
@@ -98,7 +98,7 @@
 .runcty-app .wizard-content > p {margin:0 0 12px;color:var(--color-muted);font-size:13px;line-height:1.5;}
 .runcty-app .incident-types {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px; margin:4px 0 14px;}
 .runcty-app .incident-types > button {display:flex;align-items:center;gap:9px;min-width:0;min-height:84px;padding:12px;border:1px solid var(--color-line);border-radius:14px;background:linear-gradient(135deg,var(--color-panel),var(--color-panel));text-align:left;color:var(--color-copy);font-size:12px;font-weight:650;line-height:1.35;overflow-wrap:break-word;}
-.runcty-app .incident-types > button > span {display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:9px;background:var(--color-raised);color:var(--color-accent);font-weight:800;font-size:11px;}
+.runcty-app .incident-types > button > span {display:grid;place-items:center;flex:0 0 29px;width:29px;height:29px;border-radius:9px;background:var(--color-raised);color:var(--color-accent);font-weight:800;font-size:12px;}
 .runcty-app .incident-types > button > svg {width:16px;height:16px;flex-shrink:0;margin-left:auto;color:var(--color-muted);}
 .runcty-app .incident-types > button.selected {border-color:#ff9158;background:var(--color-raised);box-shadow:inset 0 0 0 1px #ff643744;}
 .runcty-app .incident-types > button.selected > span {background:#ff6437;color:#fff;}
@@ -114,13 +114,13 @@
 .runcty-app .safety-distribution {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px;}
 .runcty-app .safety-distribution > div {min-width:0;display:flex;flex-direction:column;gap:7px;padding:9px;border-radius:11px;background:var(--color-panel);border:1px solid var(--color-line);}
 .runcty-app .safety-distribution strong {font-size:17px;}
-.runcty-app .safety-distribution > div > span:nth-child(2) {font-size:11px;color:var(--color-muted);}
+.runcty-app .safety-distribution > div > span:nth-child(2) {font-size:12px;color:var(--color-muted);}
 /* Sponsors + club content: no cramped column or floating text */
 .runcty-app .sponsor-banner {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));min-width:0;overflow:hidden;border:1px solid var(--color-line);border-radius:18px;}
 .runcty-app .sponsor-banner .sponsor-art {min-width:0;min-height:165px;}
 .runcty-app .sponsor-banner > div:not(.sponsor-art) {display:flex;min-width:0;flex-direction:column;align-items:flex-start;justify-content:center;gap:9px;padding:16px 18px;}
 .runcty-app .sponsor-banner h3 {font-size:clamp(17px,3vw,27px);line-height:1.12;overflow-wrap:anywhere;}
-.runcty-app .sponsor-banner p {font-size:clamp(11px,2.5vw,13px);line-height:1.45;}
+.runcty-app .sponsor-banner p {font-size:clamp(12px,2.5vw,13px);line-height:1.45;}
 .runcty-app .club-editorial {min-width:0;overflow:hidden;}
 /* Responsive actual iPhone viewport sizes, no horizontal scrolling. */
 @media (max-width:650px) {
@@ -135,12 +135,12 @@
  .runcty-app .profile-heading .edit-profile {margin-left:auto;}
  .runcty-app .profile-numbers {gap:7px;}
  .runcty-app .profile-numbers > span {padding:11px 8px;min-height:117px;gap:7px;}
- .runcty-app .profile-numbers b {font-size:11px;}
+ .runcty-app .profile-numbers b {font-size:12px;}
  .runcty-app .profile-numbers strong {font-size:clamp(17px,4.6vw,22px);}
  .runcty-app .incident-types {grid-template-columns:minmax(0,1fr);gap:8px;}
  .runcty-app .incident-types > button {min-height:58px;padding:11px 13px;font-size:13px;}
  .runcty-app .incident-types > button > span {width:29px;flex-basis:29px;}
- .runcty-app .wizard-progress > span {font-size:11px;}
+ .runcty-app .wizard-progress > span {font-size:12px;}
  .runcty-app .sponsor-banner {grid-template-columns:minmax(0,1fr);}
  .runcty-app .sponsor-banner .sponsor-art {height:160px;min-height:160px;}
  .runcty-app .sponsor-banner > div:not(.sponsor-art) {min-height:142px;padding:17px;}
@@ -149,9 +149,9 @@
 }
 @media (max-width:375px) {
  .runcty-app .profile-numbers > span {min-height:113px;padding:9px 7px;}
- .runcty-app .profile-numbers b {font-size:11px;}
- .runcty-app .mobile-nav > button {font-size:11px;}
- .runcty-app .wizard-progress > span {font-size:11px;}
+ .runcty-app .profile-numbers b {font-size:12px;}
+ .runcty-app .mobile-nav > button {font-size:12px;}
+ .runcty-app .wizard-progress > span {font-size:12px;}
 }
 @media (min-width:700px) {
  .runcty-app .profile-navigation {grid-template-columns:repeat(2,minmax(0,1fr));}
@@ -167,7 +167,7 @@
 .runcty-app .mobile-presentation-nav button { display: flex; align-items: center; gap: 6px; min-height: 44px; }
 .runcty-app .phone-container { width: 407px; max-width: 100%; padding: 0; }
 .runcty-app .phone-frame { display: flex; flex-direction: column; width: 100%; max-width: none; height: 866px; max-height: none; border: 7px solid var(--color-line); border-radius: 42px; overflow: hidden; background: var(--color-shell); box-shadow: 0 35px 90px #0008, 0 0 0 1px #60708a; }
-.runcty-app .android-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 36px; height: 36px; flex-shrink: 0; padding: 8px 22px; background: var(--color-shell); color: var(--color-copy); font-size: 11px; }
+.runcty-app .android-status { position: relative; display: flex; justify-content: space-between; align-items: center; min-height: 36px; height: 36px; flex-shrink: 0; padding: 8px 22px; background: var(--color-shell); color: var(--color-copy); font-size: 12px; }
 .runcty-app .camera-dot { position: absolute; top: 9px; left: 50%; width: 13px; height: 13px; transform: translateX(-50%); border-radius: 50%; background: var(--color-shell); box-shadow: inset 0 0 0 2px #171d28; }
 .runcty-app .mobile-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 0; }
 .runcty-app .mobile-nav { position: relative; inset: auto; width: 100%; flex-shrink: 0; padding-bottom: 4px; }
@@ -187,11 +187,11 @@
   .runcty-app *, .runcty-app *::before, .runcty-app *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
 
-.runcty-app .phone-frame .mobile-nav > button { min-height: 48px; font-size: 11px; }
+.runcty-app .phone-frame .mobile-nav > button { min-height: 48px; font-size: 12px; }
 .runcty-app .phone-frame .scenario-notice p { font-size: 12px; line-height: 1.5; }
 .runcty-app .phone-frame .route-card h3 { font-size: 17px; }
 .runcty-app .phone-frame .route-card p { font-size: 12px; line-height: 1.5; }
-.runcty-app .demo-tag { font-size: 11px; }
+.runcty-app .demo-tag { font-size: 12px; }
 
 .runcty-app .club-link-strip { display: flex; width: 100%; align-items: center; gap: 16px; margin-top: 24px; padding: 20px; text-align: left; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); }
 .runcty-app .club-link-strip .club-letter { display: grid; place-items: center; flex-shrink: 0; width: 44px; height: 44px; border-radius: 12px; background: #6b49d926; color: var(--color-muted); font-weight: 800; font-size: 24px; }
@@ -293,7 +293,7 @@
 .runcty-app .route-condition.low { color: var(--color-risk); background: #ff475710; border-color: #ff475735; }
 .runcty-app .route-condition.none { color: var(--color-muted); background: #64748b15; border-color: #64748b50; }
 .runcty-app .route-condition.condition-large { max-width: 230px; font-size: 14px; padding: 10px 12px; }
-.runcty-app .route-card .route-condition { margin-top: 12px; max-width: 100%; font-size: 11px; }
+.runcty-app .route-card .route-condition { margin-top: 12px; max-width: 100%; font-size: 12px; }
 .runcty-app .route-index-heading { flex-wrap: wrap; gap: 12px; }
 .runcty-app .condition-explanation { color: var(--color-muted); font-size: 13px; line-height: 1.6; }
 .runcty-app .segment-breakdown > div > span:last-child { max-width: 145px; text-align: right; font-size: 12px; line-height: 1.5; }
@@ -326,7 +326,7 @@
 .runcty-app .point-list > div { display: flex; align-items: center; gap: 12px; padding: 8px 0; }
 .runcty-app .point-list > div > span { display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: #3478f6; font-size: 12px; font-weight: 650; }
 .runcty-app .point-list p { flex: 1; font-size: 13px; }
-.runcty-app .point-list small { display: block; margin-top: 3px; color: var(--color-muted); font-size: 11px; }
+.runcty-app .point-list small { display: block; margin-top: 3px; color: var(--color-muted); font-size: 12px; }
 .runcty-app .point-list button { width: 44px; height: 44px; color: var(--color-muted); }
 .runcty-app .route-edit-tools { display: flex; flex-wrap: wrap; gap: 8px; }
 .runcty-app .route-result { padding: 16px; border-radius: 14px; border: 1px solid #3478f650; background: #3478f60a; }
@@ -439,7 +439,7 @@
 .runcty-app .modal-actions .button { flex: 1 1 auto; }
 .runcty-app .places-row { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .runcty-app .route-card:not(.editorial-route) .route-preview > span { display: none; }
-.runcty-app .leaflet-container .leaflet-control-attribution { font-size: 10px; }
+.runcty-app .leaflet-container .leaflet-control-attribution { font-size: 12px; }
 .runcty-app .map-actions > button { width: 36px; height: 36px; }
 .runcty-app .updated-date { display: block; margin-top: 10px; font-size: 12px; color: var(--color-muted); }
 
@@ -626,16 +626,16 @@
 .runcty-app .summary-stats dt { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--color-muted); }
 .runcty-app .summary-stats dt svg { flex-shrink: 0; width: 13px; height: 13px; color: #ff8a5f; }
 .runcty-app .summary-stats dd { margin: 4px 0 0; font-size: 19px; font-weight: 750; letter-spacing: -.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.runcty-app .summary-stats dd small { font-size: 11px; font-weight: 500; letter-spacing: 0; color: var(--color-muted); }
+.runcty-app .summary-stats dd small { font-size: 12px; font-weight: 500; letter-spacing: 0; color: var(--color-muted); }
 .runcty-app .summary-details { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,.8fr) minmax(0,1.25fr); gap: 8px; margin: 0; }
 .runcty-app .summary-details > div { min-width: 0; padding: 12px; border: 1px solid var(--color-line); border-radius: 14px; background: #fff; }
 .runcty-app .summary-details dt { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--color-muted); }
 .runcty-app .summary-details dt svg { flex-shrink: 0; width: 13px; height: 13px; color: var(--color-accent); }
 .runcty-app .summary-details dd { margin: 4px 0 0; overflow: hidden; overflow-wrap: normal; font-size: 15px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.runcty-app .summary-main > .summary-clock-note { margin: -4px 0 0; font-size: 11px; font-weight: 400; line-height: 1.5; color: var(--color-dim); }
+.runcty-app .summary-main > .summary-clock-note { margin: -4px 0 0; font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--color-dim); }
 .runcty-app .summary-main .button { width: 100%; margin-top: 0; }
 .runcty-app .summary-main .route-feedback-card { margin: 0; }
-.runcty-app .summary-main > .safety-note { margin: 0; font-size: 11px; font-weight: 400; line-height: 1.5; color: var(--color-dim); }
+.runcty-app .summary-main > .safety-note { margin: 0; font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--color-dim); }
 .runcty-app .summary-main > .text-action { align-self: center; width: auto; margin: 0; color: var(--color-accent); }
 .runcty-app .summary-safety { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; }
 .runcty-app .summary-safety-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
@@ -648,7 +648,7 @@
 .runcty-app .summary-safety-legend i { width: 8px; height: 8px; border-radius: 50%; }
 .runcty-app .summary-safety > p { font-size: 12px; line-height: 1.55; color: var(--color-muted); }
 .runcty-app .summary-perception { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin: 0; padding-top: 10px; border-top: 1px solid var(--color-line); }
-.runcty-app .summary-perception dt { font-size: 11px; color: var(--color-muted); }
+.runcty-app .summary-perception dt { font-size: 12px; color: var(--color-muted); }
 .runcty-app .summary-perception dd { margin: 3px 0 0; font-size: 13px; font-weight: 650; }
 .runcty-app .summary-report { padding-top: 10px; border-top: 1px solid var(--color-line); }
 .runcty-app .summary-report p { font-size: 12px; line-height: 1.5; color: var(--color-muted); }
@@ -759,7 +759,7 @@
 .runcty-app .news-featured .club-letter { display: grid; place-items: center; flex-shrink: 0; width: 40px; height: 40px; border-radius: 12px; background: #f72585; color: #fff; font-size: 20px; font-weight: 800; }
 .runcty-app .news-featured > p { font-size: 14px; line-height: 1.5; color: var(--color-copy); }
 .runcty-app .news-featured .text-action { align-self: flex-start; color: var(--color-accent); }
-.runcty-app .news-sample { display: inline-block; padding: 2px 8px; border: 1px solid var(--color-line); border-radius: 99px; font-size: 11px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--color-muted); }
+.runcty-app .news-sample { display: inline-block; padding: 2px 8px; border: 1px solid var(--color-line); border-radius: 99px; font-size: 12px; font-weight: 600; letter-spacing: 0; text-transform: none; color: var(--color-muted); }
 .runcty-app .news-group { display: flex; flex-direction: column; gap: 8px; }
 .runcty-app .news-heading { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 700; }
 .runcty-app .news-heading svg { width: 15px; height: 15px; color: var(--color-accent); }
@@ -768,7 +768,7 @@
 .runcty-app .news-item > div { flex: 1; min-width: 0; }
 .runcty-app .news-icon { display: grid; place-items: center; flex-shrink: 0; width: 32px; height: 32px; border-radius: 10px; background: var(--color-raised); color: var(--color-accent); }
 .runcty-app .news-icon svg { width: 16px; height: 16px; }
-.runcty-app .news-label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--color-muted); }
+.runcty-app .news-label { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--color-muted); }
 .runcty-app .news-item h3 { margin-top: 3px; font-size: 14px; font-weight: 650; line-height: 1.35; }
 .runcty-app .news-item p { margin-top: 2px; font-size: 12px; line-height: 1.5; color: var(--color-muted); }
 .runcty-app .news-item .text-action { min-height: 30px; color: var(--color-accent); }
@@ -808,7 +808,7 @@
 .runcty-app .auth-note strong { color: var(--color-copy); }
 .runcty-app .auth-links { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 2px 16px; }
 .runcty-app .auth-links button { min-height: 40px; font-size: 13px; font-weight: 600; color: var(--color-accent); }
-.runcty-app .auth-foot { margin-top: auto; font-size: 11px; line-height: 1.4; text-align: center; color: var(--color-muted); }
+.runcty-app .auth-foot { margin-top: auto; font-size: 12px; line-height: 1.4; text-align: center; color: var(--color-muted); }
 .runcty-app .auth-modal { padding: 0; border-radius: 0; }
 .runcty-app .auth-legal { font-size: 12px; line-height: 1.5; color: var(--color-muted); }
 .runcty-app .auth-admin { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; font-size: 13px; font-weight: 600; color: var(--color-accent); }
@@ -835,7 +835,7 @@
 .runcty-app .training-sharing .sos-button.holding::before { transform: scaleX(1); transition: transform 3s linear; }
 .runcty-app .training-sharing .sos-button > * { position: relative; }
 .runcty-app .training-sharing .sos-button > span { font-size: 17px; font-weight: 800; line-height: 1.1; letter-spacing: .06em; }
-.runcty-app .training-sharing .sos-button > small { font-size: 11px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
+.runcty-app .training-sharing .sos-button > small { font-size: 12px; font-weight: 600; line-height: 1.2; white-space: nowrap; }
 .runcty-app .training-sharing .sos-button:focus-visible { outline: 2px solid var(--color-copy); outline-offset: 2px; }
 
 /* Detalles: en el teléfono la lista del perfil va a una columna y Finalizar deja de parecer deshabilitado. */

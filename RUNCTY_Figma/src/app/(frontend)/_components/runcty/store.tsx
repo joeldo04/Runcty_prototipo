@@ -360,7 +360,7 @@ export function DemoProvider({
         return false
       }
       if (ops.length && !identity) {
-        setMessage('Entra como Carlos para continuar con la demostración.')
+        setMessage('Inicia sesión para continuar.')
         return false
       }
       ref.current = next
@@ -374,7 +374,7 @@ export function DemoProvider({
   const notify = useCallback(
     (text: string) =>
       setMessage(
-        demoRef.current && /sincroniz/i.test(text) ? 'Cambio aplicado en esta demostración.' : text,
+        demoRef.current && /sincroniz/i.test(text) ? 'Cambio guardado.' : text,
       ),
     [],
   )
@@ -389,7 +389,7 @@ export function DemoProvider({
       ref.current = clean
       setState(clean)
       version.current++
-      setMessage('Demostración cerrada. No se ha modificado ninguna cuenta.')
+      setMessage('Sesión cerrada.')
       return true
     }
     if (pendingRef.current) {

@@ -36,7 +36,7 @@ const clubSteps = [
 const systemSteps = [
   { id: 'users', target: 'admin-users', title: 'Usuarios y roles', text: 'Busca cuentas, desactívalas o reactívalas y da o quita el rol de administrador.' },
   { id: 'cities', target: 'admin-cities', title: 'Ciudades y red vial', text: 'Habilita una ciudad cuando tenga su red de calles cargada.' },
-  { id: 'parameters', target: 'admin-parameters', title: 'Pesos del índice', text: 'Consulta la fórmula y las franjas de precaución. En esta demo no se editan.' },
+  { id: 'parameters', target: 'admin-parameters', title: 'Pesos del índice', text: 'Consulta la fórmula y las franjas de precaución.' },
 ]
 export default function DemoAdmin() {
   const { state, user, isDemo, loading, startDemo, logout, update, openAccount } = useDemo()
@@ -78,12 +78,12 @@ export default function DemoAdmin() {
         customRoutes: current.customRoutes.some(r => r.id === 'demo-admin-proposal') ? current.customRoutes : [...current.customRoutes, {
           ...sample, id: 'demo-admin-proposal', slug: undefined, name: 'Circuito comunitario Jipiro',
           desc: 'Propuesta de ejemplo para practicar revisión. Trazado y condiciones demostrativos.',
-          official: false, verified: false, owned: false, private: true, owner: 'Corredora de demostración', status: 'Pendiente', date: current.date,
+          official: false, verified: false, owned: false, private: true, owner: 'Andrea Jaramillo', status: 'Pendiente', date: current.date,
         }],
         incidents: current.incidents.some(i => i.id === 'demo-admin-incident') ? current.incidents : [...current.incidents, {
           id: 'demo-admin-incident', type: 'Falta de iluminación', location: 'Sendero Jipiro · ejemplo', coordinate: sample.geometry[1] ?? [-3.9736, -79.2027],
           date: current.date, time: '19:00', description: 'Reporte ficticio de poca iluminación para demostrar la revisión administrativa.',
-          status: 'Pendiente', owner: 'Corredor de demostración', owned: false, createdAt: Date.now(),
+          status: 'Pendiente', owner: 'Luis Ordóñez', owned: false, createdAt: Date.now(),
         }],
       }
     })
@@ -96,8 +96,7 @@ export default function DemoAdmin() {
   }
   const pageLabel = groups.flatMap(g => g.items).find(i => i.id === page)?.label
   return <div className="min-h-screen bg-ink text-copy">
-    <div className="border-b border-sport/30 bg-sport/10 px-5 py-3 text-center text-sm leading-6" role="status"><strong>Administración · demostración local</strong> / Sin cambios en servidor</div>
-    <header className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 lg:px-8"><Link href="/" aria-label="RUNCTY, inicio"><Logo /></Link><nav className="flex flex-wrap items-center gap-5 text-sm">{account?.role === 'corredor' && !blocked && <button type="button" className="role-switch" onClick={() => { startDemo('corredor'); router.push('/explorar') }}><RunnerIcon /><span>Modo corredor</span></button>}{panel && <button type="button" className="inline-flex min-h-11 items-center gap-2" onClick={() => setTour(true)}><GraduationCap className="size-4" />Ver tutorial</button>}<Link className="inline-flex min-h-11 items-center gap-2" href="/"><Home className="size-4" />Inicio</Link>{account?.role === 'corredor' && <Link className="inline-flex min-h-11 items-center gap-2" href="/movil"><Smartphone className="size-4" />Aplicación móvil</Link>}{account && <button type="button" className="admin-account" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta"><CircleUserRound className="size-4" /><span>{account.name.replace(' · ejemplo', '')}</span></button>}{account && <button type="button" className="exit-button" onClick={async () => { if (await logout()) router.push('/') }}><LogOut />Salir</button>}</nav></header>
+        <header className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 lg:px-8"><Link href="/" aria-label="RUNCTY, inicio"><Logo /></Link><nav className="flex flex-wrap items-center gap-5 text-sm">{account?.role === 'corredor' && !blocked && <button type="button" className="role-switch" onClick={() => { startDemo('corredor'); router.push('/explorar') }}><RunnerIcon /><span>Modo corredor</span></button>}{panel && <button type="button" className="inline-flex min-h-11 items-center gap-2" onClick={() => setTour(true)}><GraduationCap className="size-4" />Ver tutorial</button>}<Link className="inline-flex min-h-11 items-center gap-2" href="/"><Home className="size-4" />Inicio</Link>{account?.role === 'corredor' && <Link className="inline-flex min-h-11 items-center gap-2" href="/movil"><Smartphone className="size-4" />Aplicación móvil</Link>}{account && <button type="button" className="admin-account" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta"><CircleUserRound className="size-4" /><span>{account.name.replace(' · ejemplo', '')}</span></button>}{account && <button type="button" className="exit-button" onClick={async () => { if (await logout()) router.push('/') }}><LogOut />Salir</button>}</nav></header>
     {blocked ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Tu cuenta no tiene rol de administrador.</h1><p className="my-5 text-sm leading-7 text-muted">Un administrador puede asignártelo desde Usuarios y roles. Mientras tanto sigues teniendo tu acceso de corredor.</p><Button onClick={() => { startDemo('corredor'); router.push('/explorar') }}>Ir a modo corredor</Button></main> : user && !isDemo ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Prueba la gestión de RUNCTY.</h1><p className="my-5 text-sm leading-7 text-muted">Tienes una cuenta iniciada. Puedes cerrar esa sesión voluntariamente para abrir la demostración con datos ficticios.</p><Button onClick={async () => { if (await logout()) startDemo('club') }}>Cerrar sesión y abrir demostración</Button></main> : !isDemo ? <main className="p-10" aria-busy="true">Preparando demostración…</main> :
     <div className="mx-auto grid max-w-[1600px] lg:grid-cols-[260px_minmax(0,1fr)]">
       <aside className={`demo-admin-menu ${menu ? 'menu-open' : ''} border-b border-line px-4 py-6 lg:border-r lg:border-b-0`}>

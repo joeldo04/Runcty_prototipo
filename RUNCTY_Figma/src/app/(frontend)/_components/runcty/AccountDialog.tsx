@@ -128,7 +128,7 @@ export default function AccountDialog({
           <div className="absolute inset-0 -z-10 bg-linear-to-b from-ink/40 via-ink/10 to-ink/95" />
           <Logo />
           <div className="mt-7 lg:mt-32">
-            <span className="mb-4 hidden items-center gap-2 text-[11px] font-semibold tracking-[.2em] text-lilac lg:flex">
+            <span className="mb-4 hidden items-center gap-2 text-xs font-semibold tracking-[.2em] text-lilac lg:flex">
               <span className="h-px w-6 bg-neon" /> CORRE CON INFORMACIÓN.
             </span>
             <p className="max-w-sm font-display text-3xl leading-none font-semibold uppercase italic sm:text-4xl lg:text-6xl">
@@ -141,14 +141,14 @@ export default function AccountDialog({
               <br />
               Encuentra una nueva forma de recorrer Loja.
             </p>
-            <div className="mt-9 hidden items-center gap-2 border-t border-copy/10 pt-5 text-[11px] text-muted lg:flex">
+            <div className="mt-9 hidden items-center gap-2 border-t border-copy/10 pt-5 text-xs text-muted lg:flex">
               <ShieldCheck className="size-4 text-lilac" /> Una cuenta. Web y móvil. Tu propio
               ritmo.
             </div>
           </div>
         </div>
         <div className="px-6 py-8 sm:px-10 lg:py-11">
-          <span className="mb-3 block text-[11px] font-semibold uppercase tracking-[.2em] text-lilac">
+          <span className="mb-3 block text-xs font-semibold uppercase tracking-[.2em] text-lilac">
             RUNCTY / {user ? 'MI CUENTA' : create ? 'EMPIEZA TU RECORRIDO' : 'BIENVENIDO DE NUEVO'}
           </span>
           <h2 id={heading} className="mb-3 text-2xl font-bold tracking-tight">
@@ -177,7 +177,7 @@ export default function AccountDialog({
                   <strong className="block text-sm">{user.name}</strong>
                   <span className="mt-1 block text-xs text-dim">
                     {isDemo
-                      ? 'Demostración local · solo esta pestaña'
+                      ? 'Solo en esta pestaña'
                       : user.role === 'club'
                         ? 'Gestión del Club Gacelas'
                         : user.role === 'sistema'
@@ -319,7 +319,7 @@ export default function AccountDialog({
                           <option>Avanzado</option>
                         </select>
                       </label>
-                      <label className="flex items-start gap-3 text-[11px] leading-5 text-muted">
+                      <label className="flex items-start gap-3 text-xs leading-5 text-muted">
                         <input
                           name="acceptedPrivacy"
                           type="checkbox"
@@ -336,7 +336,7 @@ export default function AccountDialog({
                     <div className="flex justify-end">
                       <Button
                         variant="ghost"
-                        className="min-h-0 px-0 py-0 text-[11px] text-lilac"
+                        className="min-h-0 px-0 py-0 text-xs text-lilac"
                         onClick={() =>
                           setNotice(
                             'La recuperación por correo todavía no está configurada. Esta vista no envía mensajes ni cambia tu contraseña.',
@@ -374,7 +374,7 @@ export default function AccountDialog({
                   </Button>
                 </fieldset>
               </form>
-              <div className="my-5 flex items-center gap-3 text-[11px] text-dim">
+              <div className="my-5 flex items-center gap-3 text-xs text-dim">
                 <span className="h-px flex-1 bg-line" /> O CONTINÚA CON{' '}
                 <span className="h-px flex-1 bg-line" />
               </div>
@@ -389,7 +389,7 @@ export default function AccountDialog({
                 </span>{' '}
                 Continuar con Google
               </Button>
-              <p className="mt-2 flex items-center justify-center gap-1.5 text-[11px] text-dim">
+              <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-dim">
                 <KeyRound className="size-3" /> Google pendiente de configuración.
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-1 text-xs text-muted">
@@ -414,12 +414,12 @@ export default function AccountDialog({
                     <UserRound /> Explorar como Carlos
                     <ArrowRight />
                   </Button>
-                  <p className="mt-2 text-center text-[11px] leading-5 text-dim">
-                    Demo local, sin crear cuenta. No se guarda en el servidor.
+                  <p className="mt-2 text-center text-xs leading-5 text-dim">
+                    Sin crear cuenta.
                   </p>
                 </div>
               )}
-              <details className="mt-6 border-t border-line/70 pt-4 text-[11px] leading-5 text-dim">
+              <details className="mt-6 border-t border-line/70 pt-4 text-xs leading-5 text-dim">
                 <summary className="w-fit cursor-pointer text-muted">
                   Condiciones y privacidad del prototipo
                 </summary>
