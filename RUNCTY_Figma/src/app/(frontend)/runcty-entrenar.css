@@ -126,3 +126,10 @@ html, body { overscroll-behavior: none; }
 }
 /* Portada del explorador web más compacta. */
 .runcty-app .explore-hero .page-heading h1 { font-size: 40px; }
+
+/* Nueva salida: el mapa ocupa el espacio libre y los botones quedan abajo. */
+.runcty-app .training-screen:not(.recording) { display: flex; flex-direction: column; min-height: 100%; }
+.runcty-app .training-screen:not(.recording) .training-prepare-map { flex: 1 1 320px; height: auto; min-height: 320px; }
+.runcty-app .training-prepare-map > .live-cartography { height: 100%; }
+.runcty-app .record-sheet { flex: none; padding-bottom: 20px; }
+.runcty-app .route-picker-text strong { display: -webkit-box; overflow: hidden; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }

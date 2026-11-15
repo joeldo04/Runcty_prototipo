@@ -114,7 +114,6 @@ export default function SafetyMap(props: Props) {
       style: 'https://tiles.openfreemap.org/styles/liberty',
       interactive: false,
     }).addTo(m)
-    m.attributionControl?.addAttribution('© OpenFreeMap © OpenStreetMap')
     segments.current = L.layerGroup().addTo(m)
     markers.current = L.layerGroup().addTo(m)
     routeLayer.current = L.layerGroup().addTo(m)
