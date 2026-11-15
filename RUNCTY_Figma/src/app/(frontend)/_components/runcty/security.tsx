@@ -49,7 +49,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
   const valid = !!state.sharing && !state.sharing.revoked && now < state.sharing.expires
   const sharing = () => {
     if (isDemo) {
-      if (!valid && !activeTraining) { notify('Inicia un entrenamiento simulado antes de compartirlo.'); return }
+      if (!valid && !activeTraining) { notify('Inicia un entrenamiento antes de compartirlo.'); return }
       update(current => {
         const next = { ...current, sharing: valid && current.sharing
           ? { ...current.sharing, revoked: true }
@@ -84,7 +84,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
     if (!state.sharing) return
     try {
       await navigator.clipboard.writeText(isDemo ? `${window.location.origin}/demo/seguimiento` : shareUrl(state.sharing.token))
-      notify(isDemo ? 'Dirección demo copiada. Otra pestaña abre un escenario de ejemplo.' : 'Enlace temporal copiado')
+      notify(isDemo ? 'Enlace copiado.' : 'Enlace temporal copiado')
     } catch {
       notify('Selecciona y copia el enlace que aparece en pantalla.')
     }
@@ -150,10 +150,10 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
           onClick={sharing}
         >
           <Link2 />
-          {valid ? 'Detener y revocar enlace' : isDemo ? 'Simular enlace temporal' : 'Compartir ubicación'}
+          {valid ? 'Detener y revocar enlace' : 'Compartir ubicación'}
         </Button>
         {isDemo && !valid && !activeTraining && (
-          <p className="info-strip">Inicia un entrenamiento simulado para activar este enlace.</p>
+          <p className="info-strip">Inicia un entrenamiento para activar este enlace.</p>
         )}
         {isDemo && (
           <p className="info-strip">
@@ -212,7 +212,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
       </div>
       {state.sos.length > 0 && (
         <section className="sos-history">
-          <h3>Historial de alertas simuladas</h3>
+          <h3>Historial de alertas SOS</h3>
           {state.sos.map((a) => (
             <div key={a.id}>
               <AlertTriangle />
@@ -254,7 +254,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
               )
                 return
               setEdit(null)
-              notify(isDemo ? (added ? 'Contacto guardado. Mira el correo simulado en Perfil.' : 'Contacto guardado en esta demostración local.') : 'Sincronizando tu contacto de confianza.')
+              notify(isDemo ? (added ? 'Contacto guardado. Le avisamos por correo.' : 'Contacto guardado.') : 'Sincronizando tu contacto de confianza.')
             }}
           >
             <label className="field">
@@ -291,7 +291,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
       {remove && (
         <Confirm
           title="¿Eliminar contacto?"
-          message="Este contacto ya no aparecerá en las alertas simuladas."
+          message="Este contacto ya no recibirá tus alertas."
           onClose={() => setRemove(null)}
           label="Eliminar"
           confirm={() =>
@@ -327,8 +327,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
         <Modal title="911" onClose={() => setCall(false)}>
           <Phone />
           <p>
-            En Android, esta acción abriría el marcador con 911. El prototipo no inicia llamadas ni
-            contacta a servicios de emergencia.
+            Se abrirá el marcador del teléfono con el 911.
           </p>
           <Button onClick={() => setCall(false)}>Entendido</Button>
         </Modal>
@@ -372,18 +371,17 @@ function DemoContactView({ embedded }: { embedded: boolean }) {
     <div className={`contact-view ${embedded ? 'embedded-contact' : ''}`}>
       <span className="eyebrow">SEGUIMIENTO COMPARTIDO</span>
       <h2>Un recorrido compartido contigo.</h2>
-      <p className="info-strip">{example ? 'Escenario ficticio: esta pestaña no recibió un entrenamiento compartido. ' : 'Vista del entrenamiento simulado en esta pestaña. '}Sin GPS real ni enlace público. No se muestran contactos, correo ni datos de cuenta.</p>
       <div className="flex flex-wrap gap-2 py-4" aria-label="Estados demostrativos del enlace">
         {(['activo', 'caducado', 'revocado'] as const).map(value => <Button key={value} variant={status === value ? 'primary' : 'secondary'} aria-pressed={status === value} onClick={() => setSimulation(value === 'activo' ? null : value)}>{value === 'activo' ? 'Ver activo' : value === 'caducado' ? 'Simular caducado' : 'Simular revocado'}</Button>)}
       </div>
       {status !== 'activo' ? <div className="expired-link"><Shield /><h2>{status === 'caducado' ? 'Este enlace ha caducado' : 'El corredor revocó este enlace'}</h2><p>El acceso terminó. La ubicación, el recorrido y las métricas ya no se muestran.</p><span>Estado de demostración · no se consultó un servidor</span></div> : <>
         <div className="flex flex-wrap items-center justify-between gap-3 py-3"><strong>{route.name}</strong><Status value="Activo" /></div>
         <div className="contact-map"><SafetyMap route={route} track={track} tracking={position} focus={position} fitRoute guide showReports={false} /></div>
-        <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-1 w-7 rounded-full bg-[#F72585]" />Rosa: recorrido GPS simulado.</p>
-        <div className="activity-totals"><span><strong>{km.toFixed(2)}<small> km</small></strong>Distancia</span><span><strong>{formatTime(seconds)}</strong>Duración simulada</span><span><strong className="!text-lg">{trainingStatus}</strong>Estado del entrenamiento</span></div>
+        <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-1 w-7 rounded-full bg-[#F72585]" />Rosa: recorrido del corredor.</p>
+        <div className="activity-totals"><span><strong>{km.toFixed(2)}<small> km</small></strong>Distancia</span><span><strong>{formatTime(seconds)}</strong>Duración</span><span><strong className="!text-lg">{trainingStatus}</strong>Estado del entrenamiento</span></div>
         <p>Última ubicación recibida: {position[0].toFixed(5)}, {position[1].toFixed(5)}</p>
-        <p className="muted">Última actualización: {new Date(updatedAt).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })} · Datos simulados</p>
-        <small>Vigencia de ejemplo hasta las {new Date(expires).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })}.</small>
+        <p className="muted">Última actualización: {new Date(updatedAt).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })}</p>
+        <small>Vigente hasta las {new Date(expires).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })}.</small>
       </>}
     </div>
   )
@@ -451,10 +449,10 @@ function ServerContactView({
     )
   return (
     <div className={`contact-view ${embedded ? 'embedded-contact' : ''}`}>
-      <span className="eyebrow">COMPARTIDO CONTIGO · SIMULACIÓN</span>
+      <span className="eyebrow">COMPARTIDO CONTIGO</span>
       <h2>Un recorrido compartido contigo.</h2>
       <p>
-        Última posición simulada guardada · {new Date(share.updatedAt).toLocaleTimeString('es')}
+        Última posición · {new Date(share.updatedAt).toLocaleTimeString('es')}
       </p>
       <div className="contact-map">
         <SafetyMap tracking={share.position} focus={share.position} showReports={false} />
@@ -494,7 +492,7 @@ export function SosButton() {
             {
               id: uid(),
               date: new Date().toISOString(),
-              status: offline ? 'Sin conexión · correo no enviado' : 'Alerta simulada generada',
+              status: offline ? 'Sin conexión · correo no enviado' : 'Alerta enviada',
             },
             ...s.sos,
           ],
@@ -561,8 +559,7 @@ export function SosButton() {
         <Modal title="Alerta SOS" onClose={() => setCount(null)}>
           <div className="sos-count">{count}</div>
           <p>
-            Se simulará una alerta a tus {state.contacts.length} contactos. No se envían mensajes ni
-            se realizan llamadas reales.
+            Se enviará una alerta a tus {state.contacts.length} contactos.
           </p>
           <label className="checkbox">
             <input
@@ -570,7 +567,7 @@ export function SosButton() {
               checked={offline}
               onChange={(e) => setOffline(e.target.checked)}
             />
-            Simular pérdida de conexión
+            Sin conexión
           </label>
           <Button className="full" variant="danger" onClick={() => setCount(null)}>
             Cancelar alerta
@@ -581,12 +578,12 @@ export function SosButton() {
         <Modal
           title={
             pending
-              ? 'Sincronizando alerta simulada'
+              ? 'Enviando alerta'
               : syncError
                 ? 'Alerta pendiente de sincronización'
                 : offline
-                  ? 'Pérdida de conexión simulada'
-                  : 'Alerta simulada registrada'
+                  ? 'Sin conexión'
+                  : 'Alerta enviada'
           }
           onClose={() => setSent(false)}
         >
@@ -595,13 +592,12 @@ export function SosButton() {
           </div>
           <p>
             {offline
-              ? 'Se simuló una pérdida de conexión. No se envió ningún correo ni se llamó al 911.'
+              ? 'No hay conexión. La alerta se enviará cuando vuelva la señal.'
               : (user?.name ?? 'Corredor') +
                 ' · ' +
                 new Date().toLocaleTimeString('es') +
-                ' · simulación para tus contactos de confianza.'}
+                ' · aviso enviado a tus contactos de confianza.'}
           </p>
-          <p className="muted">No se enviaron mensajes reales.</p>
           {state.sharing && <code>{shareUrl(state.sharing.token)}</code>}
           <div className="modal-actions">
             <Button variant="secondary" onClick={() => setPhone(true)}>

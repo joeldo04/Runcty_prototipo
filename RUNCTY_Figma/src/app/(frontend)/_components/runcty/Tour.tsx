@@ -22,26 +22,13 @@ const SEARCH_DELAY = 60
 const SEARCH_TRIES = 40
 
 // Se abre solo para quien entra con una cuenta nueva; después, con «Ver tutorial».
-const SEEN = 'runcty.tutorial.visto'
-const tourSeen = () => {
-  try {
-    return localStorage.getItem(SEEN) === '1'
-  } catch {
-    return false
-  }
-}
 export function useTour(eligible: boolean) {
   const [open, setOpen] = useState(false)
   useEffect(() => {
-    if (eligible && !tourSeen()) setOpen(true)
+    if (eligible) setOpen(true)
   }, [eligible])
   const start = useCallback(() => setOpen(true), [])
-  const close = useCallback(() => {
-    try {
-      localStorage.setItem(SEEN, '1')
-    } catch {}
-    setOpen(false)
-  }, [])
+  const close = useCallback(() => setOpen(false), [])
   return { open, start, close }
 }
 

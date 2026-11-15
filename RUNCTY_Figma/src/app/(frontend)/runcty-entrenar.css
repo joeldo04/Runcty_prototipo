@@ -116,3 +116,13 @@ html, body { overscroll-behavior: none; }
 
 /* Número centrado en los marcadores de rutas. */
 .runcty-app .catalog-map-marker { display: grid; place-items: center; line-height: 1; }
+
+/* En pantallas táctiles no se oscurece el botón después de tocarlo. */
+.runcty-app * { -webkit-tap-highlight-color: transparent; }
+@media (hover: none) {
+  .runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #f2592a; }
+  .runcty-app .button-secondary:hover { background: var(--color-panel); }
+  .runcty-app .button-ghost:hover { background: transparent; }
+}
+/* Portada del explorador web más compacta. */
+.runcty-app .explore-hero .page-heading h1 { font-size: 40px; }

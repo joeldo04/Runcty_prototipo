@@ -348,7 +348,7 @@ export const clockAfter = (time: string, seconds: number) => {
 // Comparar etiquetas existentes sin cambiar los datos guardados ni el esquema.
 export const difficultyKey = (value: string) => {
   const key = value.trim().toLocaleLowerCase('es')
-  return ({ intermedia: 'intermedio', avanzada: 'avanzado' } as Record<string, string>)[key] ?? key
+  return ({ principiante: 'baja', intermedio: 'media', intermedia: 'media', avanzado: 'alta', avanzada: 'alta' } as Record<string, string>)[key] ?? key
 }
 
 // Lee franjas de texto como «08:00–10:00 · 14:00–17:00». Sin franjas no hay aviso.

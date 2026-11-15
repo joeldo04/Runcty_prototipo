@@ -77,12 +77,12 @@ export default function DemoAdmin() {
       return { ...current,
         customRoutes: current.customRoutes.some(r => r.id === 'demo-admin-proposal') ? current.customRoutes : [...current.customRoutes, {
           ...sample, id: 'demo-admin-proposal', slug: undefined, name: 'Circuito comunitario Jipiro',
-          desc: 'Propuesta de ejemplo para practicar revisión. Trazado y condiciones demostrativos.',
+          desc: 'Circuito propuesto por la comunidad alrededor de Jipiro.',
           official: false, verified: false, owned: false, private: true, owner: 'Andrea Jaramillo', status: 'Pendiente', date: current.date,
         }],
         incidents: current.incidents.some(i => i.id === 'demo-admin-incident') ? current.incidents : [...current.incidents, {
-          id: 'demo-admin-incident', type: 'Falta de iluminación', location: 'Sendero Jipiro · ejemplo', coordinate: sample.geometry[1] ?? [-3.9736, -79.2027],
-          date: current.date, time: '19:00', description: 'Reporte ficticio de poca iluminación para demostrar la revisión administrativa.',
+          id: 'demo-admin-incident', type: 'Falta de iluminación', location: 'Sendero Jipiro', coordinate: sample.geometry[1] ?? [-3.9736, -79.2027],
+          date: current.date, time: '19:00', description: 'Tramo sin luz entre el puente y el ingreso norte del parque.',
           status: 'Pendiente', owner: 'Luis Ordóñez', owned: false, createdAt: Date.now(),
         }],
       }

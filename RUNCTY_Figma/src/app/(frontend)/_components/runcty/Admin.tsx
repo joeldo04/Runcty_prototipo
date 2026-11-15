@@ -1068,13 +1068,12 @@ function RiskAdmin() {
       {!state.roads.length && <p className="info-strip">Registra primero una red vial validada en Payload para relacionar las zonas de riesgo con sus tramos.</p>}
       <div className="info-strip">
         <Shield />
-        Cada zona vigente reduce siete puntos el índice de su tramo en esta simulación. No se
-        atribuyen condiciones reales a una calle.
+        Cada zona vigente reduce siete puntos el índice de su tramo.
       </div>
       {!state.risks.length ? (
         <EmptyState
           title="No hay zonas registradas"
-          description="Añade un escenario ficticio para observar su influencia en el índice."
+          description="Registra una zona para ver su influencia en el índice."
         />
       ) : (
         state.risks.map((r) => (
@@ -1385,7 +1384,7 @@ export function SystemAdmin({ page }: { page: string }) {
         </div>)}
         {!state.cities.length && <EmptyState title="Aún no hay ciudades configuradas" description="Registra las ciudades y su red vial validada en Payload. No se simulan importaciones ni se inventa cobertura." />}
         <div className="info-strip">
-          {isDemo ? 'La cartografía base procede de OpenStreetMap / CARTO. La carga de redes es una simulación: valida el archivo sin guardarlo.' : 'La cartografía base procede de OpenStreetMap / CARTO. Las redes y los índices se administran en Payload; no hay un importador automático conectado.'}
+          {isDemo ? 'La cartografía base procede de OpenStreetMap y OpenFreeMap. Carga la red de una ciudad para habilitarla.' : 'La cartografía base procede de OpenStreetMap / CARTO. Las redes y los índices se administran en Payload; no hay un importador automático conectado.'}
         </div>
         {state.cities.filter((city) => city.id === importing).map((city) => <NetworkImport key={city.id} city={city} close={() => setImporting(null)} />)}
       </>

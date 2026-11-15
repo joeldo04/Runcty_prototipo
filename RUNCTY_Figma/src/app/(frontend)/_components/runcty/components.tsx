@@ -693,8 +693,7 @@ export function AdCarousel({
           <p>{sponsor.message}</p>
           <div className="info-strip">
             <Shield />
-            Campaña conceptual. No confirma un patrocinio ni modifica las condiciones de
-            las rutas.
+            La publicidad no modifica las condiciones de las rutas.
           </div>
           <p className="muted">{sponsor.contact}</p>
           <Button onClick={() => setDetail(false)}>Entendido</Button>

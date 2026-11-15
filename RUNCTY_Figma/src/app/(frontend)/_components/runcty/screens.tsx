@@ -250,7 +250,7 @@ export function Explore({
               setKm('Todos')
             }}
           >
-            <Shield className="size-3!" /> Del club
+            <Shield className="size-3!" /> Oficial Gacelas
           </FilterChip>
         </div>
       )}
@@ -282,9 +282,9 @@ export function Explore({
             Dificultad
             <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)}>
               <option value="Todos">Todos los niveles</option>
-              <option>Principiante</option>
-              <option value="Intermedio">Intermedio</option>
-              <option value="Avanzado">Avanzado</option>
+              <option>Baja</option>
+              <option>Media</option>
+              <option>Alta</option>
             </select>
           </label>
           <label className="field">
@@ -536,9 +536,9 @@ export function Routes({
           onChange={(e) => setDifficulty(e.target.value)}
         >
           <option value="Todos">Todos los niveles</option>
-          <option>Principiante</option>
-          <option value="Intermedio">Intermedio</option>
-          <option value="Avanzado">Avanzado</option>
+          <option>Baja</option>
+          <option>Media</option>
+          <option>Alta</option>
         </select>
         <select aria-label="Distancia máxima" value={max} onChange={(e) => setMax(e.target.value)}>
           <option value="42">Todas las distancias</option>
@@ -895,7 +895,7 @@ export function History({
       <PageTitle
         eyebrow="TU CUENTA · ACTIVIDAD PERSONAL"
         title="Cada kilómetro cuenta."
-        subtitle={isDemo ? 'Entrenamientos simulados de esta pestaña. Se eliminan al recargar.' : 'Tu historial privado de entrenamientos simulados, guardado en tu cuenta.'}
+        subtitle="Tu historial de entrenamientos."
       >
         <Button
           variant="orange"
@@ -921,7 +921,7 @@ export function History({
               notify('Conexión recuperada. Tus entrenamientos se subieron sin duplicarse.')
             }}
           >
-            Simular conexión
+            Sincronizar ahora
           </button>
         </div>
       )}
@@ -1004,7 +1004,7 @@ export function History({
             </span>
           </div>
           <p className="gps-quality">
-            GPS simulado: {gpsQuality(selected.seconds).used} puntos usados y{' '}
+            GPS: {gpsQuality(selected.seconds).used} puntos usados y{' '}
             {gpsQuality(selected.seconds).discarded} descartados por imprecisos.
           </p>
           <DemoTag />
@@ -1181,8 +1181,8 @@ export function Profile({
             ? [
                 {
                   icon: Mail,
-                  label: 'Correos simulados',
-                  desc: `${state.emails.length} mensajes de ejemplo`,
+                  label: 'Correos',
+                  desc: `${state.emails.length} mensajes`,
                   action: () => setDialog('mail'),
                 },
               ]

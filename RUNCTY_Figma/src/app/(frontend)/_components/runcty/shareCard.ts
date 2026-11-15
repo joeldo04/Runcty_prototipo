@@ -312,7 +312,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   ctx.fillText('Corre con confianza', logoX + logoSize + 26, logoY + 88)
   ctx.textAlign = 'right'
   ctx.font = `600 22px ${sans}`
-  ctx.fillText('Entrenamiento simulado', WIDTH - MARGIN, logoY + 62)
+  ctx.fillText('Entrenamiento', WIDTH - MARGIN, logoY + 62)
 
   return new Promise<Blob>((resolve, reject) => {
     try {

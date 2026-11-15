@@ -265,7 +265,7 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
                 }}
               >
                 <MapPin />
-                Usar ubicación de ejemplo
+                Usar ubicación sugerida
               </Button>
               <span>
                 {coordinate.length
@@ -315,8 +315,7 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
             </label>
             <div className="info-strip">
               <Shield />
-              Este prototipo no envía avisos reales. Para una emergencia, utiliza los canales
-              oficiales.
+              Para una emergencia, utiliza los canales oficiales.
             </div>
           </>
         )}

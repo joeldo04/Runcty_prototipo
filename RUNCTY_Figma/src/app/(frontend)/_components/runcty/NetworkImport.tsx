@@ -108,7 +108,7 @@ export function NetworkImport({ city, close }: { city: City; close: () => void }
           onClick={() => load(sampleNetwork(limits ? centerOf(limits) : LOJA))}
         >
           <FileUp />
-          Usar ejemplo
+          Usar archivo de prueba
         </Button>
         <Button variant="ghost" onClick={() => load(sampleNetwork(outside))}>
           Probar archivo incorrecto

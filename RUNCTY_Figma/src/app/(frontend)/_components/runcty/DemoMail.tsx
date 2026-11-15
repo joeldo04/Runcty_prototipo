@@ -11,7 +11,7 @@ export function DemoMailbox({ close }: { close: () => void }) {
   const [openId, setOpenId] = useState<string | null>(null)
   const email = state.emails.find((value) => value.id === openId)
   return (
-    <Modal title="Correos simulados" wide onClose={close}>
+    <Modal title="Correos" wide onClose={close}>
       {email ? (
         <article className="mail-view">
           <button type="button" className="back-button" onClick={() => setOpenId(null)}>

@@ -4,6 +4,7 @@ import utplBanner from '../../../../../imagenes/publicidad_utpl.png'
 import cuxibambaBanner from '../../../../../imagenes/publicidad_cuxibamba.png'
 /** Mock data ONLY for the explicit local demonstration mode; not verified street safety. */
 import type { RouteData, Street, Sponsor, Banner, Space, Coordinate, TimeSlot, DemoUser, Incident } from './data'
+import { length } from './data'
 
 const geometry: Coordinate[][] = [
   [[-3.9729,-79.2056],[-3.9737,-79.2027],[-3.9758,-79.2009]],
@@ -32,7 +33,7 @@ export const DEMO_ROADS: Street[] = geometry.map((points, index) => {
     name: ['Av. Orillas del Zamora','Sendero Jipiro','Av. Universitaria','Calle Mercadillo','Vía occidental','Paseo del río','Sector El Valle','Conexión urbana','Camino Pucará','Sendero panorámico','Corredor central','Conexión San Cayetano'][index],
     points,
     scores: Object.fromEntries((['05:30','08:00','14:00','19:00'] as TimeSlot[]).map((t,i) => [t,scores[i]])) as Record<TimeSlot,number>,
-    factors: ['Iluminación y características del tramo (simuladas)', 'Horario y contexto del recorrido (simulados)'],
+    factors: ['Iluminación y características del tramo', 'Horario y contexto del recorrido'],
   }
 })
 const sameNode = (a: Coordinate, b: Coordinate) => a[0] === b[0] && a[1] === b[1]
@@ -50,27 +51,30 @@ function stitch(roadIndices: number[]): Coordinate[] {
     return [...path, ...road]
   }, [])
 }
-function exampleRoute(id: string, name: string, roadIndices: number[], difficulty: string, km: number, min: number, desc: string): RouteData {
-  return {id, name, area:'Loja, Ecuador', km, min, difficulty, desc,
-    geometry:stitch(roadIndices), segmentIds:roadIndices.map(i=>`demo-street-${i+1}`),
+const PACE: Record<string, number> = { Baja: 7.2, Media: 6.6, Alta: 6 }
+function exampleRoute(id: string, name: string, roadIndices: number[], difficulty: string, desc: string): RouteData {
+  const geometry = stitch(roadIndices)
+  const km = +length(geometry).toFixed(1)
+  return {id, name, area:'Loja, Ecuador', km, min: Math.round(km * PACE[difficulty]), difficulty, desc,
+    geometry, segmentIds:roadIndices.map(i=>`demo-street-${i+1}`),
     official: false, status:'Aprobado', recommended:'08:00–10:00 · 14:00–17:00',
   }
 }
 // Las tres primeras son rutas oficiales del club.
 const OFFICIAL = new Set(['demo-jipiro', 'demo-zamora', 'demo-pucara'])
 export const DEMO_ROUTES: RouteData[] = ([
-  exampleRoute('demo-jipiro','Circuito Jipiro',[0,1,5], 'Principiante',2.6,17,'Vuelta por el entorno del Parque Jipiro, plana y con buena iluminación.'),
-  exampleRoute('demo-zamora','Parque Lineal Zamora',[1,2,3,10], 'Intermedio',5.2,34,'Una opción de entrenamiento junto a corredores urbanos.'),
-  exampleRoute('demo-pucara','Sendero Pucará',[8,9], 'Intermedio',4.8,38,'Recorrido panorámico por el sendero del Pucará.'),
-  exampleRoute('demo-centro','Loja urbana',[2,3,4], 'Principiante',3.7,28,'Ruta urbana ilustrativa con condiciones que cambian según la hora.'),
-  exampleRoute('demo-sancayetano','San Cayetano',[5,6,11], 'Avanzado',6.3,46,'Alternativa urbana para consultar horarios y tramos.'),
+  exampleRoute('demo-jipiro','Circuito Jipiro',[0,1,5], 'Baja','Vuelta por el entorno del Parque Jipiro, plana y con buena iluminación.'),
+  exampleRoute('demo-zamora','Parque Lineal Zamora',[1,2,3,10], 'Media','Junto al río Zamora, con tramos planos y mucha gente a primera hora.'),
+  exampleRoute('demo-pucara','Sendero Pucará',[8,9], 'Media','Recorrido panorámico por el sendero del Pucará.'),
+  exampleRoute('demo-centro','Loja urbana',[2,3,4], 'Baja','Por el centro de Loja; mejor en horas de luz.'),
+  exampleRoute('demo-sancayetano','San Cayetano',[5,6,11], 'Alta','Subidas hacia San Cayetano para trabajar fuerza.'),
 ] as RouteData[]).map((route) => (OFFICIAL.has(route.id) ? { ...route, official: true, verified: true } : route))
 export const DEMO_SPACES: Space[] = [
   {id:'demo-space-1',name:'Parque Jipiro',type:'Parque',location:'Norte de Loja',hours:'05:30–19:00',coordinate:[-3.9736,-79.2027],description:'Pista y senderos dentro del parque.'},
   {id:'demo-space-2',name:'Parque Lineal Zamora',type:'Parque',location:'Ribera del Zamora',hours:'05:30–19:00',coordinate:[-3.9857,-79.2027],description:'Ribera del río Zamora, ideal para rodajes suaves.'},
   {id:'demo-space-3',name:'Sendero Pucará',type:'Sendero',location:'Sector occidental',hours:'06:00–18:00',coordinate:[-3.9902,-79.2131],description:'Sendero con desnivel moderado y vista a la ciudad.'},
 ]
-export const DEMO_CITY = {id:'catamayo',name:'Catamayo · ejemplo',networkReady:false,enabled:false}
+export const DEMO_CITY = {id:'catamayo',name:'Catamayo',networkReady:false,enabled:false}
 // Reporte ficticio ya aprobado: permite ver el aviso de reportes cercanos a una ruta.
 export const demoReport = (): Incident => {
   const createdAt = Date.now() - 3 * 86400000
@@ -79,13 +83,13 @@ export const demoReport = (): Incident => {
 export const DEMO_USERS: DemoUser[] = [
   {id:'runcty-demo-carlos',name:'Carlos',role:'corredor',active:true,admin:true},
   {id:'runcty-demo-ana',name:'Ana',role:'corredor',active:true,admin:false},
-  {id:'demo-user-club',name:'Gestión Gacelas · ejemplo',role:'club',active:true,admin:true},
-  {id:'demo-user-sistema',name:'Sistema RUNCTY · ejemplo',role:'sistema',active:true,admin:true},
+  {id:'demo-user-club',name:'Gestión Gacelas',role:'club',active:true,admin:true},
+  {id:'demo-user-sistema',name:'Sistema RUNCTY',role:'sistema',active:true,admin:true},
 ]
 export const DEMO_SPONSORS: Sponsor[] = [
   {id:'demo-gacelas',name:'Gacelas Running Team',message:'En Gacelas no entrenas solo: entrenas con planificación, coaches reales y una comunidad que te acompaña todo el año. Inscripciones abiertas.',contact:'Material del Club Deportivo Gacelas Running Team · cliente de referencia',active:true,visual:'club',image:{url:gacelasBanner.src,alt:'Publicidad del Club Deportivo Gacelas Running Team: inscripciones abiertas, planes Running y Running + Fuerza',width:gacelasBanner.width,height:gacelasBanner.height}},
-  {id:'demo-utpl',name:'UTPL',message:'Tu futuro también está en movimiento. Matrículas abiertas.',contact:'Campaña conceptual no oficial',active:true,visual:'university',image:{url:utplBanner.src,alt:'Publicidad UTPL proporcionada por el proyecto',width:utplBanner.width,height:utplBanner.height}},
-  {id:'demo-cuxibamba',name:'Farmacias Cuxibamba',message:'¿Te duelen los pies después de correr? Tu bienestar también forma parte del recorrido.',contact:'Campaña conceptual no oficial',active:true,visual:'health',image:{url:cuxibambaBanner.src,alt:'Publicidad Farmacias Cuxibamba proporcionada por el proyecto',width:cuxibambaBanner.width,height:cuxibambaBanner.height}},
+  {id:'demo-utpl',name:'UTPL',message:'Tu futuro también está en movimiento. Matrículas abiertas.',contact:'Aliado de RUNCTY',active:true,visual:'university',image:{url:utplBanner.src,alt:'Publicidad UTPL proporcionada por el proyecto',width:utplBanner.width,height:utplBanner.height}},
+  {id:'demo-cuxibamba',name:'Farmacias Cuxibamba',message:'¿Te duelen los pies después de correr? Tu bienestar también forma parte del recorrido.',contact:'Aliado de RUNCTY',active:true,visual:'health',image:{url:cuxibambaBanner.src,alt:'Publicidad Farmacias Cuxibamba proporcionada por el proyecto',width:cuxibambaBanner.width,height:cuxibambaBanner.height}},
 ]
 export const DEMO_BANNERS: Banner[] = [
  {id:'demo-banner-gacelas',sponsorId:'demo-gacelas',title:'Inscripciones abiertas · Planes Running y Running + Fuerza',start:'2026-01-01',end:'2030-12-31',placement:'explore',status:'Publicado'},

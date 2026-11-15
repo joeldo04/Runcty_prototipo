@@ -130,12 +130,11 @@ function RunModal({ close, mobile }: { close: () => void; mobile: () => void }) 
             <Smartphone />
           </span>
           <p>
-            Continúa en la vista móvil para simular tu recorrido. La grabación GPS real y la
-            aplicación Android aún no están disponibles.
+            Continúa en la vista móvil para grabar tu recorrido.
           </p>
           <div className="handoff-note">
             <Route />
-            Conservaremos tu ruta seleccionada en el simulador.
+            Conservaremos tu ruta seleccionada.
           </div>
           <Button className="full" onClick={mobile}>
             Ver aplicación móvil <ArrowRight />
@@ -146,7 +145,6 @@ function RunModal({ close, mobile }: { close: () => void; mobile: () => void }) 
           <Button className="full" variant="ghost" onClick={close}>
             Cancelar
           </Button>
-          <small>La grabación del prototipo es simulada. El ordenador no graba GPS.</small>
         </>
       )}
     </Modal>
@@ -284,7 +282,7 @@ function WebApp({
               <span>Tu próximo paso.</span>
               <p>Guarda tus rutas y continúa desde cualquier dispositivo.</p>
               <Button onClick={openAccount}>
-                Entrar como Carlos <ArrowRight />
+                Iniciar sesión <ArrowRight />
               </Button>
             </div>
           ) : (
@@ -415,7 +413,7 @@ function WebApp({
                   : 'Inicia sesión para consultar tus datos privados y continuar desde cualquier dispositivo.'}
               </p>
               <Button disabled={loading} onClick={openAccount}>
-                Entrar como Carlos
+                Iniciar sesión
               </Button>
             </div>
           ) : resolved ? (
@@ -436,8 +434,8 @@ function WebApp({
           <span>RUNCTY · LOJA, ECUADOR</span>
           <p>
             {isDemo
-              ? 'Prototipo'
-              : 'Información referencial · Entrenamiento y SOS simulados'}
+              ? 'Información referencial'
+              : 'Información referencial'}
           </p>
           <button onClick={exit}>
             Cambiar experiencia <ArrowRight />
@@ -547,7 +545,7 @@ function MobileApp({
   const tourSteps: TourStep[] = [
     ...mapSteps.map((step) => ({ ...step, prepare: () => tourPage('explore') })),
     { id: 'recommend', target: 'recommend', title: 'Recomendaciones', text: 'Dinos distancia y hora, y te sugerimos las mejores rutas.', prepare: () => tourPage('recommend') },
-    { id: 'start', target: 'start-training', title: 'Iniciar entrenamiento', text: 'Graba tu recorrido paso a paso. En este prototipo el GPS se simula.', prepare: () => tourPage('train', 'ready') },
+    { id: 'start', target: 'start-training', title: 'Iniciar entrenamiento', text: 'Graba tu recorrido paso a paso.', prepare: () => tourPage('train', 'ready') },
     { id: 'share', target: 'share-live', title: 'Compartir en vivo', text: 'Prepara un enlace temporal para tus contactos de confianza.', prepare: () => tourPage('train', 'paused') },
     { id: 'sos', target: 'sos', title: 'Botón SOS', text: 'Mantén presionado 3 segundos para alertar a tus contactos.', prepare: () => tourPage('train', 'paused') },
     { id: 'report', target: 'report', title: 'Reportar', text: 'Avisa a la comunidad de un incidente. El club lo revisa antes de publicarlo.', prepare: () => tourPage('reports') },
@@ -620,7 +618,7 @@ function MobileApp({
   ]
   return (
     <div className="mobile-stage" ref={stage}>
-      <nav aria-label="Presentación del prototipo" className="mobile-presentation-nav">
+      <nav aria-label="Presentación" className="mobile-presentation-nav">
         <button onClick={() => leave(exit)}><ArrowLeft className="size-4" /> Inicio</button>
         <span>ANDROID · 393 × 852</span>
         <button onClick={() => leave(toWeb)}>Vista web <Monitor className="size-4" /></button>

@@ -215,7 +215,7 @@ export default function Training({
   }
   const finishTraining = () => {
     if (session.seconds < 1 || session.km < 0.001) {
-      notify('Simula unos segundos de recorrido antes de terminar.')
+      notify('Corre unos segundos antes de terminar.')
       return
     }
     const id = uid()
@@ -309,7 +309,7 @@ export default function Training({
     return (
       <EmptyState
         title="Elige tu próximo recorrido"
-        description="Selecciona una ruta publicada o crea una ruta privada en el planificador para iniciar la simulación. No se registra GPS real."
+        description="Selecciona una ruta publicada o crea una ruta privada en el planificador para empezar."
       >
         <Button onClick={back}>
           Explorar rutas <ArrowRight />
@@ -426,11 +426,8 @@ export default function Training({
                 <dd>{route.difficulty}</dd>
               </div>
             </dl>
-            <p className="summary-clock-note">
-              Hora simulada: parte del horario consultado y suma el tiempo del entrenamiento.
-            </p>
             <p className="gps-quality">
-              GPS simulado: {gpsQuality(session.seconds).used} puntos usados y{' '}
+              GPS: {gpsQuality(session.seconds).used} puntos usados y{' '}
               {gpsQuality(session.seconds).discarded} descartados por margen mayor a 30 m o más de
               30 km/h.
             </p>
@@ -588,7 +585,7 @@ export default function Training({
           <>
             <strong key={session.count}>{session.count}</strong>
             <h2>Vamos a por ello.</h2>
-            <p>GPS simulado</p>
+            <p>GPS listo</p>
           </>
         )}
       </div>
@@ -609,14 +606,14 @@ export default function Training({
             <>
               <button
                 type="button"
-                aria-label="Bloquear pantalla (simulación)"
+                aria-label="Bloquear pantalla"
                 onClick={() => setLocked(true)}
               >
                 <Lock />
               </button>
               <button
                 type="button"
-                aria-label="Simular sin señal"
+                aria-label="Sin señal"
                 aria-pressed={offline}
                 onClick={() => setOffline(!offline)}
               >
@@ -687,7 +684,6 @@ export default function Training({
                 : session.phase === 'running'
                   ? 'EN MOVIMIENTO'
                   : 'EN PAUSA'}
-              <small>SIMULACIÓN ×6</small>
             </span>
             <strong className="distance-numeral">
               {session.km.toFixed(2)}
@@ -695,7 +691,7 @@ export default function Training({
             </strong>
             <div className="recording-secondary">
               <span>
-                <strong>{formatTime(session.seconds)}</strong>Tiempo simulado
+                <strong>{formatTime(session.seconds)}</strong>Tiempo
               </span>
               <span>
                 <strong>
@@ -730,7 +726,7 @@ export default function Training({
             </span>
             <span>
               <i />
-              Recorrido GPS simulado · rosa
+              Tu recorrido
             </span>
           </div>
           <div className="record-dock recording-dock">
@@ -847,9 +843,9 @@ export default function Training({
         </Modal>
       )}
       {locked && (
-        <div className="lock-preview" role="dialog" aria-modal="true" aria-label="Pantalla bloqueada simulada">
+        <div className="lock-preview" role="dialog" aria-modal="true" aria-label="Pantalla bloqueada">
           <time>9:41</time>
-          <span>Pantalla bloqueada · simulación</span>
+          <span>Pantalla bloqueada</span>
           <div className="lock-notification">
             <Radio />
             <div>
@@ -870,8 +866,8 @@ export default function Training({
           title="¿Finalizar entrenamiento?"
           message={
             isDemo
-              ? 'Guardaremos esta salida simulada en el historial de esta pestaña. No se envía al servidor ni se graba GPS real.'
-              : 'Guardaremos esta salida simulada en tu historial privado y revocaremos tus enlaces de ubicación. No se graba GPS real.'
+              ? 'Guardaremos esta salida en tu historial.'
+              : 'Guardaremos esta salida en tu historial y cerraremos tus enlaces de ubicación.'
           }
           label="Finalizar entrenamiento"
           onClose={() => setFinish(false)}

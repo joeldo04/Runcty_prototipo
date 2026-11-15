@@ -76,7 +76,7 @@ export default function Planner({
       area: 'Loja · Recorrido personal',
       km: +km.toFixed(2),
       min: Math.max(1, Math.round(km * 7)),
-      difficulty: km > 8 ? 'Avanzada' : km > 4 ? 'Intermedia' : 'Principiante',
+      difficulty: km > 8 ? 'Alta' : km > 4 ? 'Media' : 'Baja',
       desc: 'Ruta privada planificada en RUNCTY. Las condiciones son referenciales; revisa el trazado antes de salir.',
       segmentIds: computed.segmentIds,
       geometry,
@@ -242,7 +242,7 @@ export default function Planner({
           <div className="map-bottom-tools">
             <Button variant="secondary" onClick={example}>
               <Route />
-              Crear ruta de ejemplo
+              Usar ruta sugerida
             </Button>
             <span>{state.roads.length ? `${state.roads.length} tramos disponibles · Loja` : 'Sin red vial publicada · trazado manual sin puntuación'}</span>
           </div>
@@ -345,9 +345,9 @@ export default function Planner({
                 Nivel
                 <select value={level} onChange={(e) => setLevel(e.target.value)}>
                   <option>Todos</option>
-                  <option>Principiante</option>
-                  <option value="Intermedio">Intermedio</option>
-                  <option value="Avanzado">Avanzado</option>
+                  <option>Baja</option>
+                  <option>Media</option>
+                  <option>Alta</option>
                 </select>
               </label>
             </div>
@@ -359,7 +359,7 @@ export default function Planner({
           {draft.mode === 'manual' && (
             <div className="point-list">
               {draft.points.length === 0 ? (
-                <p>Comienza pulsando sobre el mapa o prueba el recorrido de ejemplo.</p>
+                <p>Comienza pulsando sobre el mapa o usa la ruta sugerida.</p>
               ) : (
                 draft.points.map((p, i) => (
                   <div key={i}>

@@ -127,11 +127,11 @@ function AppSimulation() {
         ))}
         <li className="sim-control">
           <button type="button" onClick={() => setPlaying(!playing)}>
-            {playing ? <Pause /> : <Play />} {playing ? 'Pausar simulación' : 'Reproducir simulación'}
+            {playing ? <Pause /> : <Play />} {playing ? 'Pausar' : 'Reproducir'}
           </button>
         </li>
       </ol>
-      <div className="sim-phone" role="img" aria-label={`Simulación de la app: ${scenes[scene].title}`}>
+      <div className="sim-phone" role="img" aria-label={`Vista de la app: ${scenes[scene].title}`}>
         <div className="sim-screen" key={scene}>
           <span className="sim-camera" />
           {scene === 0 && (
@@ -214,7 +214,7 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
           <nav aria-label="Secciones de la página">
             <a href="#como-funciona">Cómo funciona</a>
             <a href="#video">Video</a>
-            <a href="#prototipo">Prototipo</a>
+            <a href="#prototipo">Pruébalo</a>
             <a href="#club">Club</a>
           </nav>
           <div className="home-access">
@@ -255,7 +255,7 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
           <header className="home-heading">
             <span>Así funciona</span>
             <h2>De la primera calle a la meta.</h2>
-            <p>Mira cómo se usa RUNCTY. La simulación avanza sola, o toca cada paso.</p>
+            <p>Mira cómo se usa RUNCTY. Avanza sola, o toca cada paso.</p>
           </header>
           <AppSimulation />
         </div>
@@ -287,7 +287,7 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
       <section className="home-section" id="prototipo">
         <div className="home-wrap">
           <header className="home-heading">
-            <span>El prototipo</span>
+            <span>Pruébalo</span>
             <h2>Una app. Tres formas de verla.</h2>
             <p>Corres desde el teléfono, consultas desde la web y gestionas desde el panel. Una misma cuenta puede ser corredor y administrador.</p>
           </header>
@@ -321,7 +321,7 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
             <h2>Una comunidad como punto de partida.</h2>
             <p>El club de Loja es nuestro cliente de referencia. RUNCTY tiene identidad propia y está pensado para todos los corredores.</p>
           </div>
-          <Link href="/demo/administracion" className="home-outline"><Monitor /> Ver panel web · demo <ArrowRight /></Link>
+          <Link href="/demo/administracion" className="home-outline"><Monitor /> Ver panel del club <ArrowRight /></Link>
         </div>
       </section>
 

@@ -65,7 +65,7 @@ function RecoverPassword({ back }: { back: () => void }) {
     if (step === 1 && !/^\S+@\S+\.\S+$/.test(email.trim()))
       return setError('Escribe tu correo con el formato nombre@dominio.com.')
     if (step === 2 && code.trim() !== sample)
-      return setError('El código no coincide. Usa el código de ejemplo que aparece arriba.')
+      return setError('El código no coincide. Usa el código que aparece arriba.')
     if (step === 3 && password.length < 8)
       return setError('La contraseña debe tener al menos 8 caracteres.')
     if (step === 3 && password !== repeat) return setError('Las contraseñas no coinciden.')
@@ -83,7 +83,7 @@ function RecoverPassword({ back }: { back: () => void }) {
       <div className="auth-done" role="status">
         <span><Check /></span>
         <h2>Contraseña actualizada</h2>
-        <p>Simulación completada. No se envió ningún correo ni cambió ninguna cuenta real.</p>
+        <p>Ya puedes iniciar sesión con tu nueva contraseña.</p>
         <Button variant="orange" className="w-full" onClick={back}>Volver a iniciar sesión <ArrowRight /></Button>
       </div>
     )
@@ -104,13 +104,13 @@ function RecoverPassword({ back }: { back: () => void }) {
         {step === 1 && (
           <>
             <p className="auth-copy">Escribe tu correo y te enviaremos un código.</p>
-            <label className="field">Correo electrónico<input type="email" inputMode="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} placeholder="corredor@ejemplo.com" autoComplete="off" /></label>
+            <label className="field">Correo electrónico<input type="email" inputMode="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} placeholder="nombre@correo.com" autoComplete="off" /></label>
           </>
         )}
         {step === 2 && (
           <>
-            <p className="auth-copy">Simulamos el envío a <strong>{email.trim()}</strong>.</p>
-            <p className="auth-note"><strong>Código de ejemplo: {sample}</strong>.</p>
+            <p className="auth-copy">Enviamos un código a <strong>{email.trim()}</strong>.</p>
+            <p className="auth-note"><strong>Tu código: {sample}</strong>.</p>
             <label className="field">Código de 6 dígitos<input inputMode="numeric" maxLength={6} autoFocus value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))} placeholder="000000" autoComplete="one-time-code" /></label>
           </>
         )}
@@ -201,8 +201,8 @@ export function DemoAccess({ createInitially = false, mobile = false, back, proc
         {create && <label className="field">Nombre<input name="name" placeholder="Tu nombre" autoComplete="off" /></label>}
         {!create && (
           <div className="field">
-            <span>Cuenta de ejemplo</span>
-            <div className="account-options" role="group" aria-label="Cuenta de ejemplo">
+            <span>Elige tu cuenta</span>
+            <div className="account-options" role="group" aria-label="Elige tu cuenta">
               {accounts.map((value) => (
                 <button key={value.id} type="button" aria-pressed={value.id === account?.id} className={value.id === account?.id ? 'selected' : ''} onClick={() => setAccountId(value.id)}>
                   <strong>{value.name.replace(' · ejemplo', '')}</strong>
@@ -212,7 +212,7 @@ export function DemoAccess({ createInitially = false, mobile = false, back, proc
             </div>
           </div>
         )}
-        <label className="field">Correo electrónico<input name="email" type="email" inputMode="email" placeholder="corredor@ejemplo.com" autoComplete="off" aria-invalid={!!error} /></label>
+        <label className="field">Correo electrónico<input name="email" type="email" inputMode="email" placeholder="nombre@correo.com" autoComplete="off" aria-invalid={!!error} /></label>
         <div className="field">
           <label htmlFor={passwordId}>Contraseña</label>
           <div className="auth-password">
@@ -236,7 +236,6 @@ export function DemoAccess({ createInitially = false, mobile = false, back, proc
     return (
       <section className="auth-card auth-modal" aria-label="Acceso a RUNCTY">
         {form}
-        <p className="auth-legal">No se verifican credenciales ni se crean cuentas reales. Entrenamiento, GPS, enlaces y SOS son simulados.</p>
         <Link href="/demo/administracion" className="auth-admin"><Monitor className="size-4" /> Ver administración de demostración <ArrowRight className="size-4" /></Link>
       </section>
     )
@@ -250,7 +249,6 @@ export function DemoAccess({ createInitially = false, mobile = false, back, proc
         <div className="auth-intro"><AuthIntro /></div>
         <div className="auth-card">{form}</div>
       </div>
-      <p className="auth-foot">Prototipo · no se verifican credenciales ni se crean cuentas reales</p>
     </section>
   )
 }
@@ -316,7 +314,6 @@ export function MobileWelcome({ login, register }: { login: () => void; register
             Ya tengo una cuenta
           </Button>
         </div>
-        <p className="welcome-foot">Prototipo</p>
       </div>
     </section>
   )
