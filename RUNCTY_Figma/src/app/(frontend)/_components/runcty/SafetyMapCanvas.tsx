@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { maplibreGL } from '@maplibre/maplibre-gl-leaflet'
 import { Expand, Layers3, LocateFixed, Minus, Plus, X, LoaderCircle, MapPin } from 'lucide-react'
 import {
   LOJA,
@@ -107,12 +109,12 @@ export default function SafetyMap(props: Props) {
     map.current = m
     if (!props.preview && window.matchMedia('(pointer: coarse)').matches) setTouchDevice(true)
     // Real pannable map background. Overlays and local geometry still work if tiles fail.
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap contributors © CARTO',
-      subdomains: 'abcd',
-      maxZoom: 19,
-      crossOrigin: true,
-    }).on('tileerror', () => setTileState('local')).on('tileload', () => setTileState('osm')).addTo(m)
+    // Mapa base de MapLibre con OpenFreeMap: gratuito y sin clave.
+    maplibreGL({
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      interactive: false,
+    }).addTo(m)
+    m.attributionControl?.addAttribution('© OpenFreeMap © OpenStreetMap')
     segments.current = L.layerGroup().addTo(m)
     markers.current = L.layerGroup().addTo(m)
     routeLayer.current = L.layerGroup().addTo(m)
@@ -342,7 +344,8 @@ export default function SafetyMap(props: Props) {
           .bindTooltip(tooltip)
       })
     // Elige en cada trazado el punto más alejado de los marcadores ya puestos.
-    const placed: Coordinate[] = []
+    const placed: Coordinate[] =
+      props.showReports !== false ? publicIncidents(state.incidents).map((incident) => incident.coordinate) : []
     const gap = (p: Coordinate) => Math.min(Infinity, ...placed.map((q) => distance(p, q)))
     if (props.onRoute && !props.drawing)
       state.catalog
@@ -351,14 +354,14 @@ export default function SafetyMap(props: Props) {
           const label = document.createElement('span')
           label.textContent = String(index + 1)
           const options = Array.from({ length: 11 }, (_, k) => pointAlong(route.geometry, 0.15 + k * 0.07))
-          const spot = options.find((p) => gap(p) > 0.25) ?? options.reduce((a, b) => (gap(b) > gap(a) ? b : a))
+          const spot = options.find((p) => gap(p) > 0.45) ?? options.reduce((a, b) => (gap(b) > gap(a) ? b : a))
           placed.push(spot)
           L.marker(spot, {
             icon: L.divIcon({
               className: 'catalog-map-marker',
               html: label,
               iconSize: [28, 28],
-              iconAnchor: [14, 32],
+              iconAnchor: [14, 14],
             }),
             title: `${route.name} · Ver ruta`,
           })

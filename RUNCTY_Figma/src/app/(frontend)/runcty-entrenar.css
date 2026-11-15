@@ -104,10 +104,15 @@ html, body { overscroll-behavior: none; }
 /* Próxima versión. */
 .runcty-app .soon-badge { display: inline-flex; align-items: center; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--color-raised); font-family: var(--font-sans); font-size: 12px; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; vertical-align: middle; color: var(--color-muted); }
 
-/* Foto de entrada sin filtro de color: degradado oscuro neutro. */
-.runcty-app .welcome-photo img { filter: grayscale(1) contrast(1.05) brightness(.82); }
-.runcty-app .welcome-photo::after { background: linear-gradient(180deg, rgb(11 16 32 / 45%) 0%, rgb(11 16 32 / 15%) 30%, rgb(11 16 32 / 25%) 60%); }
 
 /* Distintivo oficial del club en el rosa de Gacelas. */
 .runcty-app .official-badge { display: inline-flex; align-items: center; gap: 6px; width: fit-content; padding: 3px 10px 3px 3px; border-radius: 999px; background: #e5197d; font-size: 12px; font-weight: 700; line-height: 1.2; color: #fff; white-space: nowrap; }
 .runcty-app .official-badge img { flex: none; border-radius: 50%; background: #fff; }
+
+/* Próxima versión en el menú web: debajo del nombre para no partirse. */
+.runcty-app .sidebar nav a:has(.soon-badge) { flex-wrap: wrap; row-gap: 2px; }
+.runcty-app .sidebar nav a:has(.soon-badge) > span { white-space: nowrap; }
+.runcty-app .sidebar .soon-badge { margin-left: 34px; padding: 1px 8px; white-space: nowrap; }
+
+/* Número centrado en los marcadores de rutas. */
+.runcty-app .catalog-map-marker { display: grid; place-items: center; line-height: 1; }

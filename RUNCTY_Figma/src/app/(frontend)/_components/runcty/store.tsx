@@ -101,11 +101,18 @@ export const EMPTY_ROUTE: RouteData = {
   geometry: [],
 }
 export type AppUser = { id: User['id']; name: string; role: User['role'] }
+const currentSlot = (): TimeSlot => {
+  const hour = Number(
+    new Intl.DateTimeFormat('en-GB', { timeZone: 'America/Guayaquil', hour: '2-digit', hourCycle: 'h23' }).format(new Date()),
+  )
+  return hour >= 4 && hour < 7 ? '05:30' : hour >= 7 && hour < 11 ? '08:00' : hour >= 11 && hour < 17 ? '14:00' : '19:00'
+}
 function initialState(data: PublicRuncty): DemoState {
   const date = today()
+  const time = currentSlot()
   return {
     ...data,
-    time: '19:00',
+    time,
     date,
     role: 'visitante',
     savedIds: [],
@@ -130,7 +137,7 @@ function initialState(data: PublicRuncty): DemoState {
       seconds: 0,
       km: 0,
       count: 3,
-      time: '19:00',
+      time,
       date,
     },
   }
