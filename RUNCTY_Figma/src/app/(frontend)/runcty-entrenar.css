@@ -133,3 +133,19 @@ html, body { overscroll-behavior: none; }
 .runcty-app .training-prepare-map > .live-cartography { height: 100%; }
 .runcty-app .record-sheet { flex: none; padding-bottom: 20px; }
 .runcty-app .route-picker-text strong { display: -webkit-box; overflow: hidden; white-space: normal; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+
+/* Teléfono real: la página queda fija y solo se desplaza el contenido de la app. */
+@media (max-width: 520px), (hover: none) and (pointer: coarse) and (max-height: 520px) {
+  html:has(.mobile-stage), html:has(.mobile-stage) body { height: 100%; min-height: 0; overflow: hidden; }
+  .runcty-app .mobile-stage { position: fixed; inset: 0; min-height: 0; overflow: hidden; }
+  .runcty-app .mobile-stage :is(.phone-container, .phone-frame) { height: 100%; }
+}
+
+/* Mapa en el teléfono: crédito en una línea y botones sin encimarse. */
+.runcty-app .leaflet-container .leaflet-control-attribution { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.runcty-app .phone-frame .safety-legend { bottom: 26px; }
+.runcty-app .phone-frame .floating-create { bottom: 80px; }
+.runcty-app .phone-frame .explore-map .map-activate { left: auto; right: 60px; bottom: 80px; transform: none; padding: 0 14px; }
+@media (max-width: 359px) {
+  .runcty-app .phone-frame .explore-map .map-activate { bottom: 132px; }
+}

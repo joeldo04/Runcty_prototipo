@@ -107,6 +107,8 @@ export default function SafetyMap(props: Props) {
       markerZoomAnimation: false,
     })
     map.current = m
+    // Sin prefijo: el crédito del mapa cabe en una sola línea.
+    m.attributionControl?.setPrefix(false)
     if (!props.preview && window.matchMedia('(pointer: coarse)').matches) setTouchDevice(true)
     // Real pannable map background. Overlays and local geometry still work if tiles fail.
     // Mapa base de MapLibre con OpenFreeMap: gratuito y sin clave.
