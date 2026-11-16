@@ -149,3 +149,9 @@ html, body { overscroll-behavior: none; }
 @media (max-width: 359px) {
   .runcty-app .phone-frame .explore-map .map-activate { bottom: 132px; }
 }
+
+/* Panel: tarjeta del club con su logo y el rosa de Gacelas. */
+.runcty-app .club-card { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid rgb(229 25 125 / 45%); border-radius: 16px; background: linear-gradient(135deg, rgb(229 25 125 / 22%), rgb(229 25 125 / 6%)); }
+.runcty-app .club-card img { flex: none; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #e5197d; }
+.runcty-app .club-card strong { display: block; font-size: 14px; line-height: 1.25; color: #fff; }
+.runcty-app .club-card span { display: block; margin-top: 2px; font-size: 12px; color: #ffc2de; }

@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
+import gacelasLogo from '../../../../../imagenes/gacelas_logo.webp'
 import { useRouter } from 'next/navigation'
 import { Activity, ChevronDown, ChevronRight, CircleUserRound, Clock3, GraduationCap, Home, LogOut, Map, MapPin, Megaphone, MessageSquare, Route, Shield, ShieldAlert, Smartphone, Sparkles, Users } from 'lucide-react'
 import { ClubAdmin, SystemAdmin } from './Admin'
@@ -101,7 +103,7 @@ export default function DemoAdmin() {
     <div className="mx-auto grid max-w-[1600px] lg:grid-cols-[260px_minmax(0,1fr)]">
       <aside className={`demo-admin-menu ${menu ? 'menu-open' : ''} border-b border-line px-4 py-6 lg:border-r lg:border-b-0`}>
         <button type="button" className="demo-admin-toggle lg:hidden" aria-expanded={menu} onClick={() => setMenu(!menu)}><span>Módulos de gestión<strong>{pageLabel}</strong></span><ChevronDown /></button>
-        <div className="demo-admin-profile mb-6 rounded-xl border border-electric/25 bg-electric/10 p-4"><span className="text-xs text-muted">PERFIL SIMULADO</span><strong className="mt-2 block text-sm">{isSystem ? 'Administración del sistema' : 'Gestión del club'}</strong><p className="mt-2 text-xs leading-5 text-muted">Los permisos reales se aplican en el servidor.</p></div>
+        <div className="demo-admin-profile club-card mb-6"><Image src={gacelasLogo} alt="Logo de Gacelas Running Team" width={52} height={52} /><div><strong>Gacelas Running Team</strong><span>{isSystem ? 'Administración del sistema' : 'Gestión del club'}</span></div></div>
         <nav aria-label="Módulos administrativos" className="grid gap-6 sm:grid-cols-3 lg:grid-cols-1">{visibleGroups.map(group => <div key={group.name}><h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-muted">{group.name}</h2><div className="space-y-1">{group.items.map(({ id, label, icon: Icon }) => <button key={id} data-tour={`admin-${id}`} onClick={() => go(id)} aria-current={page === id ? 'page' : undefined} className={'flex min-h-11 w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm ' + (page === id ? 'border-electric/30 bg-electric/15 text-copy' : 'border-transparent text-muted hover:bg-raised')}><Icon className="size-4 shrink-0 text-sport" /><span className="min-w-0 flex-1">{label}</span>{id === 'proposals' && state.customRoutes.some(r => r.status === 'Pendiente') && <span className="rounded-full bg-sport px-2 text-xs text-ink">{state.customRoutes.filter(r => r.status === 'Pendiente').length}</span>}{id === 'moderate' && state.incidents.some(i => i.status === 'Pendiente') && <span className="rounded-full bg-sport px-2 text-xs text-ink">{state.incidents.filter(i => i.status === 'Pendiente').length}</span>}</button>)}</div></div>)}</nav>
         <p className="demo-admin-note mt-7 border-t border-line px-3 pt-5 text-xs leading-6 text-muted">Las rutas comunitarias se aprueban o rechazan únicamente desde esta experiencia web.</p>
       </aside>

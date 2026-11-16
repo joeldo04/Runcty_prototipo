@@ -437,11 +437,15 @@ export function DemoProvider({
     const known = current.users.length ? current.users : DEMO_USERS
     // Solo crear cuenta trae nombre, aunque esté vacío: siempre nace como corredor.
     const created = chosenName !== undefined
-    const fresh: DemoUser | null = created
-      ? { id: uid(), name: chosenName || 'Corredor nuevo', role: 'corredor', active: true, admin: false }
+    // Solo se conserva una cuenta creada: repetir el nombre la reutiliza y otra la reemplaza.
+    const isCreated = (value: DemoUser) => value.id.startsWith('cuenta-')
+    const newName = chosenName || 'Corredor nuevo'
+    const existing = created ? known.find((value) => isCreated(value) && value.name === newName) : undefined
+    const fresh: DemoUser | null = created && !existing
+      ? { id: `cuenta-${uid()}`, name: newName, role: 'corredor', active: true, admin: false }
       : null
-    const users = fresh ? [...known, fresh] : known
-    const account = fresh ?? known.find((value) => value.id === (accountId ?? userRef.current?.id)) ?? DEMO_USERS[0]
+    const users = fresh ? [...known.filter((value) => !isCreated(value)), fresh] : known
+    const account = existing ?? fresh ?? known.find((value) => value.id === (accountId ?? userRef.current?.id)) ?? DEMO_USERS[0]
     const sameAccount = wasDemo && userRef.current?.id === account.id
     const name = chosenName || (sameAccount ? current.profile.name : account.name)
     accept(

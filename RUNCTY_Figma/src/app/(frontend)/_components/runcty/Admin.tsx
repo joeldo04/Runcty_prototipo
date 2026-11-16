@@ -1441,7 +1441,7 @@ export function SystemAdmin({ page }: { page: string }) {
       <PageTitle
         eyebrow="ACCESO RESTRINGIDO · SISTEMA"
         title="Gestión de usuarios."
-        subtitle={isDemo ? 'Una cuenta puede ser corredor y administrador. Da o quita el rol de administrador; esta demo no cambia cuentas reales.' : 'Cuentas de la aplicación. Las acciones sensibles requieren confirmación; los roles se asignan desde Payload.'}
+        subtitle={isDemo ? 'Una cuenta puede ser corredor y administrador. Da o quita el rol de administrador.' : 'Cuentas de la aplicación. Las acciones sensibles requieren confirmación; los roles se asignan desde Payload.'}
       />
       <div className="route-filters">
         <div className="search-box">
