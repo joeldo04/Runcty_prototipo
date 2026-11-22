@@ -352,16 +352,14 @@ html, body { overscroll-behavior: none; }
 .runcty-app .home-route-text { display: flex; flex: 1; flex-direction: column; gap: 3px; min-width: 0; }
 .runcty-app .home-route-text strong { display: -webkit-box; overflow: hidden; font-size: 15px; font-weight: 750; line-height: 1.25; color: var(--color-copy); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .runcty-app .home-route-text small { font-size: 13px; color: var(--color-muted); }
-.runcty-app .safety-chip { display: inline-flex; flex: none; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
-.runcty-app .safety-chip i { width: 8px; height: 8px; border-radius: 50%; }
-.runcty-app .safety-chip.high { background: #E6F4EC; color: #12703E; }
-.runcty-app .safety-chip.high i { background: #17834A; }
-.runcty-app .safety-chip.medium { background: #FEF3DC; color: #8A5A00; }
-.runcty-app .safety-chip.medium i { background: #F2A20C; }
-.runcty-app .safety-chip.low { background: #FBE8E6; color: #B42318; }
-.runcty-app .safety-chip.low i { background: #D93A2B; }
-.runcty-app .safety-chip.none { background: #EEEFF1; color: #5B6068; }
-.runcty-app .safety-chip.none i { background: #8A8F98; }
+/* Condiciones con color sólido y texto legible en la lista, el catálogo y el detalle. */
+.runcty-app :is(.safety-chip, .route-condition) { border: 0; font-weight: 750; }
+.runcty-app .safety-chip { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 28px; padding: 5px 9px; border-radius: 999px; font-size: 12px; line-height: 1.25; white-space: nowrap; }
+.runcty-app .safety-chip i { flex: none; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.runcty-app :is(.safety-chip, .route-condition).high { background: var(--color-safe); color: #fff; }
+.runcty-app :is(.safety-chip, .route-condition).medium { background: var(--color-caution); color: #4A2C00; }
+.runcty-app :is(.safety-chip, .route-condition).low { background: var(--color-risk); color: #fff; }
+.runcty-app :is(.safety-chip, .route-condition).none { background: #EEEFF1; color: #5B6068; }
 .runcty-app .home-route-arrow { flex: none; width: 18px; height: 18px; color: var(--color-muted); }
 
 /* El resto del inicio con el mismo margen de 16 px. */
@@ -371,16 +369,16 @@ html, body { overscroll-behavior: none; }
 .runcty-app .explore-mobile .places-section { padding-inline: 16px; }
 .runcty-app .explore-mobile .club-link-strip { width: calc(100% - 32px); margin-inline: 16px; }
 
-/* Barra inferior: Entrenar al centro como botón circular elevado de 56 px. */
-.runcty-app .phone-frame .mobile-nav { align-items: flex-end; overflow: visible; min-height: 68px; padding: 6px 6px max(6px, env(safe-area-inset-bottom)); border-top: 1px solid var(--color-line); background: #fff; box-shadow: 0 -4px 16px rgb(26 20 24 / 5%); }
-.runcty-app .phone-frame .mobile-nav > button { flex: 1; min-height: 54px; gap: 4px; padding: 6px 2px; border-radius: 14px; background: transparent; font-size: 12px; font-weight: 600; color: var(--color-muted); }
+/* Barra inferior: iconos centrados y etiquetas alineadas; Entrenar destaca por el color. */
+.runcty-app .phone-frame .mobile-nav { align-items: center; overflow: hidden; min-height: 68px; padding: 4px 6px max(6px, env(safe-area-inset-bottom)); border-top: 1px solid var(--color-line); background: #fff; box-shadow: none; }
+.runcty-app .phone-frame .mobile-nav > button { display: grid; flex: 1; grid-template-rows: 40px 16px; align-items: center; justify-items: center; align-content: center; justify-content: center; min-height: 58px; gap: 2px; padding: 0 2px; border-radius: 14px; background: transparent; font-size: 12px; font-weight: 600; line-height: 16px; color: var(--color-muted); }
 .runcty-app .phone-frame .mobile-nav > button::before { display: none; }
 .runcty-app .phone-frame .mobile-nav > button > svg { width: 22px; height: 22px; }
 .runcty-app .phone-frame .mobile-nav > button.active { background: var(--color-primary-soft); color: var(--color-primary); }
-.runcty-app .phone-frame .mobile-nav > button:nth-child(3), .runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { justify-content: flex-end; padding-top: 0; background: transparent; }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3), .runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { background: transparent; }
 .runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { color: var(--color-primary); }
-.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > svg { box-sizing: border-box; width: 56px; height: 56px; margin-top: -30px; padding: 14px; border: 4px solid #fff; border-radius: 50%; background: var(--color-primary); color: #fff; box-shadow: 0 8px 20px rgb(209 16 111 / 35%); stroke-width: 2.4; }
-.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > i { top: -28px; right: calc(50% - 30px); width: 12px; height: 12px; border: 2px solid #fff; background: var(--color-safe); }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > svg { box-sizing: border-box; width: 40px; height: 40px; margin: 0; padding: 9px; border: 0; border-radius: 50%; background: var(--color-primary); color: #fff; box-shadow: none; stroke-width: 2.4; }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > i { top: 5px; right: calc(50% - 20px); width: 8px; height: 8px; border: 0; background: var(--color-safe); }
 @media (hover: none) {
   .runcty-app .phone-frame .mobile-nav > button:not(.active):hover { background: transparent; }
 }
