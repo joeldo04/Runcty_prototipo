@@ -2,7 +2,7 @@
    Does NOT replace the existing application, layout, Leaflet map or CMS.
    Imported after Tailwind + main styles + recovery. */
 @layer utilities {
-  .runcty-app { --brand-blue: #D1106F; --brand-orange: #D1106F; --brand-violet:#E6197F; }
+  .runcty-app { --brand-blue: #2563EB; --brand-orange: #D1106F; --brand-violet:#7C3AED; }
 }
 /* Accessible, non-overflowing baseline */
 .runcty-app { background:var(--color-ink); color:var(--color-copy); }
@@ -666,7 +666,7 @@
   color-scheme: dark;
   --color-ink: #140A11; --color-shell: #1A0D16; --color-panel: #22121C; --color-raised: #2E1826; --color-line: #3A2431;
   --color-lilac: #FF4FA3; --color-info: #FF4FA3; --color-accent: #FF4FA3; --color-sport-ink: #FF8CC6; --color-primary-soft: #3A1530;
-  --color-copy: #F5EEF3; --color-muted: #BFAFB9; --color-dim: #A6949F; --color-safe: #4FD08A; --color-safe-ink: #4FD08A; --color-caution: #F2A20C; --color-caution-ink: #F7C04A; --color-risk: #FF8A7E; --color-risk-ink: #FF8A7E;
+  --color-copy: #F5EEF3; --color-muted: #BFAFB9; --color-dim: #A6949F; --color-safe: #4FD08A; --color-safe-ink: #4FD08A; --color-caution: #FACC15; --color-caution-ink: #F7C04A; --color-risk: #FF8A7E; --color-risk-ink: #FF8A7E;
   color: var(--color-copy);
 }
 .runcty-app .sidebar { border-color: #3A2431; }
@@ -720,7 +720,8 @@
 /* Ajustes de contraste sobre fondo claro: mismos colores de marca, un tono más firmes en texto. */
 .runcty-app .button-orange, .runcty-app .weekly-empty button { border-color: #D1106F; background: #D1106F; color: #fff; }
 .runcty-app .button-orange:hover, .runcty-app .weekly-empty button:hover { background: #A50D58; }
-.runcty-app .button-primary, .runcty-app .time-slots > button.selected, .runcty-app .drawing-hint { background: #D1106F; }
+.runcty-app .button-primary, .runcty-app .drawing-hint { background: var(--color-primary); }
+.runcty-app .time-slots > button.selected { border-color: var(--color-info); background: var(--color-info); color: #fff; box-shadow: 0 4px 12px rgb(37 99 235 / 18%); }
 .runcty-app .eyebrow .gacelas-brand { color: #A50D58; }
 .runcty-app h1 .text-sport { color: #D1106F; }
 .runcty-app .demo-admin-menu .bg-sport { background: #A50D58; color: #fff; }
@@ -816,8 +817,8 @@
 /* Armonía de color: azul noche y azul estructuran, naranja es la acción deportiva,
    rosa queda para el GPS y Gacelas, violeta para la ruta guía. */
 .runcty-app .mobile-nav > button:nth-child(3) > svg { background: #D1106F; color: #fff; stroke-width: 2.8; }
-.runcty-app .mobile-intro h1 > span { color: #D1106F; }
-.runcty-app .tabs > button.active { border-color: #D1106F; color: var(--color-accent); }
+.runcty-app .mobile-intro h1 > span { color: var(--color-purple); }
+.runcty-app .tabs > button.active { border-color: var(--color-purple); color: var(--color-accent); }
 .runcty-app .demo-tag > span { background: #D1106F; }
 .runcty-app .explore-hero h1 .text-lilac { color: #FF4FA3; }
 .runcty-app .distance-numeral small { color: #FF4FA3; }

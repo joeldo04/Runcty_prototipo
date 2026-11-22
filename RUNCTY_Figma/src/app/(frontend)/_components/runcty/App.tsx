@@ -47,6 +47,7 @@ import { PublicHome } from './PublicHome'
 import { ClubAdmin, SystemAdmin } from './Admin'
 import NewsCenter from './NewsCenter'
 import Training from './Training'
+import EntryAnnouncement from './EntryAnnouncement'
 import { Tour, useTour, type TourStep } from './Tour'
 import type { RunctySession } from '@/lib/runcty-queries'
 import { paths, clubPages, systemPages, privatePages } from './navigation'
@@ -800,15 +801,20 @@ export default function App({
   initialRoute?: RouteData
   initialSession?: RunctySession
 }) {
-  const { hydrateSession } = useDemo()
+  const { hydrateSession, state } = useDemo()
   useEffect(() => {
     if (initialSession) hydrateSession(initialSession.data, initialSession.user)
   }, [initialSession, hydrateSession])
   return (
-    <Product
-      initialExperience={initialExperience}
-      initialPage={initialPage}
-      initialRoute={initialRoute}
-    />
+    <>
+      <Product
+        initialExperience={initialExperience}
+        initialPage={initialPage}
+        initialRoute={initialRoute}
+      />
+      <EntryAnnouncement
+        enabled={initialPage === 'explore' && !['running', 'paused', 'survey'].includes(state.session.phase)}
+      />
+    </>
   )
 }

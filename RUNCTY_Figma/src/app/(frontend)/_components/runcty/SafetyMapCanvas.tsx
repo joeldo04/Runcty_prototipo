@@ -654,7 +654,7 @@ export default function SafetyMap(props: Props) {
       <div className="safety-legend" data-tour="map-legend">
         <span>
           <i className="high" />
-          Favorables
+          Recomendado
         </span>
         <span>
           <i className="medium" />

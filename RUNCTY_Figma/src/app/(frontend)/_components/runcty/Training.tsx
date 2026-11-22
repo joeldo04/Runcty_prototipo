@@ -70,7 +70,7 @@ import { Security, SosButton, shareValid } from './security'
 import { SHOW_FUTURE } from './features'
 
 const conditionLabels: Record<string, string> = {
-  high: 'Favorables',
+  high: 'Recomendado',
   medium: 'Atención',
   low: 'Precaución',
   none: 'Sin datos',

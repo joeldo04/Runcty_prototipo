@@ -1,0 +1,78 @@
+/* Invitación de entrada: afiche completo y cierre violeta fuera de la esquina. */
+.runcty-app .entry-announcement .modal-backdrop {
+  z-index: 3000;
+  padding: 32px 24px;
+  background: rgb(15 10 35 / 78%);
+  backdrop-filter: blur(6px);
+}
+.runcty-app .entry-announcement .modal {
+  width: max-content;
+  max-width: calc(100vw - 48px);
+  max-height: none;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  border-radius: 18px;
+  background: transparent;
+  box-shadow: none;
+}
+.runcty-app .entry-announcement .modal > h2 {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.runcty-app .entry-announcement-image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: min(480px, calc(100vw - 48px));
+  max-height: calc(100dvh - 112px);
+  margin: 0 auto;
+  border-radius: 16px;
+  object-fit: contain;
+  box-shadow: 0 20px 64px rgb(0 0 0 / 32%);
+}
+.runcty-app .entry-announcement .modal > .icon-button {
+  position: absolute;
+  top: -18px;
+  right: -14px;
+  z-index: 2;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-purple);
+  color: #fff;
+  box-shadow: 0 6px 20px rgb(124 58 237 / 35%);
+}
+.runcty-app .entry-announcement .modal > .icon-button:hover {
+  background: #6D28D9;
+}
+.runcty-app .entry-announcement .modal > .icon-button:focus-visible {
+  outline: 3px solid #fff;
+  outline-offset: 3px;
+}
+.runcty-app .entry-announcement .modal > .icon-button > svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.5;
+}
+.runcty-app .entry-announcement .modal > .entry-announcement-caption {
+  margin: 12px 0 0;
+  color: #EDE9FE;
+  font-size: 12px;
+  line-height: 1.4;
+  text-align: center;
+}
+@media (prefers-reduced-motion: reduce) {
+  .runcty-app .entry-announcement .modal {
+    animation: none;
+  }
+}

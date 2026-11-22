@@ -6,6 +6,7 @@
 @import './runcty-tour.css';
 @import './runcty-avisos.css';
 @import './runcty-entrenar.css';
+@import './runcty-campaign.css';
 
 .figma-custom-code-fragment {
   display: contents;

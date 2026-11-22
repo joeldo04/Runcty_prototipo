@@ -152,12 +152,12 @@ export const safety = (score: number | null | undefined) =>
   score == null
     ? { label: 'Sin datos', color: 'var(--safety-none)', key: 'none' }
     : score >= 70
-      ? { label: 'Condiciones favorables', color: 'var(--safety-high)', key: 'high' }
+      ? { label: 'Recomendado', color: 'var(--safety-high)', key: 'high' }
       : score >= 40
         ? { label: 'Atención', color: 'var(--safety-medium)', key: 'medium' }
         : { label: 'Precaución', color: 'var(--safety-low)', key: 'low' }
 export const colorHex = (score: number | null | undefined) =>
-  score == null ? '#8A8F98' : score >= 70 ? '#17834A' : score >= 40 ? '#F2A20C' : '#D93A2B'
+  score == null ? '#8A8F98' : score >= 70 ? '#17834A' : score >= 40 ? '#FACC15' : '#D93A2B'
 export const distance = (a: Coordinate, b: Coordinate) => {
   const rad = Math.PI / 180,
     lat = (b[0] - a[0]) * rad,

@@ -118,7 +118,7 @@ function ConditionsCard() {
 
 // Fila de ruta recomendada: miniatura, datos y nivel de seguridad de un vistazo.
 const chipLabels: Record<string, string> = {
-  high: 'Favorable',
+  high: 'Recomendado',
   medium: 'Atención',
   low: 'Precaución',
   none: 'Sin datos',
