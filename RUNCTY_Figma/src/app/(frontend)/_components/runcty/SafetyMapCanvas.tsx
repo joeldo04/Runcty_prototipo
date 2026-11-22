@@ -418,15 +418,17 @@ export default function SafetyMap(props: Props) {
     group.clearLayers()
     const geometry = props.route?.geometry ?? props.points ?? []
     if (geometry.length > 1) {
+      // Ruta prevista en vino de marca: no se confunde con el índice ni con "Tu recorrido" (magenta).
+      const routeColor = mapColor('brand-wine') || '#5A0E3D'
       L.polyline(geometry, {
-        color: mapColor('neon'),
+        color: routeColor,
         weight: 11,
         opacity: 0.35,
         lineCap: 'round',
         interactive: false,
       }).addTo(group)
       const selected = L.polyline(geometry, {
-        color: mapColor('neon'),
+        color: routeColor,
         weight: props.guide ? 3 : 5,
         opacity: 1,
         lineCap: 'round',
@@ -472,7 +474,7 @@ export default function SafetyMap(props: Props) {
     }
     if (props.track && props.track.length > 1)
       L.polyline(props.track, {
-        color: '#F72585',
+        color: '#E6197F',
         weight: 5,
         className: 'recorded-route',
         lineCap: 'round',

@@ -14,6 +14,7 @@ import SafetyMap from './SafetyMap'
 import { BackButton, Button, DemoTag, EmptyState, Modal, PageTitle, Status } from './components'
 import { incidentTypes, publicIncidents, today, uid, type Coordinate, type Incident } from './data'
 import { useDemo } from './store'
+import { SHOW_FUTURE } from './features'
 
 export function Reports({
   mobile = false,
@@ -23,7 +24,8 @@ export function Reports({
   initialForm?: boolean
 }) {
   const { state } = useDemo(),
-    [tab, setTab] = useState('mine'),
+    // Sin "Mis reportes" en esta versión: la pantalla muestra el mapa de reportes aprobados.
+    [tab, setTab] = useState(SHOW_FUTURE ? 'mine' : 'map'),
     [creating, setCreating] = useState(initialForm),
     [detail, setDetail] = useState<Incident | null>(null)
   const mine = [...state.incidents]
@@ -42,14 +44,16 @@ export function Reports({
           Reportar incidente
         </Button>
       </PageTitle>
-      <div className="tabs">
-        <button className={tab === 'mine' ? 'active' : ''} onClick={() => setTab('mine')}>
-          Mis reportes <span>{mine.length}</span>
-        </button>
-        <button className={tab === 'map' ? 'active' : ''} onClick={() => setTab('map')}>
-          Reportes en el mapa <span>{publicIncidents(state.incidents).length}</span>
-        </button>
-      </div>
+      {SHOW_FUTURE && (
+        <div className="tabs">
+          <button className={tab === 'mine' ? 'active' : ''} onClick={() => setTab('mine')}>
+            Mis reportes <span>{mine.length}</span>
+          </button>
+          <button className={tab === 'map' ? 'active' : ''} onClick={() => setTab('map')}>
+            Reportes en el mapa <span>{publicIncidents(state.incidents).length}</span>
+          </button>
+        </div>
+      )}
       {tab === 'mine' ? (
         <>
           <div className="reports-summary">
@@ -187,14 +191,20 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
         <span className="eyebrow">GRACIAS POR TU APORTE</span>
         <h1>{pending ? 'Sincronizando tu reporte.' : syncError ? 'Tu reporte está pendiente de guardado.' : 'Recibimos tu reporte.'}</h1>
         <p>
-          {pending || syncError ? 'Comprueba el estado de sincronización antes de salir.' : <>Se guardó en Mis reportes con estado <strong>Pendiente</strong>.</>}
+          {pending || syncError ? (
+            'Comprueba el estado de sincronización antes de salir.'
+          ) : SHOW_FUTURE ? (
+            <>Se guardó en Mis reportes con estado <strong>Pendiente</strong>.</>
+          ) : (
+            <>Tu reporte quedó <strong>pendiente de revisión</strong> por el club.</>
+          )}
         </p>
         <div className="info-strip">
           <Shield />
           No se publica en el mapa hasta que el Club Gacelas lo apruebe desde la web.
         </div>
         <Button onClick={close}>
-          Ver mis reportes <ArrowRight />
+          {SHOW_FUTURE ? 'Ver mis reportes' : 'Volver a reportes'} <ArrowRight />
         </Button>
         <DemoTag />
       </div>

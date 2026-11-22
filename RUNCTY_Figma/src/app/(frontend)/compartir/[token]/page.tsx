@@ -1,5 +1,7 @@
 import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 import { connection } from 'next/server'
+import { SHOW_FUTURE } from '../../_components/runcty/features'
 import { getLiveShare } from '@/lib/runcty-queries'
 import { ContactView } from '../../_components/runcty/security'
 import Link from 'next/link'
@@ -11,6 +13,8 @@ export const metadata: Metadata = {
 }
 
 export default async function SharePage({ params }: { params: Promise<{ token: string }> }) {
+  // Compartir el recorrido en vivo no se entrega en esta versión.
+  if (!SHOW_FUTURE) notFound()
   await connection()
   const { token } = await params
   const share = await getLiveShare(token)

@@ -67,6 +67,7 @@ import ShareTraining from './ShareTraining'
 import TrainingSurvey, { feltUnsafe, isRouteRating, surveyQuestions } from './TrainingSurvey'
 import type { ShareCardData } from './shareCard'
 import { Security, SosButton, shareValid } from './security'
+import { SHOW_FUTURE } from './features'
 
 const conditionLabels: Record<string, string> = {
   high: 'Favorables',
@@ -309,7 +310,11 @@ export default function Training({
     return (
       <EmptyState
         title="Elige tu próximo recorrido"
-        description="Selecciona una ruta publicada o crea una ruta privada en el planificador para empezar."
+        description={
+          SHOW_FUTURE
+            ? 'Selecciona una ruta publicada o crea una ruta privada en el planificador para empezar.'
+            : 'Selecciona una ruta del club para empezar.'
+        }
       >
         <Button onClick={back}>
           Explorar rutas <ArrowRight />
@@ -338,9 +343,11 @@ export default function Training({
         <div className="summary-content" inert={surveying}>
           <div className="summary-topbar">
             <BackButton onClick={back}>Explorar</BackButton>
-            <IconButton label="Compartir entrenamiento" onClick={openShare}>
-              <Share2 />
-            </IconButton>
+            {SHOW_FUTURE && (
+              <IconButton label="Compartir entrenamiento" onClick={openShare}>
+                <Share2 />
+              </IconButton>
+            )}
           </div>
           <div className="summary-map">
             <SafetyMap
@@ -434,10 +441,12 @@ export default function Training({
             {state.trainings.some(({ id, pendingSync }) => id === session.finishedId && pendingSync) && (
               <span className="route-flag">Pendiente de sincronizar</span>
             )}
-            <Button variant="orange" className="full summary-share" onClick={openShare}>
-              <Share2 />
-              Compartir entrenamiento
-            </Button>
+            {SHOW_FUTURE && (
+              <Button variant="orange" className="full summary-share" onClick={openShare}>
+                <Share2 />
+                Compartir entrenamiento
+              </Button>
+            )}
             <section className="summary-safety" aria-label="Resumen de seguridad del recorrido">
               <div className="summary-safety-heading">
                 <h2>
@@ -445,27 +454,31 @@ export default function Training({
                 </h2>
                 <Score value={score.score} />
               </div>
-              <div className="safety-spectrum" aria-hidden="true">
-                {breakdown
-                  .filter(({ percent }) => percent > 0)
-                  .map(({ key, percent }) => (
-                    <span
-                      key={key}
-                      className={key}
-                      style={{ '--segment-share': percent } as React.CSSProperties}
-                    />
-                  ))}
-              </div>
-              <ul className="summary-safety-legend">
-                {breakdown
-                  .filter(({ percent }) => percent > 0)
-                  .map(({ key, percent }) => (
-                    <li key={key}>
-                      <i className={key} />
-                      {conditionLabels[key]} <strong>{percent} %</strong>
-                    </li>
-                  ))}
-              </ul>
+              {SHOW_FUTURE && (
+                <>
+                  <div className="safety-spectrum" aria-hidden="true">
+                    {breakdown
+                      .filter(({ percent }) => percent > 0)
+                      .map(({ key, percent }) => (
+                        <span
+                          key={key}
+                          className={key}
+                          style={{ '--segment-share': percent } as React.CSSProperties}
+                        />
+                      ))}
+                  </div>
+                  <ul className="summary-safety-legend">
+                    {breakdown
+                      .filter(({ percent }) => percent > 0)
+                      .map(({ key, percent }) => (
+                        <li key={key}>
+                          <i className={key} />
+                          {conditionLabels[key]} <strong>{percent} %</strong>
+                        </li>
+                      ))}
+                  </ul>
+                </>
+              )}
               <p>
                 Condiciones de la ruta para las {session.time}. Comprueba el entorno en tu próxima
                 salida.
@@ -508,18 +521,22 @@ export default function Training({
                 <RouteFeedbackCard route={route} open={() => setQuestionnaire(true)} />
               )
             )}
-            <Button
-              className="full"
-              variant={savedId ? 'secondary' : 'primary'}
-              onClick={() => save()}
-            >
-              {savedId ? <Check /> : <Save />}
-              {savedId ? 'Guardada como ruta privada' : 'Guardar como ruta privada'}
-            </Button>
-            <Button variant="secondary" className="full" onClick={() => setPrivacy(true)}>
-              <Users />
-              Proponer a la comunidad
-            </Button>
+            {SHOW_FUTURE && (
+              <>
+                <Button
+                  className="full"
+                  variant={savedId ? 'secondary' : 'primary'}
+                  onClick={() => save()}
+                >
+                  {savedId ? <Check /> : <Save />}
+                  {savedId ? 'Guardada como ruta privada' : 'Guardar como ruta privada'}
+                </Button>
+                <Button variant="secondary" className="full" onClick={() => setPrivacy(true)}>
+                  <Users />
+                  Proponer a la comunidad
+                </Button>
+              </>
+            )}
             {history && (
               <Button variant="secondary" className="full" onClick={history}>
                 Ver historial <ArrowRight />
@@ -658,7 +675,7 @@ export default function Training({
                 type="button"
                 className="dock-main dock-go"
                 data-tour="start-training"
-                onClick={() => (nearbyReports.length ? setWarning(true) : start())}
+                onClick={() => (SHOW_FUTURE && nearbyReports.length ? setWarning(true) : start())}
               >
                 <span>
                   <Play />
@@ -676,31 +693,53 @@ export default function Training({
         </>
       ) : (
         <>
-          <section className="recording-metrics">
+          <section className={`recording-metrics ${SHOW_FUTURE ? '' : 'recording-status'}`}>
             <span className="recording-state">
               <i className={session.phase === 'running' ? '' : 'is-paused'} />
               {completed
                 ? 'RUTA COMPLETADA'
                 : session.phase === 'running'
-                  ? 'EN MOVIMIENTO'
+                  ? SHOW_FUTURE ? 'EN MOVIMIENTO' : 'GRABANDO'
                   : 'EN PAUSA'}
             </span>
-            <strong className="distance-numeral">
-              {session.km.toFixed(2)}
-              <small>km</small>
-            </strong>
-            <div className="recording-secondary">
-              <span>
-                <strong>{formatTime(session.seconds)}</strong>Tiempo
-              </span>
-              <span>
-                <strong>
-                  {paceString}
-                  <small> /km</small>
+            {SHOW_FUTURE ? (
+              <>
+                <strong className="distance-numeral">
+                  {session.km.toFixed(2)}
+                  <small>km</small>
                 </strong>
-                Ritmo promedio
-              </span>
-            </div>
+                <div className="recording-secondary">
+                  <span>
+                    <strong>{formatTime(session.seconds)}</strong>Tiempo
+                  </span>
+                  <span>
+                    <strong>
+                      {paceString}
+                      <small> /km</small>
+                    </strong>
+                    Ritmo promedio
+                  </span>
+                </div>
+              </>
+            ) : (
+              // Distancia, tiempo y ritmo se muestran solo en el resumen final.
+              <div className={`recording-gps ${offline ? 'offline' : ''}`} role="status">
+                <span className="gps-bars" aria-hidden="true">
+                  <i />
+                  <i />
+                  <i />
+                  <i />
+                </span>
+                <div>
+                  <strong>{offline ? 'Sin señal GPS' : 'Señal GPS buena'}</strong>
+                  <small>
+                    {offline
+                      ? 'Sigues grabando. Los puntos se guardan al volver la señal.'
+                      : 'Verás distancia, tiempo y ritmo al terminar.'}
+                  </small>
+                </div>
+              </div>
+            )}
           </section>
           <div className="recording-map">
             <SafetyMap
@@ -730,17 +769,22 @@ export default function Training({
             </span>
           </div>
           <div className="record-dock recording-dock">
-            <button
-              type="button"
-              className="dock-side"
-              data-tour="share-live"
-              onClick={() => setSecurity(true)}
-            >
-              <span>
-                <Users />
-              </span>
-              {shareValid(state.sharing) ? 'Compartiendo' : 'Compartir'}
-            </button>
+            {SHOW_FUTURE ? (
+              <button
+                type="button"
+                className="dock-side"
+                data-tour="share-live"
+                onClick={() => setSecurity(true)}
+              >
+                <span>
+                  <Users />
+                </span>
+                {shareValid(state.sharing) ? 'Compartiendo' : 'Compartir'}
+              </button>
+            ) : (
+              // Mantiene Pausar centrado sin el botón de compartir.
+              <span className="dock-side dock-spacer" aria-hidden="true" />
+            )}
             {session.phase === 'running' ? (
               <button type="button" className="dock-main dock-go" onClick={() => setPhase('paused')}>
                 <span>
@@ -784,7 +828,12 @@ export default function Training({
             {allRoutes
               .filter(
                 (r) =>
-                  r.geometry.length > 1 && r.km > 0 && (r.owned || !r.private || r.status === 'Aprobado'),
+                  r.geometry.length > 1 &&
+                  r.km > 0 &&
+                  // Esta versión solo entrena rutas del club: oficiales o publicadas por el club.
+                  (SHOW_FUTURE
+                    ? r.owned || !r.private || r.status === 'Aprobado'
+                    : !r.owned && (!r.private || r.status === 'Aprobado')),
               )
               .map((r) => (
                 <button
@@ -796,7 +845,8 @@ export default function Training({
                   <span>
                     <strong>{r.name}</strong>
                     <small>
-                      {r.km.toFixed(1)} km · {r.min} min{r.owned ? ' · Mi ruta' : ''}
+                      {r.km.toFixed(1)} km · {r.min} min
+                      {SHOW_FUTURE && r.owned ? ' · Mi ruta' : r.official ? ' · Oficial Gacelas' : ''}
                     </small>
                     {r.alert && <span className="route-flag danger">No recomendado</span>}
                   </span>
@@ -851,7 +901,11 @@ export default function Training({
             <div>
               <strong>RUNCTY está grabando</strong>
               <p>
-                {formatTime(session.seconds)} · {session.km.toFixed(2)} km
+                {SHOW_FUTURE
+                  ? `${formatTime(session.seconds)} · ${session.km.toFixed(2)} km`
+                  : session.phase === 'running'
+                    ? 'Grabando tu recorrido'
+                    : 'Entrenamiento en pausa'}
               </p>
             </div>
           </div>

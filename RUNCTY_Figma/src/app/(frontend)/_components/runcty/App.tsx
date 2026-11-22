@@ -50,8 +50,12 @@ import Training from './Training'
 import { Tour, useTour, type TourStep } from './Tour'
 import type { RunctySession } from '@/lib/runcty-queries'
 import { paths, clubPages, systemPages, privatePages } from './navigation'
+import { SHOW_FUTURE } from './features'
 
 type Experience = 'selector' | 'web' | 'mobile'
+// Solo se listan los módulos que se entregan en esta versión.
+const delivered = <T extends { id: string }>(items: T[]) =>
+  items.filter(({ id }) => SHOW_FUTURE || !['myroutes', 'proposals', 'stats', 'clubinfo', 'parameters'].includes(id))
 const publicNavigation = [
   { id: 'explore', label: 'Explorar', icon: Home },
   { id: 'map', label: 'Mapa de seguridad', icon: Map },
@@ -59,7 +63,7 @@ const publicNavigation = [
   { id: 'spaces', label: 'Espacios recomendados', icon: MapPin },
   { id: 'club', label: 'Club Gacelas', icon: Users },
 ]
-const runnerNavigation = [
+const runnerNavigation = delivered([
   { id: 'explore', label: 'Explorar', icon: Home },
   { id: 'map', label: 'Mapa de seguridad', icon: Map },
   { id: 'routes', label: 'Rutas', icon: Route },
@@ -70,8 +74,8 @@ const runnerNavigation = [
   { id: 'security', label: 'Seguridad', icon: Shield },
   { id: 'profile', label: 'Mi perfil', icon: CircleUserRound },
   { id: 'club', label: 'Club Gacelas', icon: Users },
-]
-const clubNavigation = [
+])
+const clubNavigation = delivered([
   { id: 'clubhome', label: 'Resumen del club', icon: Home },
   { id: 'moderate', label: 'Reportes pendientes', icon: ShieldAlert },
   { id: 'proposals', label: 'Rutas propuestas', icon: Route },
@@ -84,17 +88,17 @@ const clubNavigation = [
   { id: 'stats', label: 'Estadísticas', icon: Activity },
   { id: 'moderationlog', label: 'Historial de moderación', icon: HistoryIcon },
   { id: 'clubinfo', label: 'Información del club', icon: Users },
-]
+])
 const mapSteps: TourStep[] = [
   { id: 'map', target: 'map', title: 'Mapa de condiciones', text: 'Los tramos se colorean según sus condiciones. Toca uno para ver por qué.' },
   { id: 'legend', target: 'map-legend', title: 'Leyenda', text: 'Verde favorable, amarillo atención, rojo precaución. Es referencial, no garantiza tu seguridad.' },
   { id: 'time', target: 'time', title: 'Hora de consulta', text: 'Las condiciones cambian según la hora. Prueba otro horario.' },
 ]
-const systemNavigation = [
+const systemNavigation = delivered([
   { id: 'users', label: 'Usuarios', icon: Users },
   { id: 'cities', label: 'Ciudades y red vial', icon: Map },
   { id: 'parameters', label: 'Parámetros de seguridad', icon: Settings2 },
-]
+])
 
 function Selector({ enter }: { enter: (e: Experience) => void }) {
   return <PublicHome enter={enter} />
@@ -182,7 +186,7 @@ function WebApp({
     setSelected(initialRoute ?? null)
     setMenu(false)
   }, [initialRoute, initialPage])
-  const tour = useTour(state.newAccount && page === 'explore')
+  const tour = useTour(SHOW_FUTURE && state.newAccount && page === 'explore')
   const closeTour = () => {
     tour.close()
     setMenu(false)
@@ -269,7 +273,6 @@ function WebApp({
             >
               <Icon />
               <span>{label}</span>
-              {id === 'planner' && <em className="soon-badge">Próxima versión</em>}
               {id === 'moderate' && state.incidents.some((i) => i.status === 'Pendiente') && (
                 <b>{state.incidents.filter((i) => i.status === 'Pendiente').length}</b>
               )}
@@ -280,7 +283,11 @@ function WebApp({
           {role === 'visitante' ? (
             <div className="guest-invite">
               <span>Tu próximo paso.</span>
-              <p>Guarda tus rutas y continúa desde cualquier dispositivo.</p>
+              <p>
+                {SHOW_FUTURE
+                  ? 'Guarda tus rutas y continúa desde cualquier dispositivo.'
+                  : 'Registra tus entrenamientos y continúa desde cualquier dispositivo.'}
+              </p>
               <Button onClick={openAccount}>
                 Iniciar sesión <ArrowRight />
               </Button>
@@ -355,9 +362,11 @@ function WebApp({
               <Smartphone />
               <span>Vista móvil</span>
             </button>
-            <IconButton label="Notificaciones" onClick={() => setNotification(true)}>
-              <Bell />
-            </IconButton>
+            {SHOW_FUTURE && (
+              <IconButton label="Notificaciones" onClick={() => setNotification(true)}>
+                <Bell />
+              </IconButton>
+            )}
             {isDemo && user?.role === 'corredor' && state.users.some((u) => u.id === user.id && isAdminUser(u)) && (
               <Link className="role-switch" href="/demo/administracion" aria-label="Cambiar a modo administrador">
                 <Shield /><span>Modo administrador</span>
@@ -427,7 +436,7 @@ function WebApp({
           ) : role === 'sistema' ? (
             <SystemAdmin page={page} />
           ) : (
-            <MainScreen page={page} open={open} go={go} run={setHandoff} />
+            <MainScreen page={page} open={open} go={go} run={setHandoff} signedOut={() => router.push('/')} />
           )}
         </main>
         <footer className="web-footer">
@@ -451,7 +460,7 @@ function WebApp({
           }}
         />
       )}
-      {notification && <NewsCenter close={() => setNotification(false)} go={go} />}
+      {SHOW_FUTURE && notification && <NewsCenter close={() => setNotification(false)} go={go} />}
       {tour.open && <Tour label="Tutorial de RUNCTY" steps={webSteps} onClose={closeTour} />}
     </div>
   )
@@ -460,7 +469,7 @@ function WebApp({
 // Alto del dispositivo (852 de pantalla + bisel) y espacio de la barra de presentación.
 const PHONE_HEIGHT = 866
 const PHONE_CHROME = 84
-const mobileTabs = ['explore', 'myroutes', 'reports', 'profile']
+const mobileTabs = ['explore', SHOW_FUTURE ? 'myroutes' : 'routes', 'reports', 'profile']
 const mobileTitles: Record<string, string> = {
   club: 'CLUB GACELAS',
   history: 'MIS ENTRENAMIENTOS',
@@ -487,7 +496,7 @@ function MobileApp({
   const { state, user, isDemo, update, notify, openAccount, startDemo, logout } = useDemo(),
     all = useRoutes()
   const [entry, setEntry] = useState<'welcome' | 'login' | 'register'>('welcome')
-  useThemeColor(user ? '#f3f6fa' : '#0b1020')
+  useThemeColor(user ? '#F7F5F7' : '#2A0A1F')
   const [page, setPage] = useState(startPage),
     [selected, setSelected] = useState<RouteData | null>(
       startPage === 'explore' ? (initialRoute ?? null) : null,
@@ -505,15 +514,17 @@ function MobileApp({
   const resolved = selected ? (all.find((r) => r.id === selected.id) ?? selected) : null
   const scrollTop = () => document.querySelector('.mobile-scroll')?.scrollTo({ top: 0 })
   // Salir lleva a la bienvenida, igual que en la web y en el panel.
-  const exitAccount = async () => {
-    if (!(await logout())) return
+  const toWelcome = () => {
     setEntry('welcome')
     setPage('explore')
     setTrail([])
     setSelected(null)
   }
+  const exitAccount = async () => {
+    if (await logout()) toWelcome()
+  }
   const stage = useRef<HTMLDivElement>(null)
-  const tour = useTour(state.newAccount && page === 'explore' && !selected)
+  const tour = useTour(SHOW_FUTURE && state.newAccount && page === 'explore' && !selected)
   const beforeTour = useRef({ page, trail, selected, session: state.session, mode: state.draft.mode })
   useEffect(() => {
     if (tour.open) beforeTour.current = { page, trail, selected, session: state.session, mode: state.draft.mode }
@@ -590,7 +601,7 @@ function MobileApp({
       return
     }
     if (!route?.geometry.length || route.km <= 0) {
-      notify('Elige o crea una ruta antes de entrenar.')
+      notify(SHOW_FUTURE ? 'Elige o crea una ruta antes de entrenar.' : 'Elige una ruta antes de entrenar.')
       return
     }
     update((s) => ({
@@ -611,7 +622,9 @@ function MobileApp({
   }
   const nav = [
     { id: 'explore', label: 'Explorar', icon: Home },
-    { id: 'myroutes', label: 'Mis rutas', icon: Route },
+    SHOW_FUTURE
+      ? { id: 'myroutes', label: 'Mis rutas', icon: Route }
+      : { id: 'routes', label: 'Rutas', icon: Route },
     { id: 'train', label: 'Entrenar', icon: RunnerIcon },
     { id: 'reports', label: 'Reportes', icon: ShieldAlert },
     { id: 'profile', label: 'Perfil', icon: CircleUserRound },
@@ -649,9 +662,11 @@ function MobileApp({
                     : (mobileTitles[page] ?? '')}
                 </span>
                 <div>
-                  <IconButton label="Novedades" onClick={() => setNotification(true)}>
-                    <Bell />
-                  </IconButton>
+                  {SHOW_FUTURE && (
+                    <IconButton label="Novedades" onClick={() => setNotification(true)}>
+                      <Bell />
+                    </IconButton>
+                  )}
                   <IconButton label="Salir" onClick={exitAccount}>
                     <LogOut />
                   </IconButton>
@@ -660,7 +675,7 @@ function MobileApp({
             )}
             {!user ? (
               entry === 'welcome' ? <MobileWelcome login={() => setEntry('login')} register={() => setEntry('register')} /> :
-                <DemoAccess mobile createInitially={entry === 'register'} back={() => setEntry('welcome')} proceed={(accountId, _mode, name) => startDemo('corredor', accountId, name)} />
+                <DemoAccess mobile createInitially={entry === 'register'} back={() => setEntry('welcome')} proceed={(accountId, _mode, name, email) => startDemo('corredor', accountId, name, email)} />
             ) : adminOnly ? (
               <div className="mobile-padded">
                 <EmptyState
@@ -688,7 +703,8 @@ function MobileApp({
                 }}
                 go={go}
                 run={run}
-                tutorial={tour.start}
+                tutorial={SHOW_FUTURE ? tour.start : undefined}
+                signedOut={toWelcome}
               />
             )}
           </div>
@@ -702,7 +718,7 @@ function MobileApp({
                   className={
                     page === id ||
                     (id === 'explore' &&
-                      ['map', 'planner', 'routes', 'spaces', 'club', 'recommend'].includes(page)) ||
+                      ['map', 'planner', 'spaces', 'club', 'recommend', ...(SHOW_FUTURE ? ['routes'] : [])].includes(page)) ||
                     (id === 'profile' && ['history', 'security'].includes(page)) ||
                     (id === 'reports' && page === 'report')
                       ? 'active'
@@ -718,7 +734,7 @@ function MobileApp({
             </nav>
           )}
           <div className="android-gesture" />
-          {notification && <NewsCenter close={() => setNotification(false)} go={go} />}
+          {SHOW_FUTURE && notification && <NewsCenter close={() => setNotification(false)} go={go} />}
         </div>
       </div>
       {tour.open && (

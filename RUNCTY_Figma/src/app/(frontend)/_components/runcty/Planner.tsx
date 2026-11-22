@@ -26,6 +26,7 @@ import {
   type RouteData,
 } from './data'
 import { useDemo, useRoutes } from './store'
+import { SHOW_FUTURE } from './features'
 import {
   Button,
   EmptyState,
@@ -35,6 +36,16 @@ import {
   Score,
   TimeControl,
 } from './components'
+
+type PlannerMode = 'manual' | 'calculate' | 'recommend'
+const plannerModes = {
+  manual: { icon: Plus, label: 'Trazar manualmente' },
+  calculate: { icon: Navigation, label: 'Entre dos puntos' },
+  recommend: { icon: Sparkles, label: 'Recomendar rutas' },
+}
+const plannerOrder: PlannerMode[] = ['manual', 'calculate', 'recommend']
+// Esta versión entrega dos modos: primero la recomendación y, como extra, entre dos puntos.
+const deliveredOrder: PlannerMode[] = ['recommend', 'calculate']
 
 export default function Planner({
   mobile = false,
@@ -48,7 +59,11 @@ export default function Planner({
   const tabId = useId()
   const { state, user, update, notify, isDemo } = useDemo(),
     allRoutes = useRoutes()
-  const { draft } = state,
+  // Trazar a mano no se entrega en esta versión: ese modo se muestra como recomendación.
+  const draft =
+      !SHOW_FUTURE && state.draft.mode === 'manual'
+        ? { ...state.draft, mode: 'recommend' as const }
+        : state.draft,
     [animateKey, setAnimateKey] = useState(0),
     [calculated, setCalculated] = useState(false)
   const [desired, setDesired] = useState(5),
@@ -171,15 +186,13 @@ export default function Planner({
     <div className={`planner-screen ${mobile ? 'planner-mobile' : ''}`}>
       <PageTitle
         eyebrow="TU PRÓXIMO KILÓMETRO"
-        title={
-          <>
-            Crea tu ruta <span className="soon-badge">Próxima versión</span>
-          </>
-        }
+        title={SHOW_FUTURE ? 'Crea tu ruta' : 'Planificar ruta'}
         subtitle={
           mobile
             ? undefined
-            : 'Tres formas de encontrar un recorrido. Un mismo mapa para decidir mejor.'
+            : SHOW_FUTURE
+              ? 'Tres formas de encontrar un recorrido. Un mismo mapa para decidir mejor.'
+              : 'Dos formas de encontrar un recorrido. Un mismo mapa para decidir mejor.'
         }
       />
       <div className="mode-tabs planner-modes" role="tablist" aria-label="Modo del planificador" onKeyDown={event => {
@@ -190,43 +203,25 @@ export default function Planner({
         const next = event.key === 'Home' ? 0 : event.key === 'End' ? tabs.length - 1 : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length
         tabs[next]?.click(); tabs[next]?.focus()
       }}>
-        <button
-          role="tab"
-          id={`${tabId}-manual`}
-          aria-controls={`${tabId}-content`}
-          tabIndex={draft.mode === 'manual' ? 0 : -1}
-          aria-selected={draft.mode === 'manual'}
-          className={draft.mode === 'manual' ? 'active' : ''}
-          onClick={() => mode('manual')}
-        >
-          <Plus />
-          Trazar manualmente
-        </button>
-        <button
-          role="tab"
-          id={`${tabId}-calculate`}
-          aria-controls={`${tabId}-content`}
-          tabIndex={draft.mode === 'calculate' ? 0 : -1}
-          aria-selected={draft.mode === 'calculate'}
-          className={draft.mode === 'calculate' ? 'active' : ''}
-          onClick={() => mode('calculate')}
-        >
-          <Navigation />
-          Entre dos puntos
-        </button>
-        <button
-          role="tab"
-          id={`${tabId}-recommend`}
-          data-tour="recommend"
-          aria-controls={`${tabId}-content`}
-          tabIndex={draft.mode === 'recommend' ? 0 : -1}
-          aria-selected={draft.mode === 'recommend'}
-          className={draft.mode === 'recommend' ? 'active' : ''}
-          onClick={() => mode('recommend')}
-        >
-          <Sparkles />
-          Recomendar rutas
-        </button>
+        {(SHOW_FUTURE ? plannerOrder : deliveredOrder).map((id) => {
+          const { icon: Icon, label } = plannerModes[id]
+          return (
+            <button
+              key={id}
+              role="tab"
+              id={`${tabId}-${id}`}
+              data-tour={id === 'recommend' ? 'recommend' : undefined}
+              aria-controls={`${tabId}-content`}
+              tabIndex={draft.mode === id ? 0 : -1}
+              aria-selected={draft.mode === id}
+              className={draft.mode === id ? 'active' : ''}
+              onClick={() => mode(id)}
+            >
+              <Icon />
+              {label}
+            </button>
+          )
+        })}
       </div>
       <div className="planner-layout" role="tabpanel" id={`${tabId}-content`} aria-labelledby={`${tabId}-${draft.mode}`}>
         <section className="planner-map-area">
@@ -240,10 +235,12 @@ export default function Planner({
             showReports
           />
           <div className="map-bottom-tools">
-            <Button variant="secondary" onClick={example}>
-              <Route />
-              Usar ruta sugerida
-            </Button>
+            {SHOW_FUTURE && (
+              <Button variant="secondary" onClick={example}>
+                <Route />
+                Usar ruta sugerida
+              </Button>
+            )}
             <span>{state.roads.length ? `${state.roads.length} tramos disponibles · Loja` : 'Sin red vial publicada · trazado manual sin puntuación'}</span>
           </div>
           <SafetyNote />
@@ -251,7 +248,9 @@ export default function Planner({
         <aside className="planner-panel">
           <div className="planner-panel-heading">
             <span className="step-number">
-              {draft.mode === 'manual' ? '01' : draft.mode === 'calculate' ? '02' : '03'}
+              {SHOW_FUTURE
+                ? draft.mode === 'manual' ? '01' : draft.mode === 'calculate' ? '02' : '03'
+                : draft.mode === 'recommend' ? '01' : '02'}
             </span>
             <div>
               <h2>
@@ -344,10 +343,10 @@ export default function Planner({
               <label className="field">
                 Nivel
                 <select value={level} onChange={(e) => setLevel(e.target.value)}>
-                  <option>Todos</option>
-                  <option>Baja</option>
-                  <option>Media</option>
-                  <option>Alta</option>
+                  <option value="Todos">Todos los niveles</option>
+                  <option>Principiante</option>
+                  <option>Intermedio</option>
+                  <option>Avanzado</option>
                 </select>
               </label>
             </div>
@@ -445,14 +444,16 @@ export default function Planner({
                     </div>
                     <Score value={result.score} coverage={result.coverage} />
                   </div>
-                  <Button
-                    className="full"
-                    onClick={save}
-                    variant={savedId ? 'secondary' : 'primary'}
-                  >
-                    {savedId ? <Check /> : <Save />}
-                    {savedId ? 'Guardada en Mis rutas' : 'Guardar ruta'}
-                  </Button>
+                  {SHOW_FUTURE && (
+                    <Button
+                      className="full"
+                      onClick={save}
+                      variant={savedId ? 'secondary' : 'primary'}
+                    >
+                      {savedId ? <Check /> : <Save />}
+                      {savedId ? 'Guardada en Mis rutas' : 'Guardar ruta'}
+                    </Button>
+                  )}
                   <div className="result-actions">
                     <button
                       onClick={() =>

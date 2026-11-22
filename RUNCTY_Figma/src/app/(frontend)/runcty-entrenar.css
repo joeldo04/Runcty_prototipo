@@ -1,31 +1,31 @@
 /* Bienvenida: foto del club arriba; mensaje, beneficios y acciones juntos abajo. */
-.runcty-app .welcome-screen { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: 100%; overflow: hidden; background: #0b1020; color: #f8fafc; }
+.runcty-app .welcome-screen { position: relative; isolation: isolate; display: flex; flex-direction: column; min-height: 100%; overflow: hidden; background: #140A11; color: #F5EEF3; }
 .runcty-app .welcome-photo { position: absolute; inset: 0 0 auto; z-index: -1; height: 62%; -webkit-mask-image: linear-gradient(180deg, #000 52%, transparent 96%); mask-image: linear-gradient(180deg, #000 52%, transparent 96%); }
-.runcty-app .welcome-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(11 16 32 / 35%) 0%, rgb(11 16 32 / 0%) 22%); }
+.runcty-app .welcome-photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(20 10 17 / 35%) 0%, rgb(20 10 17 / 0%) 22%); }
 .runcty-app .welcome-top { display: flex; align-items: center; gap: 10px; padding: 16px 20px; }
-.runcty-app .welcome-top strong { font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: .05em; text-shadow: 0 1px 8px rgb(11 16 32 / 45%); }
+.runcty-app .welcome-top strong { font-family: var(--font-display); font-size: 22px; font-weight: 800; letter-spacing: .05em; text-shadow: 0 1px 8px rgb(20 10 17 / 45%); }
 .runcty-app .welcome-body { display: flex; flex-direction: column; gap: 14px; margin-top: auto; padding: 0 20px 18px; }
 .runcty-app .welcome-body h1 { font-family: var(--font-display); font-size: 42px; font-weight: 800; line-height: .94; letter-spacing: .005em; text-transform: uppercase; }
-.runcty-app .welcome-body h1 span { color: #ff8a5f; }
-.runcty-app .welcome-body > p { max-width: 300px; font-size: 15px; line-height: 1.45; color: #cbd5e1; }
+.runcty-app .welcome-body h1 span { color: #FF4FA3; }
+.runcty-app .welcome-body > p { max-width: 300px; font-size: 15px; line-height: 1.45; color: #D9CCD4; }
 .runcty-app .welcome-features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 2px 0 4px; }
-.runcty-app .welcome-features li { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; line-height: 1.3; text-align: center; color: #e2e8f0; }
-.runcty-app .welcome-features li > span { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 10%); border-radius: 12px; background: rgb(255 255 255 / 6%); color: #ff8a5f; }
+.runcty-app .welcome-features li { display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; line-height: 1.3; text-align: center; color: #EDE4EA; }
+.runcty-app .welcome-features li > span { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid rgb(255 255 255 / 10%); border-radius: 12px; background: rgb(255 255 255 / 6%); color: #FF4FA3; }
 .runcty-app .welcome-features svg { width: 20px; height: 20px; }
 .runcty-app .welcome-actions { display: flex; flex-direction: column; gap: 10px; }
-.runcty-app .welcome-actions .button-secondary { border-color: rgb(255 255 255 / 28%); background: transparent; color: #f8fafc; }
+.runcty-app .welcome-actions .button-secondary { border-color: rgb(255 255 255 / 28%); background: transparent; color: #F5EEF3; }
 .runcty-app .welcome-actions .button-secondary:hover { background: rgb(255 255 255 / 8%); }
-.runcty-app .welcome-foot { font-size: 12px; text-align: center; color: #94a3b8; }
+.runcty-app .welcome-foot { font-size: 12px; text-align: center; color: #B3A3AD; }
 
 /* Entrenar: elegir ruta, iniciar, pausar y terminar desde una sola pantalla. */
 .runcty-app .training-top-tools { display: flex; align-items: center; gap: 4px; }
 .runcty-app .training-top-tools > button { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; color: var(--color-muted); }
-.runcty-app .training-top-tools > button[aria-pressed='true'] { background: rgb(255 212 59 / 22%); color: var(--color-caution-ink); }
-.runcty-app .gps-tag.offline { background: rgb(255 212 59 / 22%); color: var(--color-caution-ink); }
+.runcty-app .training-top-tools > button[aria-pressed='true'] { background: rgb(242 162 12 / 22%); color: var(--color-caution-ink); }
+.runcty-app .gps-tag.offline { background: rgb(242 162 12 / 22%); color: var(--color-caution-ink); }
 .runcty-app .record-sheet { display: flex; flex-direction: column; gap: 12px; padding: 16px 20px 18px; }
 .runcty-app .record-sheet .club-notice { margin: 0; }
 .runcty-app .route-picker { display: flex; align-items: center; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); text-align: left; }
-.runcty-app .route-picker-icon { display: grid; flex: 0 0 40px; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgb(242 89 42 / 10%); color: var(--color-sport-ink); }
+.runcty-app .route-picker-icon { display: grid; flex: 0 0 40px; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: rgb(209 16 111 / 10%); color: var(--color-sport-ink); }
 .runcty-app .route-picker-icon svg { width: 20px; height: 20px; }
 .runcty-app .route-picker-text { display: flex; flex: 1; flex-direction: column; min-width: 0; }
 .runcty-app .route-picker-text small { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--color-accent); }
@@ -38,25 +38,25 @@
 .runcty-app .dock-side > span { width: 52px; height: 52px; border: 1px solid var(--color-line); background: var(--color-panel); color: var(--color-copy); }
 .runcty-app .dock-side svg { width: 20px; height: 20px; }
 .runcty-app .record-dock .dock-main { color: var(--color-copy); }
-.runcty-app .dock-main > span { width: 76px; height: 76px; background: #0f1a30; color: #fff; }
+.runcty-app .dock-main > span { width: 76px; height: 76px; background: #2A0A1F; color: #fff; }
 .runcty-app .dock-main svg { width: 28px; height: 28px; }
-.runcty-app .dock-go > span { background: #f2592a; box-shadow: 0 10px 24px rgb(242 89 42 / 35%); }
+.runcty-app .dock-go > span { background: #D1106F; box-shadow: 0 10px 24px rgb(209 16 111 / 35%); }
 .runcty-app .record-dock .dock-main:active > span { transform: scale(.96); }
 .runcty-app .dock-pair { display: flex; gap: 14px; }
 .runcty-app .recording-dock { padding: 10px 16px max(16px, env(safe-area-inset-bottom)); }
 .runcty-app .dock-sos { display: flex; justify-content: center; width: 76px; padding-bottom: 18px; }
-.runcty-app .record-dock .sos-button { position: relative; flex-direction: column; justify-content: center; width: 56px; height: 56px; min-height: 0; padding: 0; overflow: visible; border: 0; border-radius: 50%; background: var(--color-risk); color: #fff; box-shadow: 0 8px 18px rgb(217 45 63 / 32%); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
-.runcty-app .record-dock .sos-button::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #9f1c2b; transform: scale(0); }
+.runcty-app .record-dock .sos-button { position: relative; flex-direction: column; justify-content: center; width: 56px; height: 56px; min-height: 0; padding: 0; overflow: visible; border: 0; border-radius: 50%; background: var(--color-risk); color: #fff; box-shadow: 0 8px 18px rgb(217 58 43 / 32%); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.runcty-app .record-dock .sos-button::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #A82A1E; transform: scale(0); }
 .runcty-app .record-dock .sos-button.holding::before { transform: scale(1); transition: transform 3s linear; }
 .runcty-app .record-dock .sos-button > span { position: relative; font-size: 14px; font-weight: 800; letter-spacing: .05em; }
 .runcty-app .record-dock .sos-button > small { position: absolute; top: calc(100% + 6px); left: 50%; transform: translateX(-50%); font-size: 12px; font-weight: 600; white-space: nowrap; color: var(--color-muted); }
 .runcty-app .record-dock .sos-button:focus-visible { outline: 2px solid var(--color-copy); outline-offset: 3px; }
 .runcty-app .route-pick-list { display: grid; gap: 8px; margin-top: 8px; }
 .runcty-app .route-pick-list > button { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 56px; padding: 10px 12px; border: 1px solid var(--color-line); border-radius: 12px; text-align: left; }
-.runcty-app .route-pick-list > button[aria-pressed='true'] { border-color: #f2592a; background: rgb(242 89 42 / 6%); }
+.runcty-app .route-pick-list > button[aria-pressed='true'] { border-color: #D1106F; background: rgb(209 16 111 / 6%); }
 .runcty-app .route-pick-list strong { display: block; font-size: 14px; }
 .runcty-app .route-pick-list small { display: block; margin-top: 2px; font-size: 12px; color: var(--color-muted); }
-.runcty-app .route-pick-list svg { flex: 0 0 18px; width: 18px; height: 18px; color: #f2592a; }
+.runcty-app .route-pick-list svg { flex: 0 0 18px; width: 18px; height: 18px; color: #D1106F; }
 
 /* Salir: mismo botón en la web de corredor y en el panel. */
 .runcty-app .exit-button { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px; font-size: 14px; font-weight: 600; color: var(--color-muted); }
@@ -68,17 +68,17 @@
 html, body { overscroll-behavior: none; }
 .runcty-app .mobile-scroll { overscroll-behavior: contain; }
 .runcty-app :is(.quick-filters, .editorial-carousel, .time-slots, .mode-tabs, .tabs) { overscroll-behavior-x: contain; }
-.runcty-app .map-activate { position: absolute; left: 50%; bottom: 52px; z-index: 500; min-height: 44px; padding: 0 18px; transform: translateX(-50%); border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-panel); font-size: 14px; font-weight: 600; color: var(--color-copy); box-shadow: 0 6px 16px rgb(11 16 32 / 18%); }
-.runcty-app .map-activate.active { border-color: #f2592a; color: #d9480f; }
+.runcty-app .map-activate { position: absolute; left: 50%; bottom: 52px; z-index: 500; min-height: 44px; padding: 0 18px; transform: translateX(-50%); border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-panel); font-size: 14px; font-weight: 600; color: var(--color-copy); box-shadow: 0 6px 16px rgb(20 10 17 / 18%); }
+.runcty-app .map-activate.active { border-color: #D1106F; color: #A50D58; }
 
 /* Mapa: tramos finos con borde blanco. */
 .runcty-app .safety-street { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); }
 .runcty-app .leaflet-container .leaflet-control-attribution, .runcty-app .leaflet-tooltip, .runcty-app .leaflet-popup-content { font-size: 12px; }
 
 /* Acción principal: el naranja de la marca en todos los botones. */
-.runcty-app :is(.button-primary, .button-orange, .weekly-empty button) { border-color: #f2592a; background: #f2592a; color: #fff; box-shadow: 0 6px 14px rgb(242 89 42 / 24%); }
-.runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #e04a1c; }
-.runcty-app .gacelas-brand { color: #e5197d; }
+.runcty-app :is(.button-primary, .button-orange, .weekly-empty button) { border-color: #D1106F; background: #D1106F; color: #fff; box-shadow: 0 6px 14px rgb(209 16 111 / 24%); }
+.runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #A50D58; }
+.runcty-app .gacelas-brand { color: #D1106F; }
 
 /* Zonas táctiles de 44 px como mínimo en el móvil. */
 .runcty-app .phone-frame :is(button, a[href], select) { min-height: 44px; }
@@ -105,9 +105,9 @@ html, body { overscroll-behavior: none; }
 .runcty-app .soon-badge { display: inline-flex; align-items: center; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--color-raised); font-family: var(--font-sans); font-size: 12px; font-style: normal; font-weight: 600; letter-spacing: 0; text-transform: none; vertical-align: middle; color: var(--color-muted); }
 
 
-/* Distintivo oficial del club en el rosa de Gacelas. */
-.runcty-app .official-badge { display: inline-flex; align-items: center; gap: 6px; width: fit-content; padding: 3px 10px 3px 3px; border-radius: 999px; background: #e5197d; font-size: 12px; font-weight: 700; line-height: 1.2; color: #fff; white-space: nowrap; }
-.runcty-app .official-badge img { flex: none; border-radius: 50%; background: #fff; }
+/* Distintivo oficial del club: magenta de Gacelas con la gacela en blanco. */
+.runcty-app .official-badge { display: inline-flex; align-items: center; gap: 6px; width: fit-content; padding: 4px 10px 4px 8px; border-radius: 999px; background: var(--color-primary); font-size: 12px; font-weight: 700; line-height: 1.2; color: #fff; white-space: nowrap; }
+.runcty-app .official-badge img { flex: none; width: auto; height: 16px; }
 
 /* Próxima versión en el menú web: debajo del nombre para no partirse. */
 .runcty-app .sidebar nav a:has(.soon-badge) { flex-wrap: wrap; row-gap: 2px; }
@@ -120,7 +120,7 @@ html, body { overscroll-behavior: none; }
 /* En pantallas táctiles no se oscurece el botón después de tocarlo. */
 .runcty-app * { -webkit-tap-highlight-color: transparent; }
 @media (hover: none) {
-  .runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #f2592a; }
+  .runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #D1106F; }
   .runcty-app .button-secondary:hover { background: var(--color-panel); }
   .runcty-app .button-ghost:hover { background: transparent; }
 }
@@ -151,7 +151,122 @@ html, body { overscroll-behavior: none; }
 }
 
 /* Panel: tarjeta del club con su logo y el rosa de Gacelas. */
-.runcty-app .club-card { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid rgb(229 25 125 / 45%); border-radius: 16px; background: linear-gradient(135deg, rgb(229 25 125 / 22%), rgb(229 25 125 / 6%)); }
-.runcty-app .club-card img { flex: none; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #e5197d; }
+.runcty-app .club-card { display: flex; align-items: center; gap: 12px; padding: 14px; border: 1px solid rgb(230 25 127 / 45%); border-radius: 16px; background: linear-gradient(135deg, rgb(230 25 127 / 22%), rgb(230 25 127 / 6%)); }
+.runcty-app .club-card img { flex: none; border-radius: 50%; background: #fff; box-shadow: 0 0 0 2px #D1106F; }
 .runcty-app .club-card strong { display: block; font-size: 14px; line-height: 1.25; color: #fff; }
 .runcty-app .club-card span { display: block; margin-top: 2px; font-size: 12px; color: #ffc2de; }
+
+/* ===== Paleta Gacelas Running Team ===== */
+/* Degradado de marca solo en bienvenida, portada y encabezado de Explorar, con la gacela en blanco. */
+.runcty-app .welcome-screen { background: linear-gradient(200deg, #D1106F 0%, #5A0E3D 40%, #2A0A1F 72%); }
+.runcty-app .welcome-photo::after { background: linear-gradient(180deg, rgb(42 10 31 / 40%) 0%, rgb(42 10 31 / 0%) 24%, rgb(90 14 61 / 0%) 55%, rgb(209 16 111 / 30%) 100%); }
+.runcty-app .welcome-partner { display: inline-flex; align-items: center; margin-left: auto; padding-left: 12px; border-left: 1px solid rgb(255 255 255 / 30%); }
+.runcty-app .welcome-partner img { width: auto; height: 30px; filter: drop-shadow(0 1px 6px rgb(42 10 31 / 45%)); }
+
+.runcty-app .home-hero { background: radial-gradient(rgb(255 255 255 / 7%) 1px, transparent 1px) 0 0 / 32px 32px, linear-gradient(135deg, #2A0A1F 0%, #5A0E3D 58%, #D1106F 100%); }
+.runcty-app .gacelas-lockup { display: inline-flex; align-items: center; gap: 12px; margin-top: 26px; padding: 10px 16px 10px 12px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 16px; background: rgb(255 255 255 / 6%); }
+.runcty-app .gacelas-lockup img { width: auto; height: 34px; }
+.runcty-app .gacelas-lockup span { display: flex; flex-direction: column; font-size: 12px; line-height: 1.35; color: #F1E4EC; }
+.runcty-app .gacelas-lockup strong { font-size: 15px; letter-spacing: .01em; color: #fff; }
+
+.runcty-app .explore-hero { border-color: transparent; background: linear-gradient(120deg, #2A0A1F 0%, #5A0E3D 55%, #D1106F 100%); }
+.runcty-app .explore-hero-scrim { background: linear-gradient(90deg, #2A0A1F 0%, rgb(42 10 31 / 90%) 38%, rgb(90 14 61 / 66%) 68%, rgb(209 16 111 / 42%) 100%); }
+.runcty-app .explore-hero-emblem { position: absolute; top: 50%; right: 32px; z-index: -5; width: auto; height: 76%; opacity: .16; transform: translateY(-50%); pointer-events: none; }
+@media (max-width: 640px) {
+  .runcty-app .explore-hero-emblem { right: 12px; height: 54%; opacity: .1; }
+}
+
+/* Botones secundarios: borde y texto magenta sobre blanco. En zonas oscuras, contorno blanco. */
+.runcty-app .button-secondary { border-color: var(--color-primary); background: #fff; color: var(--color-primary); }
+.runcty-app .button-secondary:hover { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app :is(.sidebar, .demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .explore-hero, .home-hero, .welcome-screen) .button-secondary { border-color: rgb(255 255 255 / 42%); background: transparent; color: #fff; }
+.runcty-app :is(.sidebar, .demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .explore-hero, .home-hero, .welcome-screen) .button-secondary:hover { border-color: #fff; background: rgb(255 255 255 / 10%); color: #fff; }
+.runcty-app .auth-card .button-secondary { border-color: var(--color-primary); background: #fff; color: var(--color-primary); }
+@media (hover: none) {
+  .runcty-app .button-secondary:hover { background: #fff; color: var(--color-primary); }
+  .runcty-app :is(.sidebar, .demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .explore-hero, .home-hero, .welcome-screen) .button-secondary:hover { background: transparent; color: #fff; }
+}
+
+/* Textos del índice sobre fondos suaves con contraste AA; el significado de los colores no cambia. */
+.runcty-app :is(.status.approved, .text-high, .level-badge.high, .index-score.high, .street-index.high) { color: var(--color-safe-ink); }
+.runcty-app :is(.status.rejected, .route-flag.danger, .text-low, .level-badge.low, .index-score.low, .street-index.low) { color: var(--color-risk-ink); }
+
+/* Progreso en magenta brillante sobre rosa suave. */
+.runcty-app .summary-route-progress { background: rgb(252 228 240 / 18%); }
+.runcty-app .summary-route-progress > span { background: var(--color-primary-bright); }
+
+/* Reportes en el mapa: vino de marca con el signo en blanco. */
+.runcty-app .incident-marker { background: var(--color-brand-dark); }
+
+/* Grabando: solo estado, señal GPS, trazo, pausa, terminar y SOS. */
+.runcty-app .recording-status { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px 20px 14px; }
+.runcty-app .recording-status .recording-state { color: #fff; letter-spacing: .2em; }
+.runcty-app .recording-status .recording-state > i { width: 9px; height: 9px; background: var(--color-primary-bright); box-shadow: 0 0 0 4px rgb(230 25 127 / 28%); animation: pulse 1.6s ease-in-out infinite; }
+.runcty-app .recording-status .recording-state > i.is-paused { background: var(--color-caution); box-shadow: none; animation: none; }
+.runcty-app .recording-gps { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 330px; padding: 10px 14px; border: 1px solid rgb(255 255 255 / 12%); border-radius: 14px; background: rgb(255 255 255 / 6%); text-align: left; }
+.runcty-app .recording-gps strong { display: block; font-size: 15px; font-weight: 750; color: #fff; }
+.runcty-app .recording-gps small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
+.runcty-app .gps-bars { display: flex; flex: none; align-items: flex-end; gap: 3px; height: 22px; }
+.runcty-app .gps-bars i { width: 5px; border-radius: 2px; background: var(--color-safe); }
+.runcty-app .gps-bars i:nth-child(1) { height: 30%; }
+.runcty-app .gps-bars i:nth-child(2) { height: 55%; }
+.runcty-app .gps-bars i:nth-child(3) { height: 80%; }
+.runcty-app .gps-bars i:nth-child(4) { height: 100%; }
+.runcty-app .recording-gps.offline .gps-bars i { background: rgb(255 255 255 / 22%); }
+.runcty-app .recording-gps.offline .gps-bars i:first-child { background: var(--color-caution); }
+.runcty-app .dock-spacer { visibility: hidden; }
+
+/* Duración aproximada según el nivel en el detalle de la ruta. */
+.runcty-app .level-durations { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 2px 0 14px; }
+.runcty-app .level-durations > div { min-width: 0; padding: 8px 10px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-shell); }
+.runcty-app .level-durations dt { font-size: 12px; color: var(--color-muted); }
+.runcty-app .level-durations dd { margin: 2px 0 0; font-size: 15px; font-weight: 750; font-variant-numeric: tabular-nums; color: var(--color-copy); }
+
+/* Catálogo: filtro Solo oficiales. */
+.runcty-app .official-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; font-weight: 600; color: var(--color-copy); white-space: nowrap; cursor: pointer; }
+.runcty-app .official-toggle input { width: 16px; height: 16px; accent-color: var(--color-primary); }
+.runcty-app .official-toggle svg { width: 16px; height: 16px; color: var(--color-primary); }
+.runcty-app .official-toggle:has(input:checked) { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .phone-frame .route-filters .official-toggle { grid-column: 1 / -1; justify-content: center; }
+
+/* Perfil: dos cifras y Eliminar mi cuenta en el color de riesgo. */
+.runcty-app .profile-numbers.profile-numbers-two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.runcty-app .profile-navigation > button.profile-danger { border-color: rgb(217 58 43 / 28%); }
+.runcty-app .profile-navigation > button.profile-danger strong { color: var(--color-risk-ink); }
+.runcty-app .profile-navigation > button.profile-danger > span { background: rgb(217 58 43 / 10%); color: var(--color-risk); }
+.runcty-app .profile-navigation > button.profile-danger > svg { color: var(--color-risk); }
+.runcty-app .delete-account { display: flex; flex-direction: column; gap: 14px; }
+.runcty-app .delete-account > p { padding: 12px 14px; border: 1px solid rgb(217 58 43 / 25%); border-radius: 12px; background: rgb(217 58 43 / 6%); font-size: 14px; line-height: 1.5; color: var(--color-copy); }
+.runcty-app .delete-account .modal-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.runcty-app :is(.delete-account, .sos-offline-actions) .button-danger { border-color: var(--color-risk); background: var(--color-risk); color: #fff; }
+.runcty-app :is(.delete-account, .sos-offline-actions) .button-danger:hover { background: #B42318; }
+.runcty-app .sos-offline-actions .button { flex: 1 1 100%; }
+
+/* Registro: campos en dos columnas, términos y verificación de correo. */
+.runcty-app .auth-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.runcty-app .auth-row .field { min-width: 0; }
+.runcty-app .auth-row :is(input, select) { width: 100%; min-width: 0; }
+.runcty-app .auth-terms { align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.45; color: var(--color-muted); }
+.runcty-app .auth-terms input { flex: none; margin-top: 2px; accent-color: var(--color-primary); }
+.runcty-app .auth-card { --color-primary-soft: #FCE4F0; }
+.runcty-app .auth-verify > span { background: var(--color-primary-soft); color: var(--color-primary); }
+.runcty-app .auth-verify h2 { font-size: 22px; }
+.runcty-app .auth-verify p { font-size: 14px; }
+
+/* Simulación de la portada: grabando sin métricas en vivo. */
+.runcty-app .sim-live > .sim-recording { display: flex; align-items: center; gap: 10px; font-size: 34px; }
+.runcty-app .sim-recording i { width: 11px; height: 11px; border-radius: 50%; background: #FF4FA3; box-shadow: 0 0 0 4px rgb(255 79 163 / 25%); }
+
+/* Resumen del club con cuatro indicadores. */
+@media (min-width: 751px) {
+  .runcty-app .admin-kpis:has(> :nth-child(4):last-child) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (min-width: 1201px) {
+  .runcty-app .admin-kpis:has(> :nth-child(4):last-child) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+/* Ventanas del SOS: se abren dentro del dock y no deben heredar su estilo de botones. */
+.runcty-app .record-dock .modal .button { flex-direction: row; gap: 8px; font-size: 14px; }
+.runcty-app .record-dock .modal .button-secondary { color: var(--color-primary); }
+.runcty-app .record-dock .modal .button-danger { color: var(--color-risk-ink); }
+.runcty-app .record-dock .modal .sos-offline-actions .button-danger { color: #fff; }

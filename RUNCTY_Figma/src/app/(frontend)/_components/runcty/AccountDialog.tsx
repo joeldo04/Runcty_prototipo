@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { authenticateRuncty } from '@/app/(frontend)/actions'
 import { Button, IconButton, Logo } from './components'
+import { SHOW_FUTURE } from './features'
 import type { AppUser, DemoState } from './store'
 
 function AccountField({
@@ -311,14 +312,19 @@ export default function AccountDialog({
                         maxLength={128}
                         autoComplete="new-password"
                       />
-                      <label className="field">
-                        Nivel de running
-                        <select name="level" defaultValue="Intermedio" required>
-                          <option>Principiante</option>
-                          <option>Intermedio</option>
-                          <option>Avanzado</option>
-                        </select>
-                      </label>
+                      {SHOW_FUTURE ? (
+                        <label className="field">
+                          Nivel de running
+                          <select name="level" defaultValue="Intermedio" required>
+                            <option>Principiante</option>
+                            <option>Intermedio</option>
+                            <option>Avanzado</option>
+                          </select>
+                        </label>
+                      ) : (
+                        // El nivel se pregunta al recomendar rutas, no al registrarse.
+                        <input type="hidden" name="level" value="Intermedio" />
+                      )}
                       <label className="flex items-start gap-3 text-xs leading-5 text-muted">
                         <input
                           name="acceptedPrivacy"
@@ -332,7 +338,7 @@ export default function AccountDialog({
                         </span>
                       </label>
                     </>
-                  ) : (
+                  ) : SHOW_FUTURE && (
                     <div className="flex justify-end">
                       <Button
                         variant="ghost"
@@ -374,24 +380,28 @@ export default function AccountDialog({
                   </Button>
                 </fieldset>
               </form>
-              <div className="my-5 flex items-center gap-3 text-xs text-dim">
-                <span className="h-px flex-1 bg-line" /> O CONTINÚA CON{' '}
-                <span className="h-px flex-1 bg-line" />
-              </div>
-              <Button
-                variant="secondary"
-                className="w-full"
-                disabled
-                title="Google OAuth no está configurado"
-              >
-                <span aria-hidden="true" className="font-bold text-muted">
-                  G
-                </span>{' '}
-                Continuar con Google
-              </Button>
-              <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-dim">
-                <KeyRound className="size-3" /> Google pendiente de configuración.
-              </p>
+              {SHOW_FUTURE && (
+                <>
+                  <div className="my-5 flex items-center gap-3 text-xs text-dim">
+                    <span className="h-px flex-1 bg-line" /> O CONTINÚA CON{' '}
+                    <span className="h-px flex-1 bg-line" />
+                  </div>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    disabled
+                    title="Google OAuth no está configurado"
+                  >
+                    <span aria-hidden="true" className="font-bold text-muted">
+                      G
+                    </span>{' '}
+                    Continuar con Google
+                  </Button>
+                  <p className="mt-2 flex items-center justify-center gap-1.5 text-xs text-dim">
+                    <KeyRound className="size-3" /> Google pendiente de configuración.
+                  </p>
+                </>
+              )}
               <div className="mt-6 flex flex-wrap items-center justify-center gap-1 text-xs text-muted">
                 <span>{create ? '¿Ya tienes una cuenta?' : '¿Es tu primer kilómetro aquí?'}</span>
                 <Button

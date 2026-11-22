@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import clubPoster from '../../../../../imagenes/publicidad_runcty1.png'
+import gacelasWhite from '../../../../../imagenes/gacelas_emblema_blanco.png'
+import { SHOW_FUTURE } from './features'
 import {
   Activity,
   ArrowRight,
@@ -24,7 +26,9 @@ import {
   SlidersHorizontal,
   Sparkles,
   Trash2,
+  UserX,
   Users,
+  type LucideIcon,
 } from 'lucide-react'
 import SafetyMap from './SafetyMap'
 import Planner from './Planner'
@@ -86,8 +90,13 @@ export function Explore({
   mobile = false,
   full = false,
 }: ScreenProps & { full?: boolean }) {
-  const { state, user } = useDemo(),
+  const { state, user, update } = useDemo(),
     all = useRoutes()
+  // Abre el planificador directamente en "Entre dos puntos".
+  const betweenPoints = () => {
+    update((s) => ({ ...s, draft: { ...s.draft, mode: 'calculate' } }))
+    go('planner')
+  }
   const [query, setQuery] = useState(''),
     [difficulty, setDifficulty] = useState('Todos'),
     [km, setKm] = useState('Todos'),
@@ -130,10 +139,17 @@ export function Explore({
             <Sparkles />
             Recomendar rutas
           </Button>
-          <Button onClick={() => go('planner')}>
-            <Plus />
-            Crear ruta
-          </Button>
+          {SHOW_FUTURE ? (
+            <Button onClick={() => go('planner')}>
+              <Plus />
+              Crear ruta
+            </Button>
+          ) : (
+            <Button onClick={betweenPoints}>
+              <Navigation />
+              Entre dos puntos
+            </Button>
+          )}
         </PageTitle>
       ) : (
         <section className="explore-hero relative isolate mb-6 overflow-hidden rounded-2xl border border-line/70 bg-shell">
@@ -147,7 +163,8 @@ export function Explore({
               className="-z-20 object-cover object-[center_40%] opacity-65"
             />
           )}
-          <div className="absolute inset-0 -z-10 bg-linear-to-r from-shell via-shell/90 to-shell/15" />
+          <div className="explore-hero-scrim absolute inset-0 -z-10" />
+          <Image src={gacelasWhite} alt="" aria-hidden className="explore-hero-emblem" />
           <div className="relative p-6 lg:px-8 lg:py-7">
             <PageTitle
               eyebrow={
@@ -165,9 +182,15 @@ export function Explore({
               subtitle="Descubre recorridos y elige tu mejor horario para correr."
             />
             <div className="flex flex-wrap items-center gap-3">
-              <Button onClick={() => go('planner')}>
-                <Plus /> Diseña tu recorrido
-              </Button>
+              {SHOW_FUTURE ? (
+                <Button onClick={() => go('planner')}>
+                  <Plus /> Diseña tu recorrido
+                </Button>
+              ) : (
+                <Button onClick={() => go('planner')}>
+                  <Navigation /> Planificar ruta
+                </Button>
+              )}
               <Button variant="secondary" data-tour="recommend" onClick={() => go('recommend')}>
                 <Sparkles /> Inspírame
               </Button>
@@ -287,14 +310,25 @@ export function Explore({
               <option>Alta</option>
             </select>
           </label>
-          <label className="field">
-            Origen
-            <select value={source} onChange={(e) => setSource(e.target.value)}>
-              <option value="Todas">Todas las rutas</option>
-              <option value="Oficiales">Oficiales</option>
-              <option value="Comunidad">Comunidad</option>
-            </select>
-          </label>
+          {SHOW_FUTURE ? (
+            <label className="field">
+              Origen
+              <select value={source} onChange={(e) => setSource(e.target.value)}>
+                <option value="Todas">Todas las rutas</option>
+                <option value="Oficiales">Oficiales</option>
+                <option value="Comunidad">Comunidad</option>
+              </select>
+            </label>
+          ) : (
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={source === 'Oficiales'}
+                onChange={(e) => setSource(e.target.checked ? 'Oficiales' : 'Todas')}
+              />
+              Solo oficiales
+            </label>
+          )}
           <label className="checkbox">
             <input
               type="checkbox"
@@ -334,8 +368,8 @@ export function Explore({
             />
             {mobile && (
               <Button className="floating-create" onClick={() => go('planner')}>
-                <Plus />
-                Crear ruta
+                {SHOW_FUTURE ? <Plus /> : <Navigation />}
+                {SHOW_FUTURE ? 'Crear ruta' : 'Planificar ruta'}
               </Button>
             )}
           </div>
@@ -377,11 +411,21 @@ export function Explore({
             {!mobile && (
               <div className="planning-prompt">
                 <Navigation />
-                <div>
-                  <strong>¿Prefieres tu propio camino?</strong>
-                  <p>Traza una ruta sobre el mapa.</p>
-                </div>
-                <button aria-label="Ir al creador de rutas" onClick={() => go('planner')}>
+                {SHOW_FUTURE ? (
+                  <div>
+                    <strong>¿Prefieres tu propio camino?</strong>
+                    <p>Traza una ruta sobre el mapa.</p>
+                  </div>
+                ) : (
+                  <div>
+                    <strong>¿Vas de un punto a otro?</strong>
+                    <p>Calcula la ruta entre dos puntos.</p>
+                  </div>
+                )}
+                <button
+                  aria-label={SHOW_FUTURE ? 'Ir al creador de rutas' : 'Calcular una ruta entre dos puntos'}
+                  onClick={SHOW_FUTURE ? () => go('planner') : betweenPoints}
+                >
                   <ArrowRight />
                 </button>
               </div>
@@ -473,6 +517,7 @@ export function Routes({
     [tab, setTab] = useState(saved ? 'saved' : 'catalog'),
     [difficulty, setDifficulty] = useState('Todos'),
     [max, setMax] = useState('42'),
+    [onlyOfficial, setOnlyOfficial] = useState(false),
     [deleting, setDeleting] = useState<RouteData | null>(null),
     [rename, setRename] = useState<RouteData | null>(null),
     [name, setName] = useState('')
@@ -485,6 +530,7 @@ export function Routes({
           ? r.owned
           : !r.private || r.status === 'Aprobado') &&
       (difficulty === 'Todos' || difficultyKey(r.difficulty) === difficultyKey(difficulty)) &&
+      (!onlyOfficial || r.official) &&
       r.km <= +max,
   )
   const propose = (r: RouteData) => {
@@ -502,14 +548,22 @@ export function Routes({
       <PageTitle
         eyebrow={saved ? 'TU COLECCIÓN' : 'DESCUBRE LOJA'}
         title={saved ? 'Mis rutas' : 'Un nuevo camino te espera.'}
-        subtitle={mobile ? undefined : 'Explora, guarda y compara recorridos según el horario.'}
+        subtitle={
+          mobile
+            ? undefined
+            : SHOW_FUTURE
+              ? 'Explora, guarda y compara recorridos según el horario.'
+              : 'Explora y compara recorridos según el horario.'
+        }
       >
-        <Button onClick={() => go('planner')}>
-          <Plus />
-          Crear ruta
-        </Button>
+        {SHOW_FUTURE && (
+          <Button onClick={() => go('planner')}>
+            <Plus />
+            Crear ruta
+          </Button>
+        )}
       </PageTitle>
-      <div className="tabs">
+      {SHOW_FUTURE && <div className="tabs">
         <button className={tab === 'catalog' ? 'active' : ''} onClick={() => setTab('catalog')}>
           Catálogo
         </button>
@@ -519,7 +573,7 @@ export function Routes({
         <button className={tab === 'own' ? 'active' : ''} onClick={() => setTab('own')}>
           Mis recorridos
         </button>
-      </div>
+      </div>}
       <div className="route-filters catalog-filters">
         <div className="search-box">
           <Search />
@@ -545,6 +599,15 @@ export function Routes({
           <option value="5">Hasta 5 km</option>
           <option value="10">Hasta 10 km</option>
         </select>
+        <label className="official-toggle">
+          <input
+            type="checkbox"
+            checked={onlyOfficial}
+            onChange={(e) => setOnlyOfficial(e.target.checked)}
+          />
+          <Shield />
+          Solo oficiales
+        </label>
       </div>
       <TimeControl />
       <div className="route-count catalog-count" role="status">
@@ -585,9 +648,13 @@ export function Routes({
       ) : (
         <EmptyState
           title="Tu próxima ruta empieza aquí"
-          description="No hay recorridos con estos filtros. Guarda una ruta o crea la tuya."
+          description={
+            SHOW_FUTURE
+              ? 'No hay recorridos con estos filtros. Guarda una ruta o crea la tuya.'
+              : 'No hay recorridos con estos filtros. Prueba con otra distancia o dificultad.'
+          }
         >
-          <Button onClick={() => go('planner')}>Crear ruta</Button>
+          {SHOW_FUTURE && <Button onClick={() => go('planner')}>Crear ruta</Button>}
         </EmptyState>
       )}
       <AdCarousel placement="catalog" />
@@ -638,6 +705,13 @@ export function Routes({
   )
 }
 
+// Ritmo referencial en minutos por kilómetro para estimar la duración según el nivel.
+const levelPaces = [
+  { level: 'Principiante', pace: 7.5 },
+  { level: 'Intermedio', pace: 6.5 },
+  { level: 'Avanzado', pace: 5.5 },
+]
+
 export function RouteDetail({
   route,
   back,
@@ -683,7 +757,7 @@ export function RouteDetail({
         </div>
         {!mobile && (
           <div className="detail-cta">
-            <SaveButton route={route} />
+            {SHOW_FUTURE && <SaveButton route={route} />}
             <Button variant="orange" onClick={() => run(route)}>
               <Activity />
               Correr esta ruta
@@ -713,12 +787,20 @@ export function RouteDetail({
               <b>{route.difficulty}</b>dificultad
             </span>
           </div>
+          <dl className="level-durations" aria-label="Duración aproximada según tu nivel">
+            {levelPaces.map(({ level, pace }) => (
+              <div key={level}>
+                <dt>{level}</dt>
+                <dd>{Math.max(1, Math.round(route.km * pace))} min</dd>
+              </div>
+            ))}
+          </dl>
           <TimeControl compact />
           <ClubAlerts item={route} hours={route.recommended} />
           <SafetyNote />
           {mobile && (
             <div className="mobile-detail-actions">
-              <SaveButton route={route} />
+              {SHOW_FUTURE && <SaveButton route={route} />}
               <Button variant="orange" onClick={() => run(route)}>
                 <Activity />
                 Correr esta ruta
@@ -1026,20 +1108,43 @@ export function History({
   )
 }
 
+type ProfileItem = {
+  icon: LucideIcon
+  label: string
+  desc: string
+  action: () => void
+  future?: boolean
+  danger?: boolean
+}
+
 export function Profile({
   go,
   mobile = false,
   tutorial,
+  signedOut,
 }: {
   go: (s: string) => void
   mobile?: boolean
   tutorial?: () => void
+  signedOut?: () => void
 }) {
   const { state, user, update, notify, logout, isDemo } = useDemo()
-  const [dialog, setDialog] = useState<'privacy' | 'personal' | 'logout' | 'mail' | null>(null),
+  const [dialog, setDialog] = useState<'privacy' | 'personal' | 'logout' | 'mail' | 'delete' | null>(null),
     [email, setEmail] = useState(state.profile.email),
     [name, setName] = useState(state.profile.name),
-    [level, setLevel] = useState(state.profile.level)
+    [level, setLevel] = useState(state.profile.level),
+    [password, setPassword] = useState('')
+  // RF-004: borra la cuenta, cierra la sesión y vuelve al inicio público.
+  const deleteAccount = async () => {
+    const id = user?.id
+    if (id?.startsWith('cuenta-'))
+      update((s) => ({ ...s, users: s.users.filter((account) => account.id !== id) }))
+    if (!(await logout())) return
+    setDialog(null)
+    notify('Tu cuenta fue eliminada.')
+    if (signedOut) signedOut()
+    else go('explore')
+  }
   const total = state.trainings.reduce((sum, t) => sum + t.km, 0)
   const week = Array.from({ length: 7 }, (_, i) => {
     const date = new Date()
@@ -1057,17 +1162,21 @@ export function Profile({
         <div>
           <span className="eyebrow">TU ESPACIO EN RUNCTY</span>
           <h1>{user?.name ?? 'Tu perfil'}</h1>
-          <p>Corredor {state.profile.level.toLowerCase()}</p>
-          <span className="privacy-label">
-            <LockKeyhole />
-            {state.profile.public ? 'Perfil público' : 'Perfil privado'}
-          </span>
+          {SHOW_FUTURE && (
+            <>
+              <p>Corredor {state.profile.level.toLowerCase()}</p>
+              <span className="privacy-label">
+                <LockKeyhole />
+                {state.profile.public ? 'Perfil público' : 'Perfil privado'}
+              </span>
+            </>
+          )}
         </div>
         <button className="edit-profile" onClick={() => setDialog('personal')}>
           Editar perfil <ChevronRight />
         </button>
       </div>
-      <div className="profile-numbers">
+      <div className={`profile-numbers ${SHOW_FUTURE ? '' : 'profile-numbers-two'}`}>
         <span>
           <i>
             <Navigation />
@@ -1085,15 +1194,17 @@ export function Profile({
           <strong>{state.trainings.length.toString().padStart(2, '0')}</strong>
           <b>Entrenamientos</b>
         </span>
-        <span>
-          <i>
-            <RouteIcon />
-          </i>
-          <strong>{state.savedIds.length.toString().padStart(2, '0')}</strong>
-          <b>Rutas guardadas</b>
-        </span>
+        {SHOW_FUTURE && (
+          <span>
+            <i>
+              <RouteIcon />
+            </i>
+            <strong>{state.savedIds.length.toString().padStart(2, '0')}</strong>
+            <b>Rutas guardadas</b>
+          </span>
+        )}
       </div>
-      <section className="weekly-activity" aria-labelledby="weekly-activity-title">
+      {SHOW_FUTURE && <section className="weekly-activity" aria-labelledby="weekly-activity-title">
         <div className="section-heading">
           <div>
             <span className="eyebrow">UN PASO A LA VEZ</span>
@@ -1129,9 +1240,9 @@ export function Profile({
             </div>
           ))}
         </div>
-      </section>
+      </section>}
       <div className="profile-navigation">
-        {[
+        {([
           {
             icon: Activity,
             label: 'Mis entrenamientos',
@@ -1143,12 +1254,14 @@ export function Profile({
             label: 'Mis rutas guardadas',
             desc: `${state.savedIds.length} caminos por recorrer`,
             action: () => go('myroutes'),
+            future: true,
           },
           {
             icon: Flag,
             label: 'Mis reportes',
             desc: 'Consulta el estado de tus aportes',
             action: () => go('reports'),
+            future: true,
           },
           {
             icon: Users,
@@ -1164,17 +1277,19 @@ export function Profile({
                 ? 'Enlace temporal activo'
                 : 'Tú decides cuándo compartir',
             action: () => go('security'),
+            future: true,
           },
           {
             icon: LockKeyhole,
             label: 'Configuración de privacidad',
             desc: 'Controla lo que compartes',
             action: () => setDialog('privacy'),
+            future: true,
           },
           {
             icon: Users,
             label: 'Datos personales',
-            desc: 'Tu información y nivel deportivo',
+            desc: SHOW_FUTURE ? 'Tu información y nivel deportivo' : 'Tu nombre y tu correo',
             action: () => setDialog('personal'),
           },
           ...(isDemo
@@ -1194,11 +1309,22 @@ export function Profile({
                   label: 'Ver tutorial',
                   desc: 'Repasa las funciones principales',
                   action: tutorial,
+                  future: true,
                 },
               ]
             : []),
-        ].map(({ icon: I, label, desc, action }) => (
-          <button key={label} onClick={action}>
+          {
+            icon: UserX,
+            label: 'Eliminar mi cuenta',
+            desc: 'Borra tus datos de RUNCTY',
+            action: () => {
+              setPassword('')
+              setDialog('delete')
+            },
+            danger: true,
+          },
+        ] as ProfileItem[]).filter((item) => SHOW_FUTURE || !item.future).map(({ icon: I, label, desc, action, danger }) => (
+          <button key={label} onClick={action} className={danger ? 'profile-danger' : undefined}>
             <span>
               <I />
             </span>
@@ -1223,14 +1349,16 @@ export function Profile({
             Correo electrónico
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </label>
-          <label className="field">
-            Nivel
-            <select value={level} onChange={(e) => setLevel(e.target.value)}>
-              <option>Principiante</option>
-              <option>Intermedio</option>
-              <option>Avanzado</option>
-            </select>
-          </label>
+          {SHOW_FUTURE && (
+            <label className="field">
+              Nivel
+              <select value={level} onChange={(e) => setLevel(e.target.value)}>
+                <option>Principiante</option>
+                <option>Intermedio</option>
+                <option>Avanzado</option>
+              </select>
+            </label>
+          )}
           <Button
             disabled={!name.trim() || !email.includes('@')}
             onClick={() => {
@@ -1270,6 +1398,42 @@ export function Profile({
         </Modal>
       )}
       {dialog === 'mail' && <DemoMailbox close={() => setDialog(null)} />}
+      {dialog === 'delete' && (
+        <Modal title="Eliminar mi cuenta" onClose={() => setDialog(null)}>
+          <form
+            className="delete-account"
+            onSubmit={(event) => {
+              event.preventDefault()
+              if (password) void deleteAccount()
+            }}
+          >
+            <p>
+              Se borrarán tus datos personales, tus entrenamientos y tus ubicaciones. Esta acción
+              no se puede deshacer.
+            </p>
+            <label className="field">
+              Contraseña
+              <input
+                type="password"
+                required
+                autoFocus
+                autoComplete="current-password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
+                placeholder="Escribe tu contraseña para confirmar"
+              />
+            </label>
+            <div className="modal-actions">
+              <Button type="button" variant="secondary" onClick={() => setDialog(null)}>
+                Cancelar
+              </Button>
+              <Button type="submit" variant="danger" disabled={!password}>
+                Eliminar definitivamente
+              </Button>
+            </div>
+          </form>
+        </Modal>
+      )}
       {dialog === 'logout' && (
         <Confirm
           title="¿Cerrar sesión?"
@@ -1338,11 +1502,13 @@ export function PublicClub({ open, go, run, mobile = false }: ScreenProps) {
       </div>
       <Spaces mobile={mobile} />
       <AdCarousel placement="club" />
-      <div className="future-features">
-        <span>PRÓXIMAMENTE</span>
-        <h3>Noticias y salidas grupales</h3>
-        <p>Módulos futuros.</p>
-      </div>
+      {SHOW_FUTURE && (
+        <div className="future-features">
+          <span>PRÓXIMAMENTE</span>
+          <h3>Noticias y salidas grupales</h3>
+          <p>Módulos futuros.</p>
+        </div>
+      )}
       {detail && (
         <Modal title={detail} onClose={() => setDetail(null)}>
           <p>Club Deportivo Gacelas Running Team · Loja, Ecuador.</p>
@@ -1429,18 +1595,20 @@ export function MainScreen({
   run,
   mobile = false,
   tutorial,
-}: ScreenProps & { page: string; tutorial?: () => void }) {
+  signedOut,
+}: ScreenProps & { page: string; tutorial?: () => void; signedOut?: () => void }) {
   const { update } = useDemo()
   if (page === 'explore' || page === 'map')
     return <Explore {...{ open, go, run, mobile }} full={page === 'map'} />
   if (page === 'routes' || page === 'myroutes')
-    return <Routes key={page} {...{ open, go, run, mobile }} saved={page === 'myroutes'} />
+    return <Routes key={page} {...{ open, go, run, mobile }} saved={SHOW_FUTURE && page === 'myroutes'} />
   if (page === 'planner' || page === 'recommend')
     return <Planner key={page} mobile={mobile} open={open} run={run} />
   if (page === 'reports' || page === 'report')
     return <Reports mobile={mobile} initialForm={page === 'report'} />
   if (page === 'history') return <History mobile={mobile} run={run} />
-  if (page === 'profile') return <Profile mobile={mobile} go={go} tutorial={tutorial} />
+  if (page === 'profile')
+    return <Profile mobile={mobile} go={go} tutorial={tutorial} signedOut={signedOut} />
   if (page === 'security') return <Security mobile={mobile} />
   if (page === 'spaces')
     return (

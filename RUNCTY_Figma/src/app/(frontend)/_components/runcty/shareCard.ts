@@ -17,11 +17,11 @@ const WIDTH = 1080,
   HEIGHT = 1350,
   MARGIN = 64
 const MAP = { x: MARGIN, y: 216, width: WIDTH - MARGIN * 2, height: 580, radius: 36 }
-const NAVY = '#0f1b33',
-  MUTED = '#5b6980',
-  LINE = '#e3e8f0',
-  ORANGE = '#ff6437',
-  ROUTE = '#f72585'
+const NAVY = '#1A1418',
+  MUTED = '#6B5F67',
+  LINE = '#E7E1E6',
+  ORANGE = '#D1106F',
+  ROUTE = '#E6197F'
 const TILE_TIMEOUT = 3500
 
 const worldX = (lng: number) => ((lng + 180) / 360) * 256
@@ -119,7 +119,7 @@ async function drawTiles(
   return loaded >= (columns * rows) / 2
 }
 function drawLocalNetwork(ctx: CanvasRenderingContext2D, data: ShareCardData, view: ReturnType<typeof projection>) {
-  ctx.strokeStyle = '#d5dde8'
+  ctx.strokeStyle = '#DDD3DA'
   ctx.lineWidth = 14
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
@@ -128,7 +128,7 @@ function drawLocalNetwork(ctx: CanvasRenderingContext2D, data: ShareCardData, vi
 function drawMap(ctx: CanvasRenderingContext2D, data: ShareCardData, view: ReturnType<typeof projection>) {
   ctx.lineCap = 'round'
   ctx.lineJoin = 'round'
-  ctx.strokeStyle = '#a9b4c6'
+  ctx.strokeStyle = '#B9AAB3'
   ctx.lineWidth = 7
   ctx.setLineDash([3, 18])
   strokeLine(ctx, data.geometry.map(view.point))
@@ -217,7 +217,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   ctx.save()
   roundedPath(ctx, MAP.x, MAP.y, MAP.width, MAP.height, MAP.radius)
   ctx.clip()
-  ctx.fillStyle = '#eef2f7'
+  ctx.fillStyle = '#F1ECF0'
   ctx.fillRect(MAP.x, MAP.y, MAP.width, MAP.height)
   ctx.filter = 'grayscale(0.8) contrast(0.9) brightness(1.08)'
   const tiles = await drawTiles(ctx, view)
@@ -226,7 +226,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
     ctx.fillStyle = 'rgba(255, 255, 255, 0.34)'
     ctx.fillRect(MAP.x, MAP.y, MAP.width, MAP.height)
   } else {
-    ctx.fillStyle = '#eef2f7'
+    ctx.fillStyle = '#F1ECF0'
     ctx.fillRect(MAP.x, MAP.y, MAP.width, MAP.height)
     drawLocalNetwork(ctx, data, view)
   }
@@ -234,7 +234,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   ctx.restore()
   if (tiles) {
     ctx.font = `600 17px ${sans}`
-    ctx.fillStyle = 'rgba(79, 93, 117, 0.9)'
+    ctx.fillStyle = 'rgba(107, 95, 103, 0.9)'
     ctx.textAlign = 'right'
     ctx.fillText('© OpenStreetMap', MAP.x + MAP.width - 24, MAP.y + MAP.height - 20)
     ctx.textAlign = 'left'
@@ -259,7 +259,7 @@ export async function renderShareCard(data: ShareCardData): Promise<Blob> {
   const pillX = WIDTH - MARGIN - pillWidth,
     pillY = statsTop + 88
   roundedPath(ctx, pillX, pillY, pillWidth, 56, 28)
-  ctx.fillStyle = '#f4f6fa'
+  ctx.fillStyle = '#F7F5F7'
   ctx.fill()
   ctx.beginPath()
   ctx.arc(pillX + 30, pillY + 28, 9, 0, Math.PI * 2)

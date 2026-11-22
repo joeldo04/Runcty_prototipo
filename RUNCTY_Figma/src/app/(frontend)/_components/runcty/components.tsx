@@ -8,7 +8,7 @@ import {
   type SVGProps,
 } from 'react'
 import Image from 'next/image'
-import gacelasLogo from '../../../../../imagenes/gacelas_logo.webp'
+import gacelasWhite from '../../../../../imagenes/gacelas_emblema_blanco.png'
 import {
   AlertTriangle,
   ArrowLeft,
@@ -53,10 +53,10 @@ export function Button({
 }) {
   const variants = {
     primary:
-      'border border-electric/40 bg-electric text-white shadow-neon hover:bg-blue-500',
+      'border border-electric/40 bg-electric text-white shadow-neon hover:bg-primary-pressed',
     secondary: 'border border-line bg-panel text-copy hover:border-lilac/40 hover:bg-raised',
     ghost: 'border border-transparent bg-transparent text-muted hover:bg-raised hover:text-copy',
-    orange: 'border border-sport/30 bg-sport text-ink shadow-sm hover:bg-orange-400',
+    orange: 'border border-sport/30 bg-sport text-ink shadow-sm hover:bg-primary-pressed',
     danger: 'border border-risk/30 bg-risk/15 text-risk hover:bg-risk/25',
   }
   return (
@@ -196,7 +196,7 @@ export function useThemeColor(color: string) {
 export function OfficialBadge() {
   return (
     <span className="official-badge">
-      <Image src={gacelasLogo} alt="" width={22} height={22} />
+      <Image src={gacelasWhite} alt="" height={16} />
       Oficial Gacelas
     </span>
   )

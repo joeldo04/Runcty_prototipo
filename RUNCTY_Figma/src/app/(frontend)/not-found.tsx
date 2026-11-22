@@ -9,7 +9,7 @@ export default function NotFound() {
         La página o ruta que buscas no existe, es privada o todavía no está publicada.
       </p>
       <Link
-        className="mt-6 rounded-xl bg-[#2f6fe8] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent"
+        className="mt-6 rounded-xl bg-[#D1106F] px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent"
         href="/explorar"
       >
         Volver a explorar

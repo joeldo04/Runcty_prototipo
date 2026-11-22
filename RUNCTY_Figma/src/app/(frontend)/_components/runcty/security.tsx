@@ -22,7 +22,13 @@ import { Button, Confirm, DemoTag, Modal, PageTitle, Status } from './components
 import { uid, formatTime, pointAlong, sliceAlong, withEmails, type Coordinate } from './data'
 import { DEMO_ROUTES } from './demo-seed'
 import { useDemo } from './store'
+import { SHOW_FUTURE } from './features'
 import { readRunctyShare } from '../../actions'
+
+// Abre el marcador del teléfono con el número de emergencias.
+const callEmergency = () => {
+  window.location.href = 'tel:911'
+}
 
 export const shareUrl = (token: string) =>
   `${typeof window === 'undefined' ? '' : window.location.origin}/compartir/${encodeURIComponent(token)}`
@@ -39,8 +45,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
     } | null>(null),
     [remove, setRemove] = useState<string | null>(null),
     [whatsapp, setWhatsapp] = useState(false),
-    [preview, setPreview] = useState(false),
-    [call, setCall] = useState(false)
+    [preview, setPreview] = useState(false)
   useEffect(() => {
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
@@ -130,7 +135,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
           ))}
         </div>
       </div>
-      <div className="sharing-section">
+      {SHOW_FUTURE && <div className="sharing-section">
         <span className={`sharing-symbol ${valid ? 'active' : ''}`}>
           <Navigation />
         </span>
@@ -195,22 +200,19 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
             Comprobar enlace revocado <ExternalLink />
           </button>
         )}
-      </div>
+      </div>}
       <div className="emergency-section">
         <Shield />
         <div>
           <h3>Herramientas de emergencia</h3>
-          <p>
-            El SOS está disponible durante el entrenamiento. No se envían alertas ni llamadas
-            reales.
-          </p>
+          <p>El SOS está disponible durante el entrenamiento.</p>
         </div>
-        <Button variant="secondary" onClick={() => setCall(true)}>
+        <Button variant="secondary" onClick={callEmergency}>
           <Phone />
-          911
+          Llamar al 911
         </Button>
       </div>
-      {state.sos.length > 0 && (
+      {SHOW_FUTURE && state.sos.length > 0 && (
         <section className="sos-history">
           <h3>Historial de alertas SOS</h3>
           {state.sos.map((a) => (
@@ -247,7 +249,7 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
                     ? withEmails(next, [{
                         to: edit.email,
                         subject: `${s.profile.name} te eligió como contacto de confianza`,
-                        body: `${s.profile.name} te agregó como contacto de confianza en RUNCTY.\n\nPodrías recibir el enlace de su recorrido y alertas SOS si necesita ayuda mientras entrena.`,
+                        body: `${s.profile.name} te agregó como contacto de confianza en RUNCTY. Si necesita ayuda mientras entrena, podrías recibir una alerta SOS con su última ubicación.`,
                       }])
                     : next
                 })
@@ -323,15 +325,6 @@ export function Security({ mobile = false }: { mobile?: boolean }) {
           </Button>
         </Modal>
       )}
-      {call && (
-        <Modal title="911" onClose={() => setCall(false)}>
-          <Phone />
-          <p>
-            Se abrirá el marcador del teléfono con el 911.
-          </p>
-          <Button onClick={() => setCall(false)}>Entendido</Button>
-        </Modal>
-      )}
     </div>
   )
 }
@@ -377,7 +370,7 @@ function DemoContactView({ embedded }: { embedded: boolean }) {
       {status !== 'activo' ? <div className="expired-link"><Shield /><h2>{status === 'caducado' ? 'Este enlace ha caducado' : 'El corredor revocó este enlace'}</h2><p>El acceso terminó. La ubicación, el recorrido y las métricas ya no se muestran.</p><span>Estado de demostración · no se consultó un servidor</span></div> : <>
         <div className="flex flex-wrap items-center justify-between gap-3 py-3"><strong>{route.name}</strong><Status value="Activo" /></div>
         <div className="contact-map"><SafetyMap route={route} track={track} tracking={position} focus={position} fitRoute guide showReports={false} /></div>
-        <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-1 w-7 rounded-full bg-[#F72585]" />Rosa: recorrido del corredor.</p>
+        <p className="mt-3 flex items-center gap-2 text-sm text-muted"><span className="h-1 w-7 rounded-full bg-[#E6197F]" />Rosa: recorrido del corredor.</p>
         <div className="activity-totals"><span><strong>{km.toFixed(2)}<small> km</small></strong>Distancia</span><span><strong>{formatTime(seconds)}</strong>Duración</span><span><strong className="!text-lg">{trainingStatus}</strong>Estado del entrenamiento</span></div>
         <p>Última ubicación recibida: {position[0].toFixed(5)}, {position[1].toFixed(5)}</p>
         <p className="muted">Última actualización: {new Date(updatedAt).toLocaleTimeString('es', { timeZone: 'America/Guayaquil' })}</p>
@@ -479,8 +472,17 @@ export function SosButton() {
     [holding, setHolding] = useState(false),
     [count, setCount] = useState<number | null>(null),
     [sent, setSent] = useState(false),
-    [offline, setOffline] = useState(false),
-    [phone, setPhone] = useState(false)
+    [offline, setOffline] = useState(false)
+  // Última ubicación conocida del corredor sobre la ruta que está entrenando.
+  const lastLocation = pointAlong(
+    state.session.route.geometry,
+    state.session.route.km ? Math.min(1, state.session.km / state.session.route.km) : 0,
+  )
+  const warnByWhatsapp = () => {
+    const [lat, lng] = lastLocation.map((value) => value.toFixed(5))
+    const text = `Alerta SOS de RUNCTY: ${user?.name ?? 'Un corredor'} necesita ayuda mientras entrena. Última ubicación: https://maps.google.com/?q=${lat},${lng}. Si no logras comunicarte, llama al 911.`
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank', 'noopener,noreferrer')
+  }
   useEffect(() => {
     if (count === null) return
     if (count === 0) {
@@ -592,35 +594,25 @@ export function SosButton() {
           </div>
           <p>
             {offline
-              ? 'No hay conexión. La alerta se enviará cuando vuelva la señal.'
+              ? 'No hay conexión: no se pudo enviar la alerta.'
               : (user?.name ?? 'Corredor') +
                 ' · ' +
                 new Date().toLocaleTimeString('es') +
                 ' · aviso enviado a tus contactos de confianza.'}
           </p>
-          {state.sharing && <code>{shareUrl(state.sharing.token)}</code>}
-          <div className="modal-actions">
-            <Button variant="secondary" onClick={() => setPhone(true)}>
+          {SHOW_FUTURE && state.sharing && <code>{shareUrl(state.sharing.token)}</code>}
+          <div className={`modal-actions ${offline ? 'sos-offline-actions' : ''}`}>
+            <Button variant={offline ? 'danger' : 'secondary'} onClick={callEmergency}>
               <Phone />
-              911
+              Llamar al 911
             </Button>
-            <Button
-              onClick={() => {
-                navigator.clipboard
-                  ?.writeText(`Alerta RUNCTY · ${user?.name ?? 'Corredor'}`)
-                  .catch(() => {})
-                setSent(false)
-              }}
-            >
-              <Copy />
-              Copiar aviso
-            </Button>
+            {!offline && (
+              <Button onClick={warnByWhatsapp}>
+                <Send />
+                Avisar también por WhatsApp
+              </Button>
+            )}
           </div>
-          {phone && (
-            <p className="info-strip">
-              Se abriría el marcador con el 911.
-            </p>
-          )}
         </Modal>
       )}
     </>

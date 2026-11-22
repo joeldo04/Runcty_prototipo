@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import {
@@ -22,6 +23,8 @@ import { averageSpeed, formatDuration, formatPace, JIPIRO, LOJA, type Coordinate
 import { DEMO_ROADS, DEMO_ROUTES } from './demo-seed'
 import { BrandMark } from './Onboarding'
 import { useDemo } from './store'
+import { SHOW_FUTURE } from './features'
+import gacelasWhite from '../../../../../imagenes/gacelas_emblema_blanco.png'
 
 const WIDTH = 420,
   HEIGHT = 520
@@ -45,7 +48,7 @@ function LojaStreets({ progress, labels = false }: { progress?: number; labels?:
     <svg className="loja-streets" viewBox={`0 0 ${WIDTH} ${HEIGHT}`} role="img" aria-label="Calles de Loja pintadas con una ruta de RUNCTY" preserveAspectRatio="xMidYMid slice">
       <defs>
         <pattern id="loja-blocks" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="rotate(-9)">
-          <path d="M34 0H0V34" fill="none" stroke="#3478f6" strokeOpacity=".16" strokeWidth="1" />
+          <path d="M34 0H0V34" fill="none" stroke="#FF4FA3" strokeOpacity=".14" strokeWidth="1" />
         </pattern>
       </defs>
       <rect width={WIDTH} height={HEIGHT} fill="url(#loja-blocks)" />
@@ -64,7 +67,7 @@ function LojaStreets({ progress, labels = false }: { progress?: number; labels?:
           <circle cx={parkX} cy={parkY} r="4" fill="#fff" />
           <text x={parkX + 10} y={parkY + 4}>Parque Jipiro</text>
           <circle cx={pinX} cy={pinY} r="16" className="street-pin-ring" />
-          <circle cx={pinX} cy={pinY} r="6" fill="#ff6437" />
+          <circle cx={pinX} cy={pinY} r="6" fill="#FF4FA3" />
           <text x={pinX + 14} y={pinY + 4} className="street-city">Loja</text>
         </>
       )}
@@ -72,13 +75,20 @@ function LojaStreets({ progress, labels = false }: { progress?: number; labels?:
   )
 }
 
-const scenes = [
+const allScenes = [
   { title: 'Elige tu ruta', text: 'Compara distancia, horario y condiciones de cada recorrido en Loja.' },
-  { title: 'Corre', text: 'Sigue tus métricas y el trazado en vivo. Tu seguridad, siempre a mano.' },
+  {
+    title: 'Corre',
+    text: SHOW_FUTURE
+      ? 'Sigue tus métricas y el trazado en vivo. Tu seguridad, siempre a mano.'
+      : 'Graba tu recorrido con GPS. Tu seguridad, siempre a mano.',
+  },
   { title: 'Cuéntanos cómo fue', text: 'Una encuesta breve y una valoración con estrellas ayudan a otros corredores.' },
   { title: 'Revisa tu resumen', text: 'Distancia, tiempo, ritmo y velocidad, con el mapa de lo que corriste.' },
   { title: 'Comparte tu logro', text: 'Genera una imagen con tu recorrido, lista para tus redes.' },
 ]
+// "Comparte tu logro" no se entrega en esta versión.
+const scenes = SHOW_FUTURE ? allScenes : allScenes.slice(0, 4)
 const SCENE_SECONDS = 5
 
 function AppSimulation() {
@@ -150,8 +160,17 @@ function AppSimulation() {
             <div className="sim-run">
               <div className="sim-map sim-map-tall"><LojaStreets progress={part} /></div>
               <div className="sim-live">
-                <strong>{runKm.toFixed(2)}<small> km</small></strong>
-                <div><span>{formatDuration(runSeconds)}<small>Tiempo</small></span><span>{formatPace(seconds, route.km)}<small>Ritmo /km</small></span></div>
+                {SHOW_FUTURE ? (
+                  <>
+                    <strong>{runKm.toFixed(2)}<small> km</small></strong>
+                    <div><span>{formatDuration(runSeconds)}<small>Tiempo</small></span><span>{formatPace(seconds, route.km)}<small>Ritmo /km</small></span></div>
+                  </>
+                ) : (
+                  <>
+                    <strong className="sim-recording"><i /> Grabando</strong>
+                    <div><span>GPS<small>Señal buena</small></span><span>SOS<small>Mantén 3 s</small></span></div>
+                  </>
+                )}
               </div>
               <div className="sim-buttons"><span>Pausar</span><span>Finalizar</span></div>
             </div>
@@ -202,7 +221,7 @@ function AppSimulation() {
 
 export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') => void }) {
   const { state, user, openAccount, openRegistration } = useDemo()
-  useThemeColor('#0b1020')
+  useThemeColor('#2A0A1F')
   const router = useRouter()
   const routes = (state.catalog.length ? state.catalog : DEMO_ROUTES).length
   const streets = (state.roads.length ? state.roads : DEMO_ROADS).length
@@ -235,6 +254,10 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
               <button type="button" className="home-outline" onClick={() => enter('mobile')}><Smartphone /> Ver en móvil</button>
             </div>
             <div className="home-tag"><DemoTag /></div>
+            <div className="gacelas-lockup">
+              <Image src={gacelasWhite} alt="" height={34} />
+              <span>Con el Club Deportivo<strong>Gacelas Running Team</strong></span>
+            </div>
           </div>
           <figure className="home-art">
             <LojaStreets labels />
@@ -277,7 +300,13 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
           {[
             { icon: Route, title: 'Elige con información', text: 'Explora recomendaciones por horario, distancia y dificultad.' },
             { icon: Activity, title: 'Registra tu recorrido', text: 'Inicia, pausa y termina tu entrenamiento. Revisa después tu actividad.' },
-            { icon: Shield, title: 'Corre en comunidad', text: 'Reporta incidentes y comparte un enlace temporal con alguien de confianza.' },
+            {
+              icon: Shield,
+              title: 'Corre en comunidad',
+              text: SHOW_FUTURE
+                ? 'Reporta incidentes y comparte un enlace temporal con alguien de confianza.'
+                : 'Reporta incidentes y, si lo necesitas, avisa a tus contactos de confianza con el SOS.',
+            },
           ].map(({ icon: Icon, title, text }) => (
             <article key={title}><span><Icon /></span><h3>{title}</h3><p>{text}</p></article>
           ))}
@@ -295,7 +324,11 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
             <article className="featured navy-zone">
               <span><Smartphone /></span>
               <h3>Ver en móvil</h3>
-              <p>La experiencia del corredor: entrenar, valorar la ruta y compartir el resultado.</p>
+              <p>
+                {SHOW_FUTURE
+                  ? 'La experiencia del corredor: entrenar, valorar la ruta y compartir el resultado.'
+                  : 'La experiencia del corredor: entrenar, valorar la ruta y revisar tu resumen.'}
+              </p>
               <Button variant="orange" onClick={() => enter('mobile')}>Abrir vista móvil <ArrowRight /></Button>
             </article>
             <article>

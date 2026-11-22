@@ -157,7 +157,7 @@ export const safety = (score: number | null | undefined) =>
         ? { label: 'Atención', color: 'var(--safety-medium)', key: 'medium' }
         : { label: 'Precaución', color: 'var(--safety-low)', key: 'low' }
 export const colorHex = (score: number | null | undefined) =>
-  score == null ? '#64748b' : score >= 70 ? '#16d98a' : score >= 40 ? '#facc15' : '#ff4757'
+  score == null ? '#8A8F98' : score >= 70 ? '#17834A' : score >= 40 ? '#F2A20C' : '#D93A2B'
 export const distance = (a: Coordinate, b: Coordinate) => {
   const rad = Math.PI / 180,
     lat = (b[0] - a[0]) * rad,

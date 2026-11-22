@@ -5,7 +5,7 @@
 .tour-spotlight {
   position: absolute;
   border-radius: 14px;
-  box-shadow: 0 0 0 2px var(--color-sport), 0 0 18px 4px rgb(255 100 55 / 55%), 0 0 0 200vmax rgb(0 0 0 / 65%);
+  box-shadow: 0 0 0 2px var(--color-sport), 0 0 18px 4px rgb(209 16 111 / 55%), 0 0 0 200vmax rgb(0 0 0 / 65%);
   transition: left .22s ease, top .22s ease, width .22s ease, height .22s ease;
 }
 .tour-spotlight::after {
@@ -34,7 +34,7 @@
 .tour-progress > span { display: flex; flex-wrap: wrap; gap: 5px; }
 .tour-progress i { width: 7px; height: 7px; border-radius: 50%; background: var(--color-line); }
 .tour-progress i.done { background: var(--color-neon); }
-.tour-progress i.current { background: var(--color-purple); box-shadow: 0 0 0 2px rgb(107 73 217 / 22%); }
+.tour-progress i.current { background: var(--color-purple); box-shadow: 0 0 0 2px rgb(209 16 111 / 22%); }
 .tour-progress small { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--color-purple); }
 .tour-bubble h2 { font-size: 16px; font-weight: 700; line-height: 1.25; }
 .tour-bubble p { margin-top: 4px; font-size: 14px; line-height: 1.4; color: var(--color-muted); }

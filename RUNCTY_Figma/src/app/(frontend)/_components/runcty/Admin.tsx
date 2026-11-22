@@ -24,6 +24,7 @@ import {
   X,
 } from 'lucide-react'
 import SafetyMap from './SafetyMap'
+import { SHOW_FUTURE } from './features'
 import {
   activeBanners,
   AdCarousel,
@@ -135,7 +136,9 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
             icon: ShieldAlert,
             target: 'moderate',
           },
-          { label: 'Rutas propuestas', value: proposed.length, icon: Route, target: 'proposals' },
+          ...(SHOW_FUTURE
+            ? [{ label: 'Rutas propuestas', value: proposed.length, icon: Route, target: 'proposals' }]
+            : []),
           {
             label: 'Rutas oficiales',
             value: all.filter((r) => r.official).length,

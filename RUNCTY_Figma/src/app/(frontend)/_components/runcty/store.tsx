@@ -129,7 +129,7 @@ function initialState(data: PublicRuncty): DemoState {
     moderation: [],
     users: [],
     mapView: { center: [-3.9857, -79.2027], zoom: 14 },
-    draft: { points: [], mode: 'manual', name: 'Mi recorrido por Loja' },
+    draft: { points: [], mode: 'recommend', name: 'Mi recorrido por Loja' },
     routeOverrides: {},
     session: {
       phase: 'ready',
@@ -221,7 +221,7 @@ type Store = {
   notify: (message: string) => void
   openAccount: () => void
   openRegistration: () => void
-  startDemo: (role?: 'corredor' | 'club' | 'sistema', accountId?: string, name?: string) => void
+  startDemo: (role?: 'corredor' | 'club' | 'sistema', accountId?: string, name?: string, email?: string) => void
   logout: () => Promise<boolean>
   hydrateSession: (data: Partial<DemoState>, user: AppUser | null) => void
 }
@@ -427,7 +427,7 @@ export function DemoProvider({
     router.refresh()
     return true
   }
-  const startDemo = useCallback((role: 'corredor' | 'club' | 'sistema' = 'corredor', accountId?: string, chosenName?: string) => {
+  const startDemo = useCallback((role: 'corredor' | 'club' | 'sistema' = 'corredor', accountId?: string, chosenName?: string, chosenEmail?: string) => {
     if ((userRef.current && !demoRef.current) || pendingRef.current || failed.current.length) return
     const wasDemo = demoRef.current
     demoRef.current = true
@@ -465,7 +465,7 @@ export function DemoProvider({
           : [...current.incidents, demoReport()],
         newAccount: created || (sameAccount && current.newAccount),
         emails: !created ? current.emails : withEmails(current, [{
-          to: 'corredor@ejemplo.com',
+          to: chosenEmail || 'corredor@ejemplo.com',
           subject: 'Verifica tu cuenta de RUNCTY',
           body: `Hola${name ? `, ${name}` : ''}.\n\nConfirma tu correo con el enlace de verificación para activar tu cuenta de corredor. El enlace vence en 24 horas.`,
         }]).emails,
@@ -479,7 +479,7 @@ export function DemoProvider({
           name,
           level: 'Intermedio',
           public: false,
-          email: 'corredor@example.invalid',
+          email: chosenEmail || 'corredor@example.invalid',
         },
       },
       { id: account.id, name, role: role === 'club' && account.role === 'sistema' ? 'sistema' : role },
@@ -509,9 +509,9 @@ export function DemoProvider({
         <AccountPreview
           create={accountMode === 'register'}
           close={() => setAccountMode(null)}
-          proceed={(accountId, mode, name) => {
+          proceed={(accountId, mode, name, email) => {
             if (userRef.current && !demoRef.current) { setAccountMode(null); return }
-            startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name)
+            startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name, email)
             if (mode === 'admin') router.push('/demo/administracion')
             else if (!window.location.pathname.startsWith('/movil')) router.push('/explorar')
           }}
