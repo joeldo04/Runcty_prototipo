@@ -15,7 +15,6 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
-  ChevronLeft,
   ChevronRight,
   Clock3,
   Footprints,
@@ -639,51 +638,79 @@ export function AdCarousel({
 }) {
   const { state } = useDemo(),
     [index, setIndex] = useState(0),
-    [detail, setDetail] = useState(false),
-    touch = useRef(0)
+    [detail, setDetail] = useState<string | null>(null),
+    track = useRef<HTMLDivElement>(null)
   const ads = activeBanners(state.banners, state.sponsors, placement)
   if (!ads.length) return null
-  const ad = ads[index % ads.length],
-    sponsor = state.sponsors.find((s) => s.id === ad.sponsorId)!
-  const next = (direction: number) => setIndex((i) => (i + direction + ads.length) % ads.length)
+  const sponsorOf = (sponsorId: string) => state.sponsors.find((s) => s.id === sponsorId)!
+  const opened = ads.find((ad) => ad.id === detail)
+  const sponsor = opened ? sponsorOf(opened.sponsorId) : null
+  // Posición de cada tarjeta dentro del carrusel, descontando el margen interior.
+  const stops = () => {
+    const el = track.current
+    if (!el) return []
+    const pad = parseFloat(getComputedStyle(el).paddingLeft) || 0
+    return (Array.from(el.children) as HTMLElement[]).map((slide) => slide.offsetLeft - pad)
+  }
+  // Se desliza con el dedo; el punto activo sigue a la tarjeta más cercana.
+  const follow = () => {
+    const left = track.current?.scrollLeft ?? 0
+    const nearest = stops().reduce(
+      (best, stop, i, all) => (Math.abs(stop - left) < Math.abs(all[best] - left) ? i : best),
+      0,
+    )
+    if (nearest !== index) setIndex(nearest)
+  }
+  const goTo = (i: number) => {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    track.current?.scrollTo({ left: stops()[i] ?? 0, behavior: reduce ? 'auto' : 'smooth' })
+  }
   return (
     <section className="allies-section">
       <div className="section-heading">
         <div>
           <span className="eyebrow">ALIADOS DE RUNCTY</span>
         </div>
-        <div className="carousel-arrows">
-          <IconButton label="Anuncio anterior" onClick={() => next(-1)}>
-            <ChevronLeft />
-          </IconButton>
-          <IconButton label="Anuncio siguiente" onClick={() => next(1)}>
-            <ChevronRight />
-          </IconButton>
-        </div>
       </div>
-      <article
-        className={`sponsor-banner campaign-${sponsor.visual}`}
-        onTouchStart={(e) => (touch.current = e.touches[0].clientX)}
-        onTouchEnd={(e) => {
-          const delta = touch.current - e.changedTouches[0].clientX
-          if (Math.abs(delta) > 40) next(delta > 0 ? 1 : -1)
-        }}
-      >
-        <SponsorArt sponsor={sponsor} />
-        <div>
-          <span className="ad-label">PUBLICIDAD</span>
-          <h3>{sponsor.name}</h3>
-          <p>{ad.title}</p>
-          <button onClick={() => setDetail(true)}>
-            Conocer más <ArrowRight />
-          </button>
+      <div className="ad-track" ref={track} onScroll={follow} role="region" aria-label="Anuncios de aliados, desliza para ver más">
+        {ads.map((ad, i) => {
+          const owner = sponsorOf(ad.sponsorId)
+          return (
+            <article
+              key={ad.id}
+              className={`sponsor-banner campaign-${owner.visual}`}
+              aria-roledescription="anuncio"
+              aria-label={`${i + 1} de ${ads.length}`}
+            >
+              <SponsorArt sponsor={owner} />
+              <div>
+                <span className="ad-label">PUBLICIDAD</span>
+                <h3>{owner.name}</h3>
+                <p>{ad.title}</p>
+                <button onClick={() => setDetail(ad.id)}>
+                  Conocer más <ArrowRight />
+                </button>
+              </div>
+            </article>
+          )
+        })}
+      </div>
+      {ads.length > 1 && (
+        <div className="ad-dots">
+          {ads.map((ad, i) => (
+            <button
+              key={ad.id}
+              type="button"
+              aria-label={`Ver anuncio ${i + 1} de ${ads.length}`}
+              aria-current={i === index ? 'true' : undefined}
+              className={i === index ? 'active' : ''}
+              onClick={() => goTo(i)}
+            />
+          ))}
         </div>
-        <span className="ad-pagination">
-          {(index % ads.length) + 1} / {ads.length}
-        </span>
-      </article>
-      {detail && (
-        <Modal title={sponsor.name} onClose={() => setDetail(false)}>
+      )}
+      {sponsor && (
+        <Modal title={sponsor.name} onClose={() => setDetail(null)}>
           <SponsorArt sponsor={sponsor} />
           {sponsor.image && (
             <a className="text-action" href={sponsor.image.url} target="_blank" rel="noreferrer">
@@ -696,7 +723,7 @@ export function AdCarousel({
             La publicidad no modifica las condiciones de las rutas.
           </div>
           <p className="muted">{sponsor.contact}</p>
-          <Button onClick={() => setDetail(false)}>Entendido</Button>
+          <Button onClick={() => setDetail(null)}>Entendido</Button>
         </Modal>
       )}
     </section>

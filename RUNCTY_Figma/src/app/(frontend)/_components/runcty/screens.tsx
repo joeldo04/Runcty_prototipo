@@ -14,6 +14,7 @@ import {
   GraduationCap,
   Heart,
   LockKeyhole,
+  LogOut,
   Mail,
   MapPin,
   MessageSquare,
@@ -436,6 +437,7 @@ export function Explore({
       <SafetyNote />
       {!full && !expanded && (
         <>
+          <AdCarousel />
           <section className="places-section">
             <div className="section-heading">
               <div>
@@ -476,7 +478,6 @@ export function Explore({
               />
             )}
           </section>
-          <AdCarousel />
           <button className="club-link-strip" onClick={() => go('club')}>
             <span className="club-letter">G</span>
             <div>
@@ -1336,8 +1337,9 @@ export function Profile({
           </button>
         ))}
       </div>
-      <button className="logout-button" onClick={() => setDialog('logout')}>
-        Cerrar sesión <ArrowRight />
+      <button type="button" className="logout-button" onClick={() => setDialog('logout')}>
+        <LogOut />
+        Cerrar sesión
       </button>
       {dialog === 'personal' && (
         <Modal title="Tus datos personales" onClose={() => setDialog(null)}>
