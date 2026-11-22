@@ -291,3 +291,96 @@ html, body { overscroll-behavior: none; }
 @media (hover: none) {
   .runcty-app .logout-button:hover { background: #fff; }
 }
+
+/* ===== Inicio móvil (Explorar): 16 px a los lados y 12 px entre bloques. ===== */
+.runcty-app .phone-frame .mobile-scroll:has(> .explore-mobile) { background: #fff; }
+.runcty-app .explore-mobile { padding-top: 6px; padding-bottom: 44px; background: #fff; }
+.runcty-app .explore-mobile .home-intro { margin: 0 16px 14px; padding: 6px 0 0; }
+.runcty-app .explore-mobile .home-intro h1 { font-size: 28px; font-weight: 800; line-height: 1.12; letter-spacing: -.02em; color: var(--color-copy); }
+.runcty-app .explore-mobile .home-intro h1 > span { color: var(--color-primary); }
+.runcty-app .explore-mobile .home-intro .locality { position: static; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 14px; color: var(--color-muted); }
+.runcty-app .explore-mobile .home-intro .locality svg { width: 16px; height: 16px; color: var(--color-primary); }
+
+/* Buscador a todo el ancho. */
+.runcty-app .explore-mobile .explore-toolbar { display: block; margin: 0 16px 12px; }
+.runcty-app .explore-mobile .explore-toolbar .search-box { width: 100%; min-height: 48px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-shell); box-shadow: none; }
+.runcty-app .explore-mobile .explore-toolbar .search-box input { font-size: 15px; }
+.runcty-app .explore-mobile .explore-toolbar .search-box > svg { color: var(--color-muted); }
+
+/* Dos selectores tipo píldora: horario y tipo de ruta. */
+.runcty-app .home-selectors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 16px 12px; }
+.runcty-app .home-selectors :is(.time-select, .route-type-select) { position: relative; display: flex; align-items: center; gap: 6px; min-width: 0; height: 48px; min-height: 48px; padding: 0 9px; border: 1px solid var(--color-line); border-radius: 999px; background: #fff; }
+.runcty-app .home-selectors :is(.time-select, .route-type-select) > svg:first-child { flex: none; width: 16px; height: 16px; color: var(--color-primary); }
+.runcty-app .home-selectors select, .runcty-app .phone-frame .home-selectors select { flex: 1; min-width: 0; height: 100%; min-height: 0; padding: 0 16px 0 0; border: 0; background: transparent; -webkit-appearance: none; appearance: none; font-size: 13px; letter-spacing: -.02em; font-weight: 700; color: var(--color-copy); text-overflow: ellipsis; cursor: pointer; }
+.runcty-app .home-selectors .select-chevron { position: absolute; right: 9px; width: 16px; height: 16px; pointer-events: none; color: var(--color-copy); }
+.runcty-app .home-selectors .route-type-select { border-color: var(--color-primary); }
+.runcty-app .home-selectors .route-type-select :is(select, .select-chevron) { color: var(--color-primary); }
+
+/* Mapa como tarjeta: bordes de 16 px, sombra suave y Planificar al pie. */
+.runcty-app .explore-mobile .home-map-card { margin: 0 16px 12px; overflow: hidden; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 6%), 0 8px 22px rgb(26 20 24 / 8%); }
+.runcty-app .explore-mobile .home-map-card .explore-map { height: 300px; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+.runcty-app .map-card-foot { padding: 12px; border-top: 1px solid var(--color-line); }
+.runcty-app .plan-route-button, .runcty-app .phone-frame .plan-route-button { width: 100%; height: 52px; min-height: 52px; gap: 10px; border-radius: 14px; font-size: 16px; font-weight: 700; }
+.runcty-app .plan-route-button svg { width: 20px; height: 20px; }
+.runcty-app .map-compact .map-actions, .runcty-app .phone-frame .map-compact .map-actions { top: 12px; right: 12px; gap: 8px; }
+.runcty-app .map-compact .map-actions > button { width: 44px; height: 44px; border: 0; border-radius: 12px; background: #fff; color: var(--color-copy); box-shadow: 0 2px 8px rgb(26 20 24 / 14%); }
+.runcty-app .map-compact .map-actions > button[aria-pressed='true'] { background: #fff; color: var(--color-primary); }
+.runcty-app .map-compact .map-location, .runcty-app .phone-frame .map-compact .map-location { top: 12px; left: 12px; border: 0; background: #fff; box-shadow: 0 2px 8px rgb(26 20 24 / 14%); }
+.runcty-app .map-compact .safety-legend, .runcty-app .phone-frame .map-compact .safety-legend { left: 12px; right: auto; bottom: 20px; width: auto; gap: 12px; padding: 7px 12px; border: 0; border-radius: 999px; background: #fff; font-size: 12px; color: var(--color-copy); box-shadow: 0 2px 8px rgb(26 20 24 / 14%); }
+.runcty-app .phone-frame .explore-map .map-compact .map-activate { top: 12px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
+
+/* Condiciones para correr ahora. */
+.runcty-app .conditions-card { display: flex; align-items: center; gap: 12px; margin: 0 16px 12px; padding: 12px 14px; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; }
+.runcty-app .conditions-icon { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-shell); color: var(--color-copy); }
+.runcty-app .conditions-icon svg { width: 20px; height: 20px; }
+.runcty-app .conditions-card > div { flex: 1; min-width: 0; padding-left: 12px; border-left: 1px solid var(--color-line); }
+.runcty-app .conditions-card strong { display: block; font-size: 14px; font-weight: 750; line-height: 1.3; color: var(--color-copy); }
+.runcty-app .conditions-card p { margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
+.runcty-app .conditions-time { flex: none; font-size: 13px; font-weight: 750; white-space: nowrap; color: var(--color-copy); }
+
+/* Rutas recomendadas en filas: miniatura, datos y nivel de seguridad. */
+.runcty-app .explore-mobile .recommended-panel { margin: 0 16px 12px; padding: 0; }
+.runcty-app .explore-mobile .recommended-panel > .section-heading { margin-bottom: 10px; padding: 0; }
+.runcty-app .explore-mobile .recommended-panel h2 { margin-top: 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+.runcty-app .home-route-list { display: flex; flex-direction: column; gap: 10px; }
+.runcty-app .home-route-row, .runcty-app .phone-frame .home-route-row { display: flex; align-items: center; gap: 12px; width: 100%; min-height: 84px; padding: 10px 10px 10px 10px; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; text-align: left; }
+.runcty-app .home-route-row:active { background: var(--color-shell); }
+.runcty-app .home-route-thumb { position: relative; flex: none; width: 64px; height: 64px; overflow: hidden; border-radius: 12px; background: var(--color-shell); color: var(--color-line); }
+.runcty-app .home-route-thumb .route-preview { position: absolute; inset: 0; display: grid; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.runcty-app .home-route-thumb .route-preview > svg { width: 100%; height: 100%; }
+.runcty-app .home-route-thumb .route-preview > span { display: none; }
+.runcty-app .home-route-text { display: flex; flex: 1; flex-direction: column; gap: 3px; min-width: 0; }
+.runcty-app .home-route-text strong { display: -webkit-box; overflow: hidden; font-size: 15px; font-weight: 750; line-height: 1.25; color: var(--color-copy); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.runcty-app .home-route-text small { font-size: 13px; color: var(--color-muted); }
+.runcty-app .safety-chip { display: inline-flex; flex: none; align-items: center; gap: 6px; padding: 5px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.runcty-app .safety-chip i { width: 8px; height: 8px; border-radius: 50%; }
+.runcty-app .safety-chip.high { background: #E6F4EC; color: #12703E; }
+.runcty-app .safety-chip.high i { background: #17834A; }
+.runcty-app .safety-chip.medium { background: #FEF3DC; color: #8A5A00; }
+.runcty-app .safety-chip.medium i { background: #F2A20C; }
+.runcty-app .safety-chip.low { background: #FBE8E6; color: #B42318; }
+.runcty-app .safety-chip.low i { background: #D93A2B; }
+.runcty-app .safety-chip.none { background: #EEEFF1; color: #5B6068; }
+.runcty-app .safety-chip.none i { background: #8A8F98; }
+.runcty-app .home-route-arrow { flex: none; width: 18px; height: 18px; color: var(--color-muted); }
+
+/* El resto del inicio con el mismo margen de 16 px. */
+.runcty-app .explore-mobile > .safety-note { margin: 0 16px 12px; }
+.runcty-app .explore-mobile .allies-section { margin: 12px 16px; }
+.runcty-app .explore-mobile .ad-track { --ad-gutter: 16px; margin-inline: -16px; }
+.runcty-app .explore-mobile .places-section { padding-inline: 16px; }
+.runcty-app .explore-mobile .club-link-strip { width: calc(100% - 32px); margin-inline: 16px; }
+
+/* Barra inferior: Entrenar al centro como botón circular elevado de 56 px. */
+.runcty-app .phone-frame .mobile-nav { align-items: flex-end; overflow: visible; min-height: 68px; padding: 6px 6px max(6px, env(safe-area-inset-bottom)); border-top: 1px solid var(--color-line); background: #fff; box-shadow: 0 -4px 16px rgb(26 20 24 / 5%); }
+.runcty-app .phone-frame .mobile-nav > button { flex: 1; min-height: 54px; gap: 4px; padding: 6px 2px; border-radius: 14px; background: transparent; font-size: 12px; font-weight: 600; color: var(--color-muted); }
+.runcty-app .phone-frame .mobile-nav > button::before { display: none; }
+.runcty-app .phone-frame .mobile-nav > button > svg { width: 22px; height: 22px; }
+.runcty-app .phone-frame .mobile-nav > button.active { background: var(--color-primary-soft); color: var(--color-primary); }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3), .runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { justify-content: flex-end; padding-top: 0; background: transparent; }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { color: var(--color-primary); }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > svg { box-sizing: border-box; width: 56px; height: 56px; margin-top: -30px; padding: 14px; border: 4px solid #fff; border-radius: 50%; background: var(--color-primary); color: #fff; box-shadow: 0 8px 20px rgb(209 16 111 / 35%); stroke-width: 2.4; }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > i { top: -28px; right: calc(50% - 30px); width: 12px; height: 12px; border: 2px solid #fff; background: var(--color-safe); }
+@media (hover: none) {
+  .runcty-app .phone-frame .mobile-nav > button:not(.active):hover { background: transparent; }
+}

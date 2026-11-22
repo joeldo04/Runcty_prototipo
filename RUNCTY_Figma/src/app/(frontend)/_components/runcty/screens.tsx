@@ -8,6 +8,7 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  ChevronDown,
   ChevronRight,
   Clock3,
   Flag,
@@ -18,6 +19,7 @@ import {
   Mail,
   MapPin,
   MessageSquare,
+  Moon,
   Mountain,
   Navigation,
   Plus,
@@ -26,6 +28,8 @@ import {
   Shield,
   SlidersHorizontal,
   Sparkles,
+  Sun,
+  Sunrise,
   Trash2,
   UserX,
   Users,
@@ -47,6 +51,7 @@ import {
   Modal,
   PageTitle,
   RouteCard,
+  RoutePreview,
   SafetyNote,
   SaveButton,
   Score,
@@ -82,6 +87,66 @@ type ScreenProps = {
   go: (page: string) => void
   run: (r: RouteData) => void
   mobile?: boolean
+}
+
+// Consejo concreto para correr según la franja horaria elegida.
+const slotConditions: Record<string, { name: string; tip: string; icon: LucideIcon }> = {
+  '05:30': { name: 'Madrugada', tip: 'Usa ropa reflectiva y prefiere vías iluminadas.', icon: Sunrise },
+  '08:00': { name: 'Mañana', tip: 'Buena luz y más gente en parques y avenidas.', icon: Sun },
+  '14:00': { name: 'Tarde', tip: 'Hidrátate y busca tramos con sombra.', icon: Sun },
+  '19:00': { name: 'Noche', tip: 'Prioriza vías iluminadas y transitadas.', icon: Moon },
+}
+function ConditionsCard() {
+  const { state } = useDemo()
+  const slot = slotConditions[state.time] ?? slotConditions['19:00']
+  const Icon = slot.icon
+  return (
+    <section className="conditions-card" aria-label="Condiciones para correr ahora">
+      <span className="conditions-icon">
+        <Icon />
+      </span>
+      <div>
+        <strong>Condiciones para correr ahora</strong>
+        <p>{slot.tip}</p>
+      </div>
+      <span className="conditions-time">
+        {state.time} · {slot.name}
+      </span>
+    </section>
+  )
+}
+
+// Fila de ruta recomendada: miniatura, datos y nivel de seguridad de un vistazo.
+const chipLabels: Record<string, string> = {
+  high: 'Favorable',
+  medium: 'Atención',
+  low: 'Precaución',
+  none: 'Sin datos',
+}
+function HomeRouteRow({ route, onOpen }: { route: RouteData; onOpen: (r: RouteData) => void }) {
+  const { state } = useDemo()
+  const level = safety(
+    routeScore(route, state.time, state.date, state.incidents, state.risks, state.roads).score,
+  )
+  const km = route.km.toLocaleString('es', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
+  return (
+    <button type="button" className="home-route-row" onClick={() => onOpen(route)}>
+      <span className="home-route-thumb">
+        <RoutePreview route={route} />
+      </span>
+      <span className="home-route-text">
+        <strong>{route.name}</strong>
+        <small>
+          {km} km · {route.min} min
+        </small>
+      </span>
+      <span className={`safety-chip ${level.key}`}>
+        <i />
+        {chipLabels[level.key]}
+      </span>
+      <ChevronRight className="home-route-arrow" />
+    </button>
+  )
 }
 
 export function Explore({
@@ -204,6 +269,17 @@ export function Explore({
           </div>
         </section>
       )}
+      {mobile && (
+        <div className="mobile-intro home-intro">
+          <h1>
+            ¿Por dónde correrás hoy<span>?</span>
+          </h1>
+          <span className="locality">
+            <MapPin />
+            Loja, Ecuador
+          </span>
+        </div>
+      )}
       <div className="explore-toolbar">
         <div className="search-box">
           <Search />
@@ -229,26 +305,49 @@ export function Explore({
             </button>
           )}
         </div>
-        <button
-          className={`filter-toggle ${filters ? 'selected' : ''}`}
-          onClick={() => setFilters(!filters)}
-          aria-label="Filtros de rutas"
-        >
-          <SlidersHorizontal />
-          {!mobile && 'Filtros'}
-          <span>
-            {[difficulty !== 'Todos', km !== 'Todos', source !== 'Todas'].filter(Boolean).length ||
-              ''}
-          </span>
-        </button>
+        {!mobile && (
+          <button
+            className={`filter-toggle ${filters ? 'selected' : ''}`}
+            onClick={() => setFilters(!filters)}
+            aria-label="Filtros de rutas"
+          >
+            <SlidersHorizontal />
+            Filtros
+            <span>
+              {[difficulty !== 'Todos', km !== 'Todos', source !== 'Todas'].filter(Boolean).length ||
+                ''}
+            </span>
+          </button>
+        )}
         {!mobile && <TimeControl />}
       </div>
-      {!full && (
+      {mobile && (
+        // Horario y tipo de ruta siempre a la vista: el horario cambia el índice de seguridad.
+        <div className="home-selectors">
+          <TimeControl select />
+          <label className="route-type-select">
+            <RouteIcon aria-hidden="true" />
+            <select
+              aria-label="Tipo de ruta"
+              value={source === 'Oficiales' ? 'oficiales' : km === '5' ? 'cortas' : 'todas'}
+              onChange={(e) => {
+                setKm(e.target.value === 'cortas' ? '5' : 'Todos')
+                setSource(e.target.value === 'oficiales' ? 'Oficiales' : 'Todas')
+              }}
+            >
+              <option value="todas">Todas las rutas</option>
+              <option value="cortas">Hasta 5 km</option>
+              <option value="oficiales">Oficial Gacelas</option>
+            </select>
+            <ChevronDown className="select-chevron" aria-hidden="true" />
+          </label>
+        </div>
+      )}
+      {!full && !mobile && (
         <div
-          className={`quick-filters mb-4 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] ${mobile ? 'mx-5' : ''}`}
+          className="quick-filters mb-4 flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]"
           aria-label="Filtros rápidos"
         >
-          {mobile && <TimeControl select />}
           <FilterChip
             selected={km === 'Todos' && source === 'Todas'}
             onClick={() => {
@@ -276,20 +375,6 @@ export function Explore({
           >
             <Shield className="size-3!" /> Oficial Gacelas
           </FilterChip>
-        </div>
-      )}
-      {mobile && (
-        <div className="mobile-intro">
-          <p>{user ? `Hola, ${user.name}.` : 'Tu ciudad. Tu ritmo.'}</p>
-          <h1>
-            ¿Por dónde
-            <br />
-            correrás hoy<span>?</span>
-          </h1>
-          <span className="locality">
-            <MapPin />
-            Loja, Ecuador
-          </span>
         </div>
       )}
       {filters && (
@@ -349,7 +434,11 @@ export function Explore({
         </div>
       )}
       <div className={`explore-grid ${full ? 'full-explore' : ''}`}>
-        <section className={expanded ? 'mobile-map-expanded' : 'explore-map-column'}>
+        <section
+          className={
+            expanded ? 'mobile-map-expanded' : `explore-map-column ${mobile ? 'home-map-card' : ''}`
+          }
+        >
           {expanded && (
             <div className="expanded-map-header">
               <BackButton onClick={() => setExpanded(false)} />
@@ -366,15 +455,20 @@ export function Explore({
                 if (route) open(route)
               }}
               onExpand={mobile ? () => setExpanded(!expanded) : undefined}
+              compact={mobile}
+              highlight={mobile ? list[0] : undefined}
             />
-            {mobile && (
-              <Button className="floating-create" onClick={() => go('planner')}>
+          </div>
+          {mobile && !expanded && (
+            // Acción principal de la pantalla: fija al pie del mapa, sin taparlo.
+            <div className="map-card-foot">
+              <Button className="plan-route-button" onClick={() => go('planner')}>
                 {SHOW_FUTURE ? <Plus /> : <Navigation />}
                 {SHOW_FUTURE ? 'Crear ruta' : 'Planificar ruta'}
               </Button>
-            )}
-          </div>
-          {!expanded && (
+            </div>
+          )}
+          {!expanded && !mobile && (
             <div className={`scenario-caption ${night ? 'night-caption' : ''}`}>
               <span>
                 {night ? 'ESCENARIO NOCTURNO' : 'ESCENARIO DIURNO'} · {state.time}
@@ -388,20 +482,27 @@ export function Explore({
             </div>
           )}
         </section>
+        {mobile && !expanded && <ConditionsCard />}
         {!expanded && (
           <section className="recommended-panel">
             <div className="section-heading">
               <div>
-                <span className="eyebrow">SELECCIONADAS PARA TI</span>
+                {!mobile && <span className="eyebrow">SELECCIONADAS PARA TI</span>}
                 <h2>Rutas recomendadas</h2>
               </div>
               <button className="text-action" onClick={() => go('routes')}>
                 Ver todas <ArrowRight />
               </button>
             </div>
-            <div className={mobile ? 'editorial-carousel' : 'recommended-list'}>
+            <div className={mobile ? 'home-route-list' : 'recommended-list'}>
               {list.length ? (
-                list.map((r) => <RouteCard key={r.id} route={r} onOpen={open} editorial={mobile} />)
+                list.map((r) =>
+                  mobile ? (
+                    <HomeRouteRow key={r.id} route={r} onOpen={open} />
+                  ) : (
+                    <RouteCard key={r.id} route={r} onOpen={open} />
+                  ),
+                )
               ) : (
                 <EmptyState
                   title="Sin coincidencias"

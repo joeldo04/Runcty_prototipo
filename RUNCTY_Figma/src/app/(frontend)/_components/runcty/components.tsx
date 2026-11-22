@@ -15,6 +15,7 @@ import {
   ArrowRight,
   CalendarDays,
   Check,
+  ChevronDown,
   ChevronRight,
   Clock3,
   Footprints,
@@ -291,6 +292,7 @@ export function TimeControl({
             </option>
           ))}
         </select>
+        <ChevronDown className="select-chevron" aria-hidden="true" />
       </label>
     )
   return (

@@ -41,6 +41,10 @@ export interface Props {
   onExpand?: () => void
   preview?: boolean
   context?: boolean
+  // Inicio móvil: solo ubicación y capas, leyenda de tres colores.
+  compact?: boolean
+  // Ruta destacada en magenta sobre los tramos coloreados por seguridad.
+  highlight?: RouteData | null
 }
 
 const labelElement = (text: string) => {
@@ -111,9 +115,10 @@ export default function SafetyMap(props: Props) {
     m.attributionControl?.setPrefix(false)
     if (!props.preview && window.matchMedia('(pointer: coarse)').matches) setTouchDevice(true)
     // Real pannable map background. Overlays and local geometry still work if tiles fail.
-    // Mapa base de MapLibre con OpenFreeMap: gratuito y sin clave.
+    // Mapa base claro (positron) de OpenFreeMap: gratuito, sin clave y sin calles amarillas
+    // que se confundan con los colores del índice.
     maplibreGL({
-      style: 'https://tiles.openfreemap.org/styles/liberty',
+      style: 'https://tiles.openfreemap.org/styles/positron',
       interactive: false,
     }).addTo(m)
     segments.current = L.layerGroup().addTo(m)
@@ -480,6 +485,25 @@ export default function SafetyMap(props: Props) {
         lineCap: 'round',
         interactive: false,
       }).addTo(group)
+    // Ruta destacada: borde blanco para separarla de los tramos y línea magenta de 5 px.
+    if (props.highlight && props.highlight.geometry.length > 1) {
+      L.polyline(props.highlight.geometry, {
+        color: '#ffffff',
+        weight: 9,
+        opacity: 0.95,
+        lineCap: 'round',
+        lineJoin: 'round',
+        interactive: false,
+      }).addTo(group)
+      L.polyline(props.highlight.geometry, {
+        color: mapColor('primary') || '#D1106F',
+        weight: 5,
+        lineCap: 'round',
+        lineJoin: 'round',
+        className: 'highlight-route',
+        interactive: false,
+      }).addTo(group)
+    }
     return () => {
       timers.forEach(clearTimeout)
       animation?.cancel()
@@ -496,6 +520,7 @@ export default function SafetyMap(props: Props) {
     props.track,
     props.guide,
     props.route?.segmentIds,
+    props.highlight?.geometry,
   ])
 
   useEffect(() => {
@@ -507,6 +532,18 @@ export default function SafetyMap(props: Props) {
         animate: false,
       })
   }, [fitKey])
+  // Encuadra la ruta destacada al abrir el inicio o cuando cambia la recomendación principal.
+  const highlightId = props.highlight?.id
+  useEffect(() => {
+    const geometry = propsRef.current.highlight?.geometry
+    if (highlightId && geometry && geometry.length > 1)
+      map.current?.fitBounds(L.latLngBounds(geometry), {
+        paddingTopLeft: [56, 64],
+        paddingBottomRight: [64, 56],
+        maxZoom: 15,
+        animate: false,
+      })
+  }, [highlightId])
   useEffect(() => {
     if (props.tracking && props.follow)
       map.current?.panTo(props.tracking, { animate: !prefersReducedMotion(), duration: 0.35 })
@@ -535,7 +572,7 @@ export default function SafetyMap(props: Props) {
   const value = selected ? segmentScore(selected, time, date, state.incidents, state.risks) : null
   return (
     <div
-      className={`live-cartography ${night ? 'map-night' : 'map-day'} ${tileState === 'local' ? 'map-local' : ''} ${props.preview ? 'map-preview' : ''} ${fullscreen ? 'map-fullscreen' : ''} ${props.className ?? ''}`}
+      className={`live-cartography ${night ? 'map-night' : 'map-day'} ${tileState === 'local' ? 'map-local' : ''} ${props.preview ? 'map-preview' : ''} ${fullscreen ? 'map-fullscreen' : ''} ${props.compact ? 'map-compact' : ''} ${props.className ?? ''}`}
     >
       <div
         ref={host}
@@ -548,18 +585,22 @@ export default function SafetyMap(props: Props) {
         <strong>Loja</strong>
       </div>
       <div className="map-actions">
-        <button
-          aria-label="Acercar mapa"
-          onClick={() => map.current?.zoomIn(undefined, { animate: !prefersReducedMotion() })}
-        >
-          <Plus />
-        </button>
-        <button
-          aria-label="Alejar mapa"
-          onClick={() => map.current?.zoomOut(undefined, { animate: !prefersReducedMotion() })}
-        >
-          <Minus />
-        </button>
+        {!props.compact && (
+          <>
+            <button
+              aria-label="Acercar mapa"
+              onClick={() => map.current?.zoomIn(undefined, { animate: !prefersReducedMotion() })}
+            >
+              <Plus />
+            </button>
+            <button
+              aria-label="Alejar mapa"
+              onClick={() => map.current?.zoomOut(undefined, { animate: !prefersReducedMotion() })}
+            >
+              <Minus />
+            </button>
+          </>
+        )}
         <button
           aria-label="Centrar mapa en Loja"
           onClick={() =>
@@ -578,12 +619,14 @@ export default function SafetyMap(props: Props) {
         >
           <Layers3 />
         </button>
-        <button
-          aria-label={fullscreen ? 'Cerrar mapa ampliado' : 'Ampliar mapa'}
-          onClick={() => (props.onExpand ? props.onExpand() : setFullscreen(!fullscreen))}
-        >
-          {fullscreen ? <X /> : <Expand />}
-        </button>
+        {!props.compact && (
+          <button
+            aria-label={fullscreen ? 'Cerrar mapa ampliado' : 'Ampliar mapa'}
+            onClick={() => (props.onExpand ? props.onExpand() : setFullscreen(!fullscreen))}
+          >
+            {fullscreen ? <X /> : <Expand />}
+          </button>
+        )}
       </div>
       <div className="cartography-status">
         <span className={tileState === 'local' ? 'offline-dot' : 'online-dot'} />
@@ -621,10 +664,12 @@ export default function SafetyMap(props: Props) {
           <i className="low" />
           Precaución
         </span>
-        <span>
-          <i className="none" />
-          Sin datos
-        </span>
+        {!props.compact && (
+          <span>
+            <i className="none" />
+            Sin datos
+          </span>
+        )}
       </div>
       {props.drawing && (
         <div className="drawing-hint">Pulsa para añadir puntos · arrastra A/B para editar</div>
