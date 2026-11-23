@@ -946,7 +946,6 @@ export function RouteDetail({
                     <p>{s.factors[0]}</p>
                   </div>
                   <span className={`text-${safety(n).key}`}>
-                    {n ?? '—'}
                     <small>{safety(n).label}</small>
                   </span>
                 </div>

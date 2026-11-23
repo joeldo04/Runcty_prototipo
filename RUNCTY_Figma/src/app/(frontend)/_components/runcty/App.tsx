@@ -801,7 +801,7 @@ export default function App({
   initialRoute?: RouteData
   initialSession?: RunctySession
 }) {
-  const { hydrateSession, state } = useDemo()
+  const { hydrateSession, state, user } = useDemo()
   useEffect(() => {
     if (initialSession) hydrateSession(initialSession.data, initialSession.user)
   }, [initialSession, hydrateSession])
@@ -813,7 +813,8 @@ export default function App({
         initialRoute={initialRoute}
       />
       <EntryAnnouncement
-        enabled={initialPage === 'explore' && !['running', 'paused', 'survey'].includes(state.session.phase)}
+        accountId={user?.id ?? null}
+        enabled={initialExperience !== 'selector' && user?.role === 'corredor' && !['running', 'paused', 'survey'].includes(state.session.phase)}
       />
     </>
   )

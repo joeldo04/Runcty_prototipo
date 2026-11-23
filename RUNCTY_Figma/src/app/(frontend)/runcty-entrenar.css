@@ -40,12 +40,12 @@
 .runcty-app .record-dock .dock-main { color: var(--color-copy); }
 .runcty-app .dock-main > span { width: 76px; height: 76px; background: #2A0A1F; color: #fff; }
 .runcty-app .dock-main svg { width: 28px; height: 28px; }
-.runcty-app .dock-go > span { background: #D1106F; box-shadow: 0 10px 24px rgb(209 16 111 / 35%); }
+.runcty-app .dock-go > span { background: var(--color-primary); box-shadow: none; }
 .runcty-app .record-dock .dock-main:active > span { transform: scale(.96); }
 .runcty-app .dock-pair { display: flex; gap: 14px; }
 .runcty-app .recording-dock { padding: 10px 16px max(16px, env(safe-area-inset-bottom)); }
 .runcty-app .dock-sos { display: flex; justify-content: center; width: 76px; padding-bottom: 18px; }
-.runcty-app .record-dock .sos-button { position: relative; flex-direction: column; justify-content: center; width: 56px; height: 56px; min-height: 0; padding: 0; overflow: visible; border: 0; border-radius: 50%; background: var(--color-risk); color: #fff; box-shadow: 0 8px 18px rgb(217 58 43 / 32%); touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
+.runcty-app .record-dock .sos-button { position: relative; flex-direction: column; justify-content: center; width: 56px; height: 56px; min-height: 0; padding: 0; overflow: visible; border: 0; border-radius: 50%; background: var(--color-risk); color: #fff; box-shadow: none; touch-action: none; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; }
 .runcty-app .record-dock .sos-button::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: #A82A1E; transform: scale(0); }
 .runcty-app .record-dock .sos-button.holding::before { transform: scale(1); transition: transform 3s linear; }
 .runcty-app .record-dock .sos-button > span { position: relative; font-size: 14px; font-weight: 800; letter-spacing: .05em; }
@@ -68,16 +68,16 @@
 html, body { overscroll-behavior: none; }
 .runcty-app .mobile-scroll { overscroll-behavior: contain; }
 .runcty-app :is(.quick-filters, .editorial-carousel, .time-slots, .mode-tabs, .tabs) { overscroll-behavior-x: contain; }
-.runcty-app .map-activate { position: absolute; left: 50%; bottom: 52px; z-index: 500; min-height: 44px; padding: 0 18px; transform: translateX(-50%); border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-panel); font-size: 14px; font-weight: 600; color: var(--color-copy); box-shadow: 0 6px 16px rgb(20 10 17 / 18%); }
+.runcty-app .map-activate { position: absolute; left: 50%; bottom: 52px; z-index: 500; min-height: 44px; padding: 0 18px; transform: translateX(-50%); border: 1px solid var(--color-line); border-radius: 999px; background: var(--color-panel); font-size: 14px; font-weight: 600; color: var(--color-copy); box-shadow: 0 1px 4px rgb(24 24 27 / 8%); border-color: var(--color-line); }
 .runcty-app .map-activate.active { border-color: #D1106F; color: #A50D58; }
 
 /* Mapa: tramos finos con borde blanco. */
 .runcty-app .safety-street { filter: drop-shadow(0 0 1px #fff) drop-shadow(0 0 1px #fff); }
 .runcty-app .leaflet-container .leaflet-control-attribution, .runcty-app .leaflet-tooltip, .runcty-app .leaflet-popup-content { font-size: 12px; }
 
-/* Acción principal: el naranja de la marca en todos los botones. */
-.runcty-app :is(.button-primary, .button-orange, .weekly-empty button) { border-color: #D1106F; background: #D1106F; color: #fff; box-shadow: 0 6px 14px rgb(209 16 111 / 24%); }
-.runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #A50D58; }
+/* Acciones de marca: fucsia de Gacelas. */
+.runcty-app :is(.button-primary, .button-orange, .weekly-empty button) { border-color: var(--color-primary); background: var(--color-primary); color: #fff; box-shadow: none; }
+.runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: var(--color-primary-pressed); }
 .runcty-app .gacelas-brand { color: #D1106F; }
 
 /* Zonas táctiles de 44 px como mínimo en el móvil. */
@@ -97,7 +97,7 @@ html, body { overscroll-behavior: none; }
 .runcty-app .phone-frame .eyebrow { font-size: 12px; letter-spacing: 0; text-transform: none; }
 
 /* Menú inferior: cinco opciones con la misma altura y etiquetas de 12 px. */
-.runcty-app .phone-frame .mobile-nav > button { min-height: 60px; justify-content: center; font-size: 12px; }
+.runcty-app .phone-frame .mobile-nav > button { min-height: 60px; justify-content: center; font-size: 12px; border-radius: 0; font-weight: 500; letter-spacing: 0; }
 .runcty-app .phone-frame .mobile-nav > button > svg { width: 22px; height: 22px; }
 .runcty-app .phone-frame .mobile-nav > button:nth-child(3) > svg { width: 30px; height: 30px; padding: 6px; }
 
@@ -120,12 +120,12 @@ html, body { overscroll-behavior: none; }
 /* En pantallas táctiles no se oscurece el botón después de tocarlo. */
 .runcty-app * { -webkit-tap-highlight-color: transparent; }
 @media (hover: none) {
-  .runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: #D1106F; }
-  .runcty-app .button-secondary:hover { background: var(--color-panel); }
+  .runcty-app :is(.button-primary, .button-orange, .weekly-empty button):hover { background: var(--color-primary); }
+  .runcty-app .button-secondary:hover { background: var(--color-shell); border-color: var(--color-line); color: var(--color-copy); }
   .runcty-app .button-ghost:hover { background: transparent; }
 }
 /* Portada del explorador web más compacta. */
-.runcty-app .explore-hero .page-heading h1 { font-size: 40px; }
+.runcty-app .explore-hero .page-heading h1 { font-size: 36px; }
 
 /* Nueva salida: el mapa ocupa el espacio libre y los botones quedan abajo. */
 .runcty-app .training-screen:not(.recording) { display: flex; flex-direction: column; min-height: 100%; }
@@ -169,22 +169,22 @@ html, body { overscroll-behavior: none; }
 .runcty-app .gacelas-lockup span { display: flex; flex-direction: column; font-size: 12px; line-height: 1.35; color: #F1E4EC; }
 .runcty-app .gacelas-lockup strong { font-size: 15px; letter-spacing: .01em; color: #fff; }
 
-.runcty-app .explore-hero { border-color: transparent; background: linear-gradient(120deg, #2A0A1F 0%, #5A0E3D 55%, #D1106F 100%); }
-.runcty-app .explore-hero-scrim { background: linear-gradient(90deg, #2A0A1F 0%, rgb(42 10 31 / 90%) 38%, rgb(90 14 61 / 66%) 68%, rgb(209 16 111 / 42%) 100%); }
-.runcty-app .explore-hero-emblem { position: absolute; top: 50%; right: 32px; z-index: -5; width: auto; height: 76%; opacity: .16; transform: translateY(-50%); pointer-events: none; }
+.runcty-app .explore-hero { border-color: transparent; background: var(--color-panel); border-radius: 0; box-shadow: none; }
+.runcty-app .explore-hero-scrim { background: linear-gradient(90deg, var(--color-panel), rgb(255 255 255 / 96%)); }
+.runcty-app .explore-hero-emblem { position: absolute; top: 50%; right: 32px; z-index: -5; width: auto; height: 76%; opacity: .04; transform: translateY(-50%); pointer-events: none; }
 @media (max-width: 640px) {
-  .runcty-app .explore-hero-emblem { right: 12px; height: 54%; opacity: .1; }
+  .runcty-app .explore-hero-emblem { right: 12px; height: 54%; opacity: .04; }
 }
 
 /* Botones secundarios: borde y texto magenta sobre blanco. En zonas oscuras, contorno blanco. */
-.runcty-app .button-secondary { border-color: var(--color-primary); background: #fff; color: var(--color-primary); }
-.runcty-app .button-secondary:hover { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
-.runcty-app :is(.sidebar, .demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .explore-hero, .home-hero, .welcome-screen) .button-secondary { border-color: rgb(255 255 255 / 42%); background: transparent; color: #fff; }
-.runcty-app :is(.sidebar, .demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .explore-hero, .home-hero, .welcome-screen) .button-secondary:hover { border-color: #fff; background: rgb(255 255 255 / 10%); color: #fff; }
-.runcty-app .auth-card .button-secondary { border-color: var(--color-primary); background: #fff; color: var(--color-primary); }
+.runcty-app .button-secondary { border-color: var(--color-line); background: var(--color-panel); color: var(--color-copy); }
+.runcty-app .button-secondary:hover { border-color: var(--color-line); background: var(--color-shell); color: var(--color-copy); }
+.runcty-app :is(.demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .home-hero, .welcome-screen) .button-secondary { border-color: rgb(255 255 255 / 42%); background: transparent; color: #fff; }
+.runcty-app :is(.demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .home-hero, .welcome-screen) .button-secondary:hover { border-color: #fff; background: rgb(255 255 255 / 10%); color: #fff; }
+.runcty-app .auth-card .button-secondary { border-color: var(--color-line); background: var(--color-panel); color: var(--color-copy); }
 @media (hover: none) {
-  .runcty-app .button-secondary:hover { background: #fff; color: var(--color-primary); }
-  .runcty-app :is(.sidebar, .demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .explore-hero, .home-hero, .welcome-screen) .button-secondary:hover { background: transparent; color: #fff; }
+  .runcty-app .button-secondary:hover { background: var(--color-shell); color: var(--color-copy); border-color: var(--color-line); }
+  .runcty-app :is(.demo-admin-menu, .navy-zone, .summary-hero, .emergency-section, .club-editorial, .club-overview, .home-hero, .welcome-screen) .button-secondary:hover { background: transparent; color: #fff; }
 }
 
 /* Textos del índice sobre fondos suaves con contraste AA; el significado de los colores no cambia. */
@@ -196,24 +196,24 @@ html, body { overscroll-behavior: none; }
 .runcty-app .summary-route-progress > span { background: var(--color-primary-bright); }
 
 /* Reportes en el mapa: vino de marca con el signo en blanco. */
-.runcty-app .incident-marker { background: var(--color-brand-dark); }
+.runcty-app .incident-marker { background: var(--color-brand-dark); display: grid; place-items: center; line-height: 1; font-weight: 750; color: #fff; }
 
 /* Grabando: solo estado, señal GPS, trazo, pausa, terminar y SOS. */
 .runcty-app .recording-status { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px 20px 14px; }
 .runcty-app .recording-status .recording-state { color: #fff; letter-spacing: .2em; }
 .runcty-app .recording-status .recording-state > i { width: 9px; height: 9px; background: var(--color-primary-bright); box-shadow: 0 0 0 4px rgb(230 25 127 / 28%); animation: pulse 1.6s ease-in-out infinite; }
-.runcty-app .recording-status .recording-state > i.is-paused { background: var(--color-caution); box-shadow: none; animation: none; }
+.runcty-app .recording-status .recording-state > i.is-paused { background: var(--color-muted); box-shadow: none; animation: none; }
 .runcty-app .recording-gps { display: flex; align-items: center; gap: 12px; width: 100%; max-width: 330px; padding: 10px 14px; border: 1px solid rgb(255 255 255 / 12%); border-radius: 14px; background: rgb(255 255 255 / 6%); text-align: left; }
 .runcty-app .recording-gps strong { display: block; font-size: 15px; font-weight: 750; color: #fff; }
 .runcty-app .recording-gps small { display: block; margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
 .runcty-app .gps-bars { display: flex; flex: none; align-items: flex-end; gap: 3px; height: 22px; }
-.runcty-app .gps-bars i { width: 5px; border-radius: 2px; background: var(--color-safe); }
+.runcty-app .gps-bars i { width: 5px; border-radius: 2px; background: var(--color-primary-bright); }
 .runcty-app .gps-bars i:nth-child(1) { height: 30%; }
 .runcty-app .gps-bars i:nth-child(2) { height: 55%; }
 .runcty-app .gps-bars i:nth-child(3) { height: 80%; }
 .runcty-app .gps-bars i:nth-child(4) { height: 100%; }
 .runcty-app .recording-gps.offline .gps-bars i { background: rgb(255 255 255 / 22%); }
-.runcty-app .recording-gps.offline .gps-bars i:first-child { background: var(--color-caution); }
+.runcty-app .recording-gps.offline .gps-bars i:first-child { background: var(--color-muted); }
 .runcty-app .dock-spacer { visibility: hidden; }
 
 /* Duración aproximada según el nivel en el detalle de la ruta. */
@@ -274,7 +274,7 @@ html, body { overscroll-behavior: none; }
 /* Anuncios: se deslizan con el dedo, sin flechas; la siguiente tarjeta asoma para invitar a deslizar. */
 .runcty-app .ad-track { position: relative; display: flex; gap: 12px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: var(--ad-gutter, 0px); padding: 4px var(--ad-gutter, 0px) 12px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .runcty-app .ad-track::-webkit-scrollbar { display: none; }
-.runcty-app .ad-track > .sponsor-banner { flex: 0 0 86%; scroll-snap-align: start; scroll-snap-stop: always; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 6%), 0 6px 16px rgb(26 20 24 / 6%); }
+.runcty-app .ad-track > .sponsor-banner { flex: 0 0 86%; scroll-snap-align: start; scroll-snap-stop: always; background: #fff; box-shadow: none; border-radius: 12px; border-color: var(--color-line); }
 .runcty-app .ad-track > .sponsor-banner:only-child { flex-basis: 100%; }
 .runcty-app .phone-frame .ad-track { --ad-gutter: 20px; margin-inline: -20px; }
 .runcty-app .ad-track .sponsor-art-image { background: #fff; }
@@ -285,7 +285,7 @@ html, body { overscroll-behavior: none; }
 .runcty-app .ad-dots button.active { width: 32px; }
 
 /* Cerrar sesión como botón. */
-.runcty-app .logout-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; min-height: 46px; margin: 22px auto 6px; padding: 0 26px; border: 1.5px solid var(--color-primary); border-radius: 999px; background: #fff; font-size: 14px; font-weight: 700; color: var(--color-primary); box-shadow: 0 4px 12px rgb(209 16 111 / 10%); }
+.runcty-app .logout-button { display: flex; align-items: center; justify-content: center; gap: 8px; width: fit-content; min-height: 46px; margin: 22px auto 6px; padding: 0 26px; border: 1.5px solid var(--color-primary); border-radius: 999px; background: #fff; font-size: 14px; font-weight: 700; color: var(--color-copy); box-shadow: none; border-width: 1px; border-color: var(--color-line); }
 .runcty-app .logout-button:hover { background: var(--color-primary-soft); }
 .runcty-app .logout-button svg { width: 17px; height: 17px; }
 @media (hover: none) {
@@ -294,47 +294,47 @@ html, body { overscroll-behavior: none; }
 
 /* ===== Inicio móvil (Explorar): 16 px a los lados y 12 px entre bloques. ===== */
 .runcty-app .phone-frame .mobile-scroll:has(> .explore-mobile) { background: #fff; }
-.runcty-app .explore-mobile { padding-top: 6px; padding-bottom: 44px; background: #fff; }
-.runcty-app .explore-mobile .home-intro { margin: 0 16px 14px; padding: 6px 0 0; }
-.runcty-app .explore-mobile .home-intro h1 { font-size: 28px; font-weight: 800; line-height: 1.12; letter-spacing: -.02em; color: var(--color-copy); }
+.runcty-app .explore-mobile { padding-top: 8px; padding-bottom: 24px; background: var(--color-panel); }
+.runcty-app .explore-mobile .home-intro { margin: 0 16px 16px; padding: 0; }
+.runcty-app .explore-mobile .home-intro h1 { font-size: 24px; font-weight: 750; line-height: 1.2; letter-spacing: -.03em; color: var(--color-copy); }
 .runcty-app .explore-mobile .home-intro h1 > span { color: var(--color-primary); }
-.runcty-app .explore-mobile .home-intro .locality { position: static; display: inline-flex; align-items: center; gap: 6px; margin-top: 6px; font-size: 14px; color: var(--color-muted); }
+.runcty-app .explore-mobile .home-intro .locality { position: static; display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 13px; color: var(--color-muted); }
 .runcty-app .explore-mobile .home-intro .locality svg { width: 16px; height: 16px; color: var(--color-primary); }
 
 /* Buscador a todo el ancho. */
 .runcty-app .explore-mobile .explore-toolbar { display: block; margin: 0 16px 12px; }
-.runcty-app .explore-mobile .explore-toolbar .search-box { width: 100%; min-height: 48px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-shell); box-shadow: none; }
-.runcty-app .explore-mobile .explore-toolbar .search-box input { font-size: 15px; }
+.runcty-app .explore-mobile .explore-toolbar .search-box { width: 100%; min-height: 44px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-shell); box-shadow: none; }
+.runcty-app .explore-mobile .explore-toolbar .search-box input { font-size: 14px; }
 .runcty-app .explore-mobile .explore-toolbar .search-box > svg { color: var(--color-muted); }
 
 /* Dos selectores tipo píldora: horario y tipo de ruta. */
-.runcty-app .home-selectors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 0 16px 12px; }
-.runcty-app .home-selectors :is(.time-select, .route-type-select) { position: relative; display: flex; align-items: center; gap: 6px; min-width: 0; height: 48px; min-height: 48px; padding: 0 9px; border: 1px solid var(--color-line); border-radius: 999px; background: #fff; }
-.runcty-app .home-selectors :is(.time-select, .route-type-select) > svg:first-child { flex: none; width: 16px; height: 16px; color: var(--color-info); }
-.runcty-app .home-selectors .route-type-select > svg:first-child { color: var(--color-purple); }
+.runcty-app .home-selectors { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 0 16px 16px; }
+.runcty-app .home-selectors :is(.time-select, .route-type-select) { position: relative; display: flex; align-items: center; gap: 6px; min-width: 0; height: 44px; min-height: 44px; padding: 0 9px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-panel); }
+.runcty-app .home-selectors :is(.time-select, .route-type-select) > svg:first-child { flex: none; width: 16px; height: 16px; color: var(--color-muted); }
+.runcty-app .home-selectors .route-type-select > svg:first-child { color: var(--color-muted); }
 .runcty-app .home-selectors select, .runcty-app .phone-frame .home-selectors select { flex: 1; min-width: 0; height: 100%; min-height: 0; padding: 0 16px 0 0; border: 0; background: transparent; -webkit-appearance: none; appearance: none; font-size: 13px; letter-spacing: -.02em; font-weight: 700; color: var(--color-copy); text-overflow: ellipsis; cursor: pointer; }
 .runcty-app .home-selectors .select-chevron { position: absolute; right: 9px; width: 16px; height: 16px; pointer-events: none; color: var(--color-copy); }
-.runcty-app .home-selectors .route-type-select { border-color: #C4B5FD; background: #FAF8FF; }
-.runcty-app .home-selectors .route-type-select :is(select, .select-chevron) { color: var(--color-purple); }
+.runcty-app .home-selectors .route-type-select { border-color: var(--color-line); background: var(--color-panel); }
+.runcty-app .home-selectors .route-type-select :is(select, .select-chevron) { color: var(--color-copy); }
 
 /* Mapa como tarjeta: bordes de 16 px, sombra suave y Planificar al pie. */
-.runcty-app .explore-mobile .home-map-card { margin: 0 16px 12px; overflow: hidden; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 6%), 0 8px 22px rgb(26 20 24 / 8%); }
-.runcty-app .explore-mobile .home-map-card .explore-map { height: 300px; margin: 0; border: 0; border-radius: 0; box-shadow: none; }
-.runcty-app .map-card-foot { padding: 12px; border-top: 1px solid var(--color-line); }
-.runcty-app .plan-route-button, .runcty-app .phone-frame .plan-route-button { width: 100%; height: 52px; min-height: 52px; gap: 10px; border-radius: 14px; font-size: 16px; font-weight: 700; }
+.runcty-app .explore-mobile .home-map-card { margin: 0 0 16px; overflow: hidden; border: 0; border-radius: 0; background: var(--color-panel); box-shadow: none; }
+.runcty-app .explore-mobile .home-map-card .explore-map { height: clamp(320px, 44svh, 420px); margin: 0; border: 0; border-radius: 0; box-shadow: none; }
+.runcty-app .map-card-foot { padding: 12px 16px 0; border-top: 0; }
+.runcty-app .plan-route-button, .runcty-app .phone-frame .plan-route-button { width: 100%; height: 48px; min-height: 48px; gap: 10px; border-radius: 12px; font-size: 15px; font-weight: 650; }
 .runcty-app .plan-route-button svg { width: 20px; height: 20px; }
 .runcty-app .map-compact .map-actions, .runcty-app .phone-frame .map-compact .map-actions { top: 12px; right: 12px; gap: 8px; }
-.runcty-app .map-compact .map-actions > button { width: 44px; height: 44px; border: 0; border-radius: 12px; background: #fff; color: var(--color-copy); box-shadow: 0 2px 8px rgb(26 20 24 / 14%); }
-.runcty-app .map-compact .map-actions > button[aria-pressed='true'] { background: #fff; color: var(--color-primary); }
-.runcty-app .map-compact .map-location, .runcty-app .phone-frame .map-compact .map-location { top: 12px; left: 12px; border: 0; background: #fff; box-shadow: 0 2px 8px rgb(26 20 24 / 14%); }
-.runcty-app .map-compact .safety-legend, .runcty-app .phone-frame .map-compact .safety-legend { left: 12px; right: auto; bottom: 20px; width: auto; gap: 12px; padding: 7px 12px; border: 0; border-radius: 999px; background: #fff; font-size: 12px; color: var(--color-copy); box-shadow: 0 2px 8px rgb(26 20 24 / 14%); }
+.runcty-app .map-compact .map-actions > button { width: 44px; height: 44px; border: 0; border-radius: 12px; background: #fff; color: var(--color-copy); box-shadow: 0 1px 4px rgb(24 24 27 / 8%); }
+.runcty-app .map-compact .map-actions > button[aria-pressed='true'] { background: var(--color-primary-soft); color: var(--color-primary); }
+.runcty-app .map-compact .map-location, .runcty-app .phone-frame .map-compact .map-location { top: 12px; left: 12px; border: 0; background: #fff; box-shadow: 0 1px 4px rgb(24 24 27 / 8%); color: var(--color-copy); }
+.runcty-app .map-compact .safety-legend, .runcty-app .phone-frame .map-compact .safety-legend { left: 12px; right: auto; bottom: 20px; width: auto; gap: 10px; padding: 8px 10px; border: 0; border-radius: 8px; background: #fff; font-size: 12px; color: var(--color-copy); box-shadow: none; }
 .runcty-app .phone-frame .explore-map .map-compact .map-activate { top: 12px; right: auto; bottom: auto; left: 50%; transform: translateX(-50%); }
 
 /* Condiciones para correr ahora. */
-.runcty-app .conditions-card { display: flex; align-items: center; gap: 12px; margin: 0 16px 12px; padding: 12px 14px; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; }
-.runcty-app .conditions-icon { display: grid; flex: none; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--color-info-soft); color: var(--color-info); }
+.runcty-app .conditions-card { display: flex; align-items: center; gap: 12px; margin: 0 16px 24px; padding: 0 0 16px; border: 0; border-radius: 0; background: var(--color-panel); border-bottom: 1px solid var(--color-line); }
+.runcty-app .conditions-icon { display: grid; flex: none; place-items: center; width: 28px; height: 32px; border-radius: 0; background: transparent; color: var(--color-muted); }
 .runcty-app .conditions-icon svg { width: 20px; height: 20px; }
-.runcty-app .conditions-card > div { flex: 1; min-width: 0; padding-left: 12px; border-left: 1px solid var(--color-line); }
+.runcty-app .conditions-card > div { flex: 1; min-width: 0; padding-left: 0; border-left: 0; }
 .runcty-app .conditions-card strong { display: block; font-size: 14px; font-weight: 750; line-height: 1.3; color: var(--color-copy); }
 .runcty-app .conditions-card p { margin-top: 2px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
 .runcty-app .conditions-time { flex: none; font-size: 13px; font-weight: 750; white-space: nowrap; color: var(--color-copy); }
@@ -342,31 +342,31 @@ html, body { overscroll-behavior: none; }
 /* Rutas recomendadas en filas: miniatura, datos y nivel de seguridad. */
 .runcty-app .explore-mobile .recommended-panel { margin: 0 16px 12px; padding: 0; }
 .runcty-app .explore-mobile .recommended-panel > .section-heading { margin-bottom: 10px; padding: 0; }
-.runcty-app .explore-mobile .recommended-panel h2 { margin-top: 0; font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
-.runcty-app .home-route-list { display: flex; flex-direction: column; gap: 10px; }
-.runcty-app .home-route-row, .runcty-app .phone-frame .home-route-row { display: grid; grid-template-areas: 'thumb details arrow' 'thumb status arrow'; grid-template-columns: 64px minmax(0, 1fr) 18px; align-items: center; gap: 6px 12px; width: 100%; min-height: 94px; padding: 10px; border: 1px solid #E2E8F0; border-radius: 16px; background: #fff; box-shadow: 0 2px 8px rgb(15 23 42 / 4%); text-align: left; }
-.runcty-app .home-route-row:active { border-color: #C4B5FD; background: #FAF8FF; }
-.runcty-app .home-route-thumb { grid-area: thumb; position: relative; width: 64px; height: 64px; overflow: hidden; border: 1px solid #DDD6FE; border-radius: 12px; background: #F5F3FF; color: #C4B5FD; }
+.runcty-app .explore-mobile .recommended-panel h2 { margin-top: 0; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+.runcty-app .home-route-list { display: flex; flex-direction: column; gap: 0; }
+.runcty-app .home-route-row, .runcty-app .phone-frame .home-route-row { display: grid; grid-template-areas: 'thumb details arrow' 'thumb status arrow'; grid-template-columns: 56px minmax(0, 1fr) 18px; align-items: center; gap: 4px 12px; width: 100%; min-height: 88px; padding: 14px 0; border: 0; border-radius: 0; background: var(--color-panel); box-shadow: none; text-align: left; border-bottom: 1px solid var(--color-line); }
+.runcty-app .home-route-row:active { border-color: var(--color-line); background: var(--color-shell); }
+.runcty-app .home-route-thumb { grid-area: thumb; position: relative; width: 56px; height: 56px; overflow: hidden; border: 0; border-radius: 8px; background: var(--color-shell); color: var(--color-line); }
 .runcty-app .home-route-thumb .route-preview { position: absolute; inset: 0; display: grid; width: 100%; height: 100%; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
 .runcty-app .home-route-thumb .route-preview > svg { width: 100%; height: 100%; }
-.runcty-app .home-route-thumb .route-preview > svg > polyline { stroke: var(--color-purple); stroke-width: 4.5; }
-.runcty-app .home-route-thumb .route-preview > svg > circle { fill: #4C1D95; }
+.runcty-app .home-route-thumb .route-preview > svg > polyline { stroke: var(--color-primary); stroke-width: 3.5; }
+.runcty-app .home-route-thumb .route-preview > svg > circle { fill: var(--color-copy); }
 .runcty-app .home-route-thumb .route-preview > span { display: none; }
 .runcty-app .home-route-text { grid-area: details; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
-.runcty-app .home-route-text strong { display: -webkit-box; overflow: hidden; font-size: 15px; font-weight: 750; line-height: 1.25; color: #0F172A; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.runcty-app .home-route-text small { font-size: 13px; color: #64748B; }
+.runcty-app .home-route-text strong { display: -webkit-box; overflow: hidden; font-size: 15px; font-weight: 650; line-height: 1.25; color: var(--color-copy); -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.runcty-app .home-route-text small { font-size: 13px; color: var(--color-muted); }
 /* Verde recomendado, amarillo atención y rojo precaución, con texto oscuro legible. */
-.runcty-app :is(.safety-chip, .route-condition) { border: 1px solid transparent; font-weight: 750; }
-.runcty-app .safety-chip { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 28px; padding: 5px 9px; border-radius: 999px; font-size: 12px; line-height: 1.25; white-space: nowrap; }
+.runcty-app :is(.safety-chip, .route-condition) { border: 0; font-weight: 600; box-shadow: none; }
+.runcty-app .safety-chip { display: inline-flex; flex: none; align-items: center; gap: 6px; min-height: 20px; padding: 0; border-radius: 0; font-size: 12px; line-height: 1.25; white-space: nowrap; }
 .runcty-app .safety-chip i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
-.runcty-app :is(.safety-chip, .route-condition).high { border-color: #4ADE80; background: #86EFAC; color: #14532D; }
-.runcty-app :is(.safety-chip, .route-condition).medium { border-color: #FACC15; background: #FDE047; color: #422006; }
-.runcty-app :is(.safety-chip, .route-condition).low { border-color: #F87171; background: #FCA5A5; color: #7F1D1D; }
-.runcty-app :is(.safety-chip, .route-condition).none { border-color: #CBD5E1; background: #F1F5F9; color: #475569; }
+.runcty-app :is(.safety-chip, .route-condition).high { border-color: transparent; background: transparent; color: var(--color-safe-ink); }
+.runcty-app :is(.safety-chip, .route-condition).medium { border-color: transparent; background: transparent; color: var(--color-caution-ink); }
+.runcty-app :is(.safety-chip, .route-condition).low { border-color: transparent; background: transparent; color: var(--color-risk-ink); }
+.runcty-app :is(.safety-chip, .route-condition).none { border-color: transparent; background: transparent; color: var(--color-muted); }
 .runcty-app .home-route-row > .safety-chip { grid-area: status; justify-self: start; }
-.runcty-app .home-route-arrow { grid-area: arrow; width: 18px; height: 18px; color: var(--color-info); }
+.runcty-app .home-route-arrow { grid-area: arrow; width: 18px; height: 18px; color: var(--color-muted); }
 @media (hover: hover) {
-  .runcty-app .home-route-row:hover { border-color: #C4B5FD; background: #FCFAFF; }
+  .runcty-app .home-route-row:hover { border-color: var(--color-line); background: var(--color-shell); }
 }
 
 /* El resto del inicio con el mismo margen de 16 px. */
@@ -378,14 +378,81 @@ html, body { overscroll-behavior: none; }
 
 /* Barra inferior: iconos centrados y etiquetas alineadas; Entrenar destaca por el color. */
 .runcty-app .phone-frame .mobile-nav { align-items: center; overflow: hidden; min-height: 68px; padding: 4px 6px max(6px, env(safe-area-inset-bottom)); border-top: 1px solid var(--color-line); background: #fff; box-shadow: none; }
-.runcty-app .phone-frame .mobile-nav > button { display: grid; flex: 1; grid-template-rows: 40px 16px; align-items: center; justify-items: center; align-content: center; justify-content: center; min-height: 58px; gap: 2px; padding: 0 2px; border-radius: 14px; background: transparent; font-size: 12px; font-weight: 600; line-height: 16px; color: var(--color-muted); }
+.runcty-app .phone-frame .mobile-nav > button { display: grid; flex: 1; grid-template-rows: 40px 16px; align-items: center; justify-items: center; align-content: center; justify-content: center; min-height: 58px; gap: 2px; padding: 0 2px; border-radius: 0; background: transparent; font-size: 12px; font-weight: 500; line-height: 16px; color: var(--color-muted); letter-spacing: 0; }
 .runcty-app .phone-frame .mobile-nav > button::before { display: none; }
 .runcty-app .phone-frame .mobile-nav > button > svg { width: 22px; height: 22px; }
-.runcty-app .phone-frame .mobile-nav > button.active { background: var(--color-purple-soft); color: var(--color-purple); }
+.runcty-app .phone-frame .mobile-nav > button.active { background: transparent; color: var(--color-primary); font-weight: 650; }
 .runcty-app .phone-frame .mobile-nav > button:nth-child(3), .runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { background: transparent; }
 .runcty-app .phone-frame .mobile-nav > button:nth-child(3).active { color: var(--color-primary); }
 .runcty-app .phone-frame .mobile-nav > button:nth-child(3) > svg { box-sizing: border-box; width: 40px; height: 40px; margin: 0; padding: 9px; border: 0; border-radius: 50%; background: var(--color-primary); color: #fff; box-shadow: none; stroke-width: 2.4; }
-.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > i { top: 5px; right: calc(50% - 20px); width: 8px; height: 8px; border: 0; background: var(--color-safe); }
+.runcty-app .phone-frame .mobile-nav > button:nth-child(3) > i { top: 5px; right: calc(50% - 20px); width: 8px; height: 8px; border: 0; background: var(--color-copy); }
 @media (hover: none) {
   .runcty-app .phone-frame .mobile-nav > button:not(.active):hover { background: transparent; }
+}
+
+/* Estados compartidos: mismo fucsia y foco visible en todos los dispositivos. */
+.runcty-app :is(.button-primary, .button-orange):not(:disabled):active { background: var(--color-primary-pressed); color: #fff; box-shadow: none; }
+.runcty-app .home-selectors :is(.time-select, .route-type-select):focus-within { border-color: var(--color-primary); outline: 2px solid var(--color-primary-soft); outline-offset: 2px; }
+.runcty-app .home-selectors select:focus-visible { outline: none; }
+.runcty-app .explore-mobile .explore-toolbar .search-box:focus-within { border-color: var(--color-primary); box-shadow: none; }
+.runcty-app .home-selectors .route-type-select:has(option:checked:not([value='todas'])) { border-color: var(--color-primary); background: var(--color-primary-soft); }
+.runcty-app .home-selectors .route-type-select:has(option:checked:not([value='todas'])) :is(select, svg) { color: var(--color-primary-pressed); }
+.runcty-app .mobile-app-header .icon-button { border-color: transparent; background: transparent; box-shadow: none; }
+.runcty-app .planner-mobile .mode-tabs { display: flex; gap: 8px; }
+.runcty-app .planner-screen .mode-tabs > button { border-radius: 12px; background: var(--color-panel); color: var(--color-muted); }
+.runcty-app .planner-screen .mode-tabs > button.active { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); box-shadow: none; }
+.runcty-app .planner-screen .planner-panel { border: 0; background: var(--color-panel); box-shadow: none; }
+.runcty-app .planner-screen .field :is(input, select, textarea):focus { border-color: var(--color-primary); }
+.runcty-app .planner-screen .time-slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; width: 100%; }
+.runcty-app .planner-screen .time-slots > button { flex-direction: column; min-width: 0; min-height: 52px; gap: 4px; padding: 6px 2px; }
+
+/* Listas con separadores: la ruta y sus datos tienen prioridad sobre el contenedor. */
+.runcty-app .home-route-row:last-child { border-bottom: 0; }
+.runcty-app .safety-chip.high > i { background: var(--color-safe); }
+.runcty-app .safety-chip.medium > i { background: var(--color-caution); outline: 1px solid rgb(113 63 18 / 16%); outline-offset: -1px; }
+.runcty-app .safety-chip.low > i { background: var(--color-risk); }
+.runcty-app .safety-chip.none > i { background: var(--color-unknown); }
+.runcty-app .route-condition { padding: 0; border-radius: 0; }
+.runcty-app .route-condition.medium > svg { color: var(--color-caution-ink); }
+.runcty-app .recommended-list { gap: 0; }
+.runcty-app .recommended-list > .route-card { display: grid; grid-template-columns: 72px minmax(0,1fr); align-items: center; gap: 12px; padding: 16px 0; border: 0; border-bottom: 1px solid var(--color-line); border-radius: 0; background: var(--color-panel); }
+.runcty-app .recommended-list .route-preview { width: 72px; height: 72px; min-height: 0; margin: 0; border: 0; border-radius: 8px; background: var(--color-shell); }
+.runcty-app .recommended-list .route-card-content { min-width: 0; padding: 0; }
+.runcty-app .recommended-list .route-card h3 { font-size: 15px; line-height: 1.3; }
+.runcty-app .recommended-list .route-card .route-condition { margin-top: 8px; }
+.runcty-app .sidebar nav a.active { background: var(--color-primary-soft); color: var(--color-primary-pressed); box-shadow: none; }
+.runcty-app .sidebar nav a.active > svg { color: var(--color-primary); }
+
+/* Más superficie de mapa en web sin cambiar el orden de los módulos. */
+.runcty-app .explore-hero > .relative { padding: 0; }
+.runcty-app .explore-grid > section > .explore-map { height: clamp(480px, 68svh, 720px); border-color: var(--color-line); border-radius: 12px; box-shadow: none; }
+.runcty-app .explore-mobile .explore-grid > section > .explore-map { height: clamp(320px, 44svh, 420px); }
+.runcty-app .search-box { box-shadow: none; }
+.runcty-app .search-box:focus-within { border-color: var(--color-primary); box-shadow: none; }
+.runcty-app .search-box input:focus-visible { outline: none; }
+.runcty-app .phone-frame .route-filters select { min-height: 44px; padding-left: 10px; padding-right: 6px; font-size: 13px; }
+.runcty-app :is(.route-insights, .stats-grid > *, .profile-heading, .weekly-activity, .profile-numbers > span) { box-shadow: none; background: var(--color-panel); }
+.runcty-app .planning-prompt { border-color: var(--color-line); background: var(--color-shell); }
+.runcty-app .safety-note > svg { color: var(--color-muted); }
+
+/* Los estados administrativos y de conexión no reutilizan colores de condiciones. */
+.runcty-app :is(.status.approved, .status.pending, .status.rejected, .status.inactive, .verified, .gps-tag.offline) { border-color: var(--color-line); background: var(--color-shell); color: var(--color-copy); }
+.runcty-app .wizard-progress > span.completed { color: var(--color-primary); border-color: var(--color-primary); }
+.runcty-app .network-result svg { color: var(--color-primary); }
+.runcty-app .training-top-tools > button[aria-pressed='true'] { background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .profile-navigation > button.profile-danger { border-color: var(--color-line); }
+.runcty-app .profile-navigation > button.profile-danger :is(strong, svg) { color: var(--color-copy); }
+.runcty-app .profile-navigation > button.profile-danger > span { background: var(--color-shell); color: var(--color-copy); }
+.runcty-app .delete-account > p { border-color: var(--color-line); background: var(--color-shell); }
+.runcty-app .delete-account .button-danger { border-color: var(--color-copy); background: var(--color-copy); color: var(--color-panel); }
+.runcty-app .delete-account .button-danger:hover { background: var(--color-copy); }
+.runcty-app .form-error { border-color: var(--color-primary-soft); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+
+/* La selección comparte el mismo tratamiento visual que el menú y las capas. */
+.runcty-app .quick-filters .button[aria-pressed='true'], .runcty-app .filter-toggle.selected { border-color: var(--color-primary-soft); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+@media (min-width: 1100px) {
+  .runcty-app .explore-hero > .relative { display: grid; grid-template-columns: minmax(0, 1fr) 340px; align-items: end; column-gap: 24px; }
+  .runcty-app .explore-hero .page-heading { margin-bottom: 0; }
+  .runcty-app .explore-hero > .relative > .flex { justify-content: flex-end; gap: 12px 8px; }
+  .runcty-app .explore-hero > .relative > .flex > span { flex-basis: 100%; justify-content: flex-end; margin-left: 0; }
 }

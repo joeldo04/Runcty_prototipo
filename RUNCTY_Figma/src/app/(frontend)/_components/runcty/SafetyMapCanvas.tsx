@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { maplibreGL } from '@maplibre/maplibre-gl-leaflet'
+import { MaplibreGL } from '@maplibre/maplibre-gl-leaflet'
 import { Expand, Layers3, LocateFixed, Minus, Plus, X, LoaderCircle, MapPin } from 'lucide-react'
 import {
   LOJA,
@@ -117,7 +117,29 @@ export default function SafetyMap(props: Props) {
     // Real pannable map background. Overlays and local geometry still work if tiles fail.
     // Mapa base claro (positron) de OpenFreeMap: gratuito, sin clave y sin calles amarillas
     // que se confundan con los colores del índice.
-    maplibreGL({
+    // El adaptador difiere el ajuste un frame; cancelarlo evita acceder al mapa desmontado.
+    let resizeFrame: number | undefined
+    let basemapRemoved = false
+    const Basemap = MaplibreGL.extend({
+      _transitionEnd(this: L.MaplibreGL & { _resizeContainer: () => void; _zoomEnd: () => void }) {
+        if (resizeFrame !== undefined) cancelAnimationFrame(resizeFrame)
+        resizeFrame = requestAnimationFrame(() => {
+          resizeFrame = undefined
+          if (basemapRemoved) return
+          const gl = this.getMaplibreMap()
+          const zoom = m.getZoom()
+          const center = m.getCenter()
+          const offset = m.latLngToContainerPoint(m.getBounds().getNorthWest())
+          this._resizeContainer()
+          L.DomUtil.setTransform(this.getCanvas(), offset, 1)
+          gl.once('moveend', () => {
+            if (!basemapRemoved) this._zoomEnd()
+          })
+          gl.jumpTo({ center: [center.lng, center.lat], zoom: zoom - 1 })
+        })
+      },
+    }) as typeof MaplibreGL
+    new Basemap({
       style: 'https://tiles.openfreemap.org/styles/positron',
       interactive: false,
     }).addTo(m)
@@ -178,6 +200,8 @@ export default function SafetyMap(props: Props) {
     resize.observe(host.current)
     return () => {
       resize.disconnect()
+      basemapRemoved = true
+      if (resizeFrame !== undefined) cancelAnimationFrame(resizeFrame)
       streetLines.current.clear()
       m.stop()
       m.remove()

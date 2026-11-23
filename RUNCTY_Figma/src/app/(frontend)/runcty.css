@@ -1,32 +1,32 @@
 @theme {
   --font-sans: var(--font-runcty-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-runcty-display), var(--font-runcty-sans), sans-serif;
-  --color-ink: #F8FAFC;
-  --color-shell: #F8FAFC;
+  --color-ink: #FFFFFF;
+  --color-shell: #FAFAFA;
   --color-panel: #ffffff;
-  --color-raised: #F1F5F9;
-  --color-line: #E2E8F0;
+  --color-raised: #F4F4F5;
+  --color-line: #E8E8EC;
   --color-primary: #D1106F;
   --color-primary-bright: #E6197F;
   --color-primary-pressed: #A50D58;
   --color-primary-soft: #FCE4F0;
   --color-brand-dark: #2A0A1F;
   --color-brand-wine: #5A0E3D;
-  --color-purple: #7C3AED;
-  --color-purple-soft: #F3E8FF;
-  --color-info-soft: #EFF6FF;
+  --color-purple: var(--color-primary);
+  --color-purple-soft: var(--color-primary-soft);
+  --color-info-soft: var(--color-primary-soft);
   --color-gps: #E6197F;
   --color-neon: #E6197F;
-  --color-lilac: #8B5CF6;
-  --color-electric: #2563EB;
-  --color-info: #1D4ED8;
-  --color-accent: #6D28D9;
+  --color-lilac: var(--color-primary);
+  --color-electric: var(--color-primary);
+  --color-info: var(--color-primary-pressed);
+  --color-accent: var(--color-primary);
   --color-sport: #D1106F;
   --color-sport-ink: #A50D58;
-  --color-energy: #F2A20C;
-  --color-copy: #0F172A;
-  --color-muted: #64748B;
-  --color-dim: #64748B;
+  --color-energy: var(--color-primary);
+  --color-copy: #18181B;
+  --color-muted: #62626C;
+  --color-dim: #62626C;
   --color-safe: #17834A;
   --color-safe-ink: #12703E;
   --color-caution: #FACC15;
@@ -34,8 +34,8 @@
   --color-risk: #D93A2B;
   --color-risk-ink: #B42318;
   --color-unknown: #8A8F98;
-  --shadow-neon: 0 4px 16px rgb(209 16 111 / 22%);
-  --shadow-panel: 0 20px 70px rgb(0 0 0 / 25%);
+  --shadow-neon: none;
+  --shadow-panel: 0 12px 40px rgb(24 24 27 / 12%);
   --animate-enter: runcty-enter 280ms ease-out both;
 }
 
@@ -354,7 +354,7 @@
     @apply border border-electric/20 bg-electric/10 text-info;
   }
   .sidebar nav > a.active::before {
-    @apply absolute -left-4 h-6 w-0.5 rounded-r bg-info shadow-[0_0_18px_rgb(230_25_127_/_0.35)] content-[''];
+    @apply hidden;
   }
   .sidebar nav > a.active > svg {
     @apply text-info;
