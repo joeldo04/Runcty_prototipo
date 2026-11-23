@@ -672,3 +672,13 @@ html, body { overscroll-behavior: none; }
 @media (hover: none) {
   .runcty-app .web-app .route-card:hover { transform: none; }
 }
+
+/* Filtro oficial activo: magenta solido con letras blancas. */
+.runcty-app .official-toggle.is-on { border-color: var(--color-primary); background: var(--color-primary); color: #fff; box-shadow: 0 6px 16px rgb(209 16 111 / 28%); }
+.runcty-app .official-toggle.is-on .official-toggle-mark { background: rgb(255 255 255 / 22%); }
+.runcty-app .official-toggle.is-on .official-toggle-check { color: #fff; }
+
+/* Entrenar: logo del corredor en blanco dentro del circulo magenta. */
+.runcty-app .mobile-nav .train-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--color-primary); }
+.runcty-app .mobile-nav .train-mark img { width: 26px; height: auto; }
+.runcty-app .mobile-nav > button:nth-child(3).active .train-mark { box-shadow: 0 0 0 4px var(--color-primary-soft); }

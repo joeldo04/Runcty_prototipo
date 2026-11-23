@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import gacelasLogo from '../../../../../imagenes/gacelas_logo.webp'
 import { useRouter } from 'next/navigation'
-import { Activity, ChevronDown, ChevronRight, CircleUserRound, Clock3, GraduationCap, Home, LogOut, Map, MapPin, Megaphone, MessageSquare, Route, Shield, ShieldAlert, Smartphone, Sparkles, Users } from 'lucide-react'
+import { Activity, ChevronDown, ChevronRight, CircleUserRound, Clock3, GraduationCap, Home, LogOut, Map, MapPin, Megaphone, MessageSquare, Route, Shield, ShieldAlert, Smartphone, Handshake, Users } from 'lucide-react'
 import { ClubAdmin, SystemAdmin } from './Admin'
 import { Button, Logo, RunnerIcon } from './components'
 import { isAdminUser } from './data'
@@ -22,7 +22,7 @@ const allGroups = [
   ]},
   { name: 'Comunidad y publicidad', items: [
     { id: 'stats', label: 'Estadísticas', icon: Activity }, { id: 'comments', label: 'Comentarios', icon: MessageSquare },
-    { id: 'sponsors', label: 'Patrocinadores', icon: Sparkles }, { id: 'banners', label: 'Publicidad', icon: Megaphone },
+    { id: 'sponsors', label: 'Patrocinadores', icon: Handshake }, { id: 'banners', label: 'Publicidad', icon: Megaphone },
     { id: 'moderationlog', label: 'Historial de revisiones', icon: Clock3 }, { id: 'clubinfo', label: 'Información del club', icon: Users },
   ]},
   { name: 'Sistema', items: [

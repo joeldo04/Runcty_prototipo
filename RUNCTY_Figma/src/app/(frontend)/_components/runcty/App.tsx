@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import runnerWhite from '../../../../../imagenes/runcty_corredor_blanco.png'
 import {
   Activity,
   ArrowLeft,
@@ -727,7 +728,14 @@ function MobileApp({
                   }
                   onClick={() => go(id)}
                 >
-                  <I />
+                  {id === 'train' ? (
+                    // Entrenar lleva el logo del corredor de RUNCTY en blanco sobre el círculo magenta.
+                    <span className="train-mark" aria-hidden="true">
+                      <Image src={runnerWhite} alt="" width={26} />
+                    </span>
+                  ) : (
+                    <I />
+                  )}
                   {label}
                   {id === 'train' && active && <i />}
                 </button>

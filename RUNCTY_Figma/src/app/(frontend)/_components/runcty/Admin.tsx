@@ -20,7 +20,7 @@ import {
   Search,
   Shield,
   ShieldAlert,
-  Sparkles,
+  Handshake,
   Trash2,
   Users,
   X,
@@ -132,7 +132,7 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
       : []),
     { label: 'Rutas oficiales', value: all.filter((r) => r.official).length, icon: Route, target: 'official', tone: 'tone-wine' },
     { label: 'Espacios recomendados', value: state.spaces.length, icon: MapPin, target: 'adminspaces', tone: 'tone-green' },
-    { label: 'Aliados activos', value: state.sponsors.filter((s) => s.active).length, icon: Sparkles, target: 'sponsors', tone: 'tone-amber' },
+    { label: 'Aliados activos', value: state.sponsors.filter((s) => s.active).length, icon: Handshake, target: 'sponsors', tone: 'tone-amber' },
   ]
   // Actividad reciente: decisiones del club y reportes nuevos, del más reciente al más antiguo.
   const activity = [
