@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ArrowRight, Check, Eye, EyeOff, MailCheck, Monitor, Route, Users } from 'lucide-react'
 import { BackButton, Button, IconButton, Modal, RunnerIcon } from './components'
 import { isAdminUser, withEmails, type DemoUser } from './data'
-import { DEMO_ACCESS_PASSWORD, DEMO_USERS } from './demo-seed'
+import { DEMO_LOGINS, DEMO_USERS } from './demo-seed'
 import { useDemo } from './store'
 import { SHOW_FUTURE } from './features'
 import brandMark from '../../../../../imagenes/logo_runcty.png'
@@ -187,7 +187,12 @@ export function DemoAccess({ createInitially = false, demonstration = false, mob
       <Button className="w-full" disabled={!account} onClick={() => {
         if (account) proceed(account.id, account.role === 'sistema' || account.role === 'club' ? 'admin' : 'corredor', undefined, undefined, undefined, 'demo')
       }}>Entrar en demostración <ArrowRight /></Button>
-      <p className="auth-note">Para probar el formulario normal con estas cuentas, usa el correo de la cuenta y la contraseña de muestra <strong>{DEMO_ACCESS_PASSWORD}</strong>. No uses credenciales reales.</p>
+      <div className="auth-demo-logins">
+        <p>También puedes entrar desde el inicio de sesión normal (usuario y contraseña iguales):</p>
+        <ul>
+          {DEMO_LOGINS.map(login => <li key={login.username}><code>{login.username}</code><span>{login.label}</span></li>)}
+        </ul>
+      </div>
       <div className="auth-links"><button type="button" onClick={() => { setDemoView(false); setCreate(false); setError('') }}>Volver al inicio de sesión</button></div>
     </div>
   ) : view === 'recover' ? <RecoverPassword back={() => setView('form')} /> : view === 'verify' && created ? (
@@ -208,10 +213,11 @@ export function DemoAccess({ createInitially = false, demonstration = false, mob
         const data = new FormData(event.currentTarget)
         if (create) { setError(register(data)); return }
         const email = String(data.get('email') ?? '').trim(), password = String(data.get('password') ?? '')
-        if (!/^\S+@\S+\.\S+$/.test(email)) { setError('Escribe un correo válido.'); return }
+        if (!email) { setError('Escribe tu correo o usuario.'); return }
+        if (email.includes('@') && !/^\S+@\S+\.\S+$/.test(email)) { setError('Escribe un correo válido.'); return }
         if (!password) { setError('Escribe tu contraseña.'); return }
         const matched = checkPreviewAccess(email, password)
-        if (!matched) { setError('El correo o la contraseña no son correctos, o la cuenta no está activa.'); return }
+        if (!matched) { setError('El usuario o la contraseña no son correctos, o la cuenta no está activa.'); return }
         setError('')
         setSubmitting(true)
         proceed(matched.id, matched.role === 'sistema' ? 'admin' : 'corredor', undefined, undefined, undefined, 'normal')
@@ -220,7 +226,9 @@ export function DemoAccess({ createInitially = false, demonstration = false, mob
           <label className="field">Nombres<input name="nombres" required placeholder="Tus nombres" autoComplete="given-name" maxLength={60} /></label>
           <label className="field">Apellidos<input name="apellidos" required placeholder="Tus apellidos" autoComplete="family-name" maxLength={60} /></label>
         </div>}
-        <label className="field">Correo electrónico<input name="email" required type="email" inputMode="email" placeholder="nombre@correo.com" autoComplete="username" /></label>
+        {create
+          ? <label className="field">Correo electrónico<input name="email" required type="email" inputMode="email" placeholder="nombre@correo.com" autoComplete="username" /></label>
+          : <label className="field">Correo o usuario<input name="email" required type="text" autoCapitalize="none" autoCorrect="off" spellCheck={false} placeholder="nombre@correo.com o usuario" autoComplete="username" /></label>}
         <div className="field">
           <label htmlFor={passwordId}>Contraseña</label>
           <div className="auth-password">

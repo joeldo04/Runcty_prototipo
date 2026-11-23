@@ -35,7 +35,7 @@ import {
   type SurveyAnswers,
 } from './data'
 import type { PublicRuncty } from '@/lib/runcty-queries'
-import { DEMO_CITY, DEMO_ROADS, DEMO_ROUTES, DEMO_SPACES, DEMO_SPONSORS, DEMO_BANNERS, DEMO_USERS, DEMO_ACCESS_PASSWORD, demoReport } from './demo-seed'
+import { DEMO_CITY, DEMO_ROADS, DEMO_ROUTES, DEMO_SPACES, DEMO_SPONSORS, DEMO_BANNERS, DEMO_USERS, DEMO_ACCESS_PASSWORD, DEMO_LOGINS, demoReport } from './demo-seed'
 import type { User } from '@/payload-types'
 import { loadRunctySession, saveRunctyChanges, signOutRuncty } from '@/app/(frontend)/actions'
 
@@ -501,7 +501,14 @@ export function DemoProvider({
   }, [accept])
   const checkPreviewAccess = (email: string, password: string) => {
     const known = ref.current.users.length ? ref.current.users : DEMO_USERS
-    const account = known.find(value => value.email?.toLowerCase() === email.trim().toLowerCase())
+    const login = email.trim().toLowerCase()
+    // Usuario corto de presentación (admin, adminClub, corredor): la contraseña es el mismo usuario.
+    const short = DEMO_LOGINS.find(value => value.username.toLowerCase() === login)
+    if (short) {
+      const shortAccount = known.find(value => value.id === short.id)
+      return shortAccount?.active && password === short.username ? shortAccount : null
+    }
+    const account = known.find(value => value.email?.toLowerCase() === login)
     if (!account?.active) return null
     const expected = previewPasswords.current.get(account.id) ??
       (DEMO_USERS.some(value => value.id === account.id) ? DEMO_ACCESS_PASSWORD : undefined)

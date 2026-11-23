@@ -82,6 +82,12 @@ export const demoReport = (): Incident => {
 }
 // Solo para la presentación; no son credenciales de la aplicación real.
 export const DEMO_ACCESS_PASSWORD = 'Runcty2026!'
+// Usuarios cortos para la presentación: usuario y contraseña son iguales.
+export const DEMO_LOGINS: { id: string; username: string; label: string }[] = [
+  { id: 'demo-user-sistema', username: 'admin', label: 'Administrador del sistema' },
+  { id: 'runcty-demo-carlos', username: 'adminClub', label: 'Corredor y administrador del club' },
+  { id: 'runcty-demo-ana', username: 'corredor', label: 'Corredor' },
+]
 export const DEMO_USERS: DemoUser[] = [
   {id:'runcty-demo-carlos',email:'carlos@runcty.demo',name:'Carlos',role:'corredor',active:true,admin:true},
   {id:'runcty-demo-ana',email:'ana@runcty.demo',name:'Ana',role:'corredor',active:true,admin:false},
