@@ -682,3 +682,13 @@ html, body { overscroll-behavior: none; }
 .runcty-app .mobile-nav .train-mark { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--color-primary); }
 .runcty-app .mobile-nav .train-mark img { width: 26px; height: auto; }
 .runcty-app .mobile-nav > button:nth-child(3).active .train-mark { box-shadow: 0 0 0 4px var(--color-primary-soft); }
+
+/* Encabezado de Explorar: título, texto y debajo las acciones, alineadas a la izquierda. */
+.runcty-app .web-app .explore-hero > .relative { display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 30px 34px; }
+.runcty-app .web-app .explore-hero .page-heading { margin-bottom: 0; }
+.runcty-app .web-app .explore-hero .page-heading p { margin-top: 10px; }
+.runcty-app .web-app .explore-hero > .relative > .flex { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 12px; width: 100%; margin-top: 22px; }
+.runcty-app .web-app .explore-hero > .relative > .flex > .button { min-height: 48px; padding: 0 22px; border-radius: 14px; font-size: 15px; }
+.runcty-app .web-app .explore-hero > .relative > .flex > span { flex-basis: auto; justify-content: flex-start; margin-left: auto; padding: 8px 14px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 999px; background: rgb(255 255 255 / 10%); letter-spacing: .04em; }
+.runcty-app .web-app .explore-hero > .relative > .flex > span > .bg-line { background: rgb(255 255 255 / 30%); }
+.runcty-app .web-app .explore-hero-emblem { right: 48px; height: 82%; opacity: .12; }
