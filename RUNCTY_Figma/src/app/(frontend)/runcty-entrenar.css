@@ -223,10 +223,13 @@ html, body { overscroll-behavior: none; }
 .runcty-app .level-durations dd { margin: 2px 0 0; font-size: 15px; font-weight: 750; font-variant-numeric: tabular-nums; color: var(--color-copy); }
 
 /* Catálogo: filtro Solo oficiales. */
-.runcty-app .official-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 46px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-panel); font-size: 13px; font-weight: 600; color: var(--color-copy); white-space: nowrap; cursor: pointer; }
-.runcty-app .official-toggle input { width: 16px; height: 16px; accent-color: var(--color-primary); }
-.runcty-app .official-toggle svg { width: 16px; height: 16px; color: var(--color-primary); }
-.runcty-app .official-toggle:has(input:checked) { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .official-toggle { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 46px; padding: 0 16px 0 8px; border: 1px solid var(--color-line); border-radius: 999px; background: #fff; font-size: 13px; font-weight: 700; color: var(--color-copy); white-space: nowrap; cursor: pointer; -webkit-user-select: none; user-select: none; transition: border-color .2s, background-color .2s; }
+.runcty-app .official-toggle-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.runcty-app .official-toggle-mark { display: grid; flex: none; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--color-primary); }
+.runcty-app .official-toggle-mark img { width: auto; height: 15px; }
+.runcty-app .official-toggle-check { width: 16px; height: 16px; margin-left: -2px; color: var(--color-primary); }
+.runcty-app .official-toggle.is-on { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .official-toggle:has(.official-toggle-input:focus-visible) { outline: 2px solid var(--color-primary); outline-offset: 3px; }
 .runcty-app .phone-frame .route-filters .official-toggle { grid-column: 1 / -1; justify-content: center; }
 
 /* Perfil: dos cifras y Eliminar mi cuenta en el color de riesgo. */

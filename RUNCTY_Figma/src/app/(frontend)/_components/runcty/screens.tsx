@@ -701,14 +701,18 @@ export function Routes({
           <option value="5">Hasta 5 km</option>
           <option value="10">Hasta 10 km</option>
         </select>
-        <label className="official-toggle">
+        <label className={`official-toggle ${onlyOfficial ? 'is-on' : ''}`}>
           <input
             type="checkbox"
+            className="official-toggle-input"
             checked={onlyOfficial}
             onChange={(e) => setOnlyOfficial(e.target.checked)}
           />
-          <Shield />
-          Solo oficiales
+          <span className="official-toggle-mark" aria-hidden="true">
+            <Image src={gacelasWhite} alt="" height={13} />
+          </span>
+          Solo oficiales Gacelas
+          {onlyOfficial && <Check className="official-toggle-check" aria-hidden="true" />}
         </label>
       </div>
       <TimeControl />
