@@ -34,7 +34,7 @@ import {
   Shield,
   ShieldAlert,
   Smartphone,
-  Sparkles,
+  Handshake,
   Users,
   X,
 } from 'lucide-react'
@@ -85,7 +85,7 @@ const clubNavigation = delivered([
   { id: 'adminspaces', label: 'Espacios recomendados', icon: MapPin },
   { id: 'risks', label: 'Zonas de riesgo', icon: Shield },
   { id: 'comments', label: 'Comentarios', icon: MessageSquare },
-  { id: 'sponsors', label: 'Patrocinadores', icon: Sparkles },
+  { id: 'sponsors', label: 'Patrocinadores', icon: Handshake },
   { id: 'banners', label: 'Banners', icon: Monitor },
   { id: 'stats', label: 'Estadísticas', icon: Activity },
   { id: 'moderationlog', label: 'Historial de moderación', icon: HistoryIcon },

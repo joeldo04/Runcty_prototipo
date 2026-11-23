@@ -221,7 +221,7 @@ const localRunctyData = {
   risks: [],
   cities: [{ id: 'loja', name: 'Loja', networkReady: false, enabled: true }],
   comments: [],
-  clubDescription: 'Club Deportivo Gacelas Running Team · Loja, Ecuador. Información demostrativa.',
+  clubDescription: 'Club Deportivo Gacelas Running Team · Loja, Ecuador.',
   clubName: 'Gacelas Running Team',
   heroImage: null,
 }

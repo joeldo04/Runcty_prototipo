@@ -8,7 +8,7 @@ import {
   Plus,
   Route,
   Save,
-  Sparkles,
+  Compass,
   Undo2,
 } from 'lucide-react'
 import SafetyMap from './SafetyMap'
@@ -41,7 +41,7 @@ type PlannerMode = 'manual' | 'calculate' | 'recommend'
 const plannerModes = {
   manual: { icon: Plus, label: 'Trazar manualmente' },
   calculate: { icon: Navigation, label: 'Entre dos puntos' },
-  recommend: { icon: Sparkles, label: 'Recomendar rutas' },
+  recommend: { icon: Compass, label: 'Recomendar rutas' },
 }
 const plannerOrder: PlannerMode[] = ['manual', 'calculate', 'recommend']
 // Esta versión entrega dos modos: primero la recomendación y, como extra, entre dos puntos.
@@ -398,7 +398,7 @@ export default function Planner({
               disabled={desired < 1 || desired > 42}
               onClick={() => setRecommend(true)}
             >
-              <Sparkles />
+              <Compass />
               Buscar recomendaciones
             </Button>
           )}

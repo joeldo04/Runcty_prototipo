@@ -362,7 +362,7 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
         <div className="home-wrap">
           <div className="home-brand"><BrandMark size={38} /><strong>RUNCTY</strong></div>
           <span>Cada ruta cuenta. <RunnerIcon /></span>
-          <small>Información demostrativa. No garantiza seguridad.</small>
+          <small>Información referencial. No garantiza seguridad.</small>
         </div>
       </footer>
     </div>

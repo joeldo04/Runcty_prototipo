@@ -27,7 +27,8 @@ import {
   Search,
   Shield,
   SlidersHorizontal,
-  Sparkles,
+  Compass,
+  Handshake,
   Sun,
   Sunrise,
   Trash2,
@@ -202,7 +203,7 @@ export function Explore({
           subtitle="Consulta las condiciones de cada tramo para el horario que elijas."
         >
           <Button variant="secondary" onClick={() => go('recommend')}>
-            <Sparkles />
+            <Compass />
             Recomendar rutas
           </Button>
           {SHOW_FUTURE ? (
@@ -258,7 +259,7 @@ export function Explore({
                 </Button>
               )}
               <Button variant="secondary" data-tour="recommend" onClick={() => go('recommend')}>
-                <Sparkles /> Inspírame
+                <Compass /> Recomendar rutas
               </Button>
               <span className="ml-auto hidden items-center gap-2 text-xs font-medium tracking-wide text-muted xl:flex">
                 <RouteIcon className="size-4 text-lilac" /> {all.length} RUTAS POR DESCUBRIR
@@ -1557,55 +1558,92 @@ export function Profile({
   )
 }
 
-export function PublicClub({ open, go, run, mobile = false }: ScreenProps) {
+export function PublicClub({ open, go, mobile = false }: ScreenProps) {
   const { state } = useDemo(),
     [detail, setDetail] = useState<string | null>(null)
+  const official = state.catalog.filter((route) => route.official)
+  const clubRoutes = official.length ? official : state.catalog.slice(0, 3)
+  // Descripción pública del club, sin notas internas del prototipo.
+  const description = (state.clubDescription || 'Club deportivo de running en Loja, Ecuador.')
+    .replace(/\s*Información demostrativa\.?/i, '')
+    .trim()
+  const stats = [
+    { label: 'Rutas oficiales', value: official.length, icon: RouteIcon, tone: 'tone-wine', target: 'routes' },
+    { label: 'Espacios recomendados', value: state.spaces.length, icon: MapPin, tone: 'tone-green', target: 'spaces' },
+    { label: 'Aliados del club', value: state.sponsors.filter((s) => s.active).length, icon: Handshake, tone: 'tone-amber', target: '' },
+  ]
   return (
-    <div className={mobile ? 'mobile-padded' : ''}>
-      <PageTitle
-        eyebrow="LOJA, ECUADOR"
-        title={<span className="gacelas-brand">{state.clubName}</span>}
-        subtitle="Una comunidad que se mueve con propósito."
-      />
-      <div className="club-editorial">
-        <div>
-          <span>CLUB DEPORTIVO</span>
-          <h2>
-            Corremos mejor.
-            <br />
-            Corremos juntos.
-          </h2>
-          <p>
-            {state.clubDescription ||
-              'La presentación del club estará disponible cuando sea publicada por su equipo.'}
-          </p>
-          <Button variant="secondary" onClick={() => setDetail('Información del club')}>
-            Conoce al club <ArrowRight />
-          </Button>
+    <div className={`club-community ${mobile ? 'mobile-padded' : ''}`}>
+      <section className="community-hero">
+        <Image src={gacelasWhite} alt="" aria-hidden className="community-hero-mark" />
+        <span className="community-eyebrow">COMUNIDAD · LOJA, ECUADOR</span>
+        <h1>{state.clubName}</h1>
+        <p className="community-claim">Corremos mejor. Corremos juntos.</p>
+        <p>{description}</p>
+        <div className="community-actions">
+          <button type="button" className="dashboard-hero-action" onClick={() => setDetail('Información del club')}>
+            Conoce al club <ArrowRight aria-hidden="true" />
+          </button>
+          <button type="button" className="community-secondary" onClick={() => go('routes')}>
+            Ver rutas del club
+          </button>
         </div>
-        <span className="club-editorial-type">
-          GACELAS{' '}
-          <br />
-          <b>RUNNING</b>{' '}
-          <br />
-          TEAM
-        </span>
+      </section>
+      <div className="dashboard-kpis community-kpis">
+        {stats.map(({ label, value, icon: I, tone, target }) => {
+          const content = (
+            <>
+              <span className={`dashboard-icon ${tone}`}>
+                <I aria-hidden="true" />
+              </span>
+              <span className="dashboard-kpi-text">
+                <strong>{value}</strong>
+                <small>{label}</small>
+              </span>
+            </>
+          )
+          return target ? (
+            <button key={label} type="button" className="dashboard-kpi" onClick={() => go(target)}>
+              {content}
+            </button>
+          ) : (
+            <div key={label} className="dashboard-kpi">
+              {content}
+            </div>
+          )
+        })}
       </div>
-      <figure className="my-6 flex flex-wrap items-center gap-5 rounded-2xl border border-line bg-panel p-5">
-        <Image src={clubPoster} alt="Pieza gráfica Social Run Loja del material aportado por el proyecto" width={180} height={180} unoptimized className="rounded-xl object-contain" />
-        <figcaption className="max-w-sm text-sm leading-6 text-muted"><strong className="mb-2 block text-copy">Gacelas Running Team · referencia del proyecto</strong>Material visual proporcionado por el equipo. Esta pieza no anuncia un evento vigente ni implica un patrocinio confirmado.</figcaption>
-      </figure>
-      <div className="section-heading">
-        <h2>{state.catalog.some((route) => route.official) ? 'Rutas oficiales' : 'Rutas del club'}</h2>
-      </div>
-      <div className="route-grid">
-        {(state.catalog.some((route) => route.official)
-          ? state.catalog.filter((route) => route.official)
-          : state.catalog.slice(0, 3)
-        ).map((route) => (
-          <RouteCard key={route.id} route={route} onOpen={open} />
-        ))}
-      </div>
+      <section className="dashboard-card community-poster">
+        <Image
+          src={clubPoster}
+          alt="Pieza gráfica Social Run Loja de Gacelas Running Team"
+          width={180}
+          height={180}
+          unoptimized
+        />
+        <div>
+          <span className="eyebrow">DEL CLUB</span>
+          <h2>Social Run Loja</h2>
+          <p>Material gráfico que Gacelas Running Team comparte con su comunidad de corredores.</p>
+          <small>Pieza de referencia: no anuncia un evento vigente.</small>
+        </div>
+      </section>
+      <section>
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">RECORRIDOS DEL CLUB</span>
+            <h2>{official.length ? 'Rutas oficiales' : 'Rutas del club'}</h2>
+          </div>
+          <button type="button" className="text-action" onClick={() => go('routes')}>
+            Ver todas <ArrowRight />
+          </button>
+        </div>
+        <div className="route-grid">
+          {clubRoutes.map((route) => (
+            <RouteCard key={route.id} route={route} onOpen={open} />
+          ))}
+        </div>
+      </section>
       <Spaces mobile={mobile} />
       <AdCarousel placement="club" />
       {SHOW_FUTURE && (
@@ -1622,7 +1660,6 @@ export function PublicClub({ open, go, run, mobile = false }: ScreenProps) {
             Información y horarios sujetos a confirmación con el club. No se publica un contacto
             real sin autorización.
           </p>
-          <DemoTag />
         </Modal>
       )}
     </div>
