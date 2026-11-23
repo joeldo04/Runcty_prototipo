@@ -99,21 +99,70 @@ export default function DemoAdmin() {
     window.scrollTo({ top: 0 })
   }
   const pageLabel = groups.flatMap(g => g.items).find(i => i.id === page)?.label
+  // Grupos del menú plegables; el grupo de la sección actual siempre queda abierto.
+  const [closed, setClosed] = useState<string[]>([])
+  const toggleGroup = (name: string) =>
+    setClosed(current => current.includes(name) ? current.filter(value => value !== name) : [...current, name])
+  const roleLabel = isSystem ? 'Administrador del sistema' : 'Administrador del club'
+  const pendingReports = state.incidents.filter(i => i.status === 'Pendiente').length
+  const signOut = async () => { if (await logout()) router.push('/') }
+  if (panel)
+    return <div className="admin-shell min-h-screen bg-ink text-copy">
+      <div className="admin-shell-grid mx-auto grid max-w-[1600px] lg:grid-cols-[268px_minmax(0,1fr)]">
+        <aside className={`demo-admin-menu admin-sidebar ${menu ? 'menu-open' : ''} px-4 py-6`}>
+          <button type="button" className="demo-admin-toggle lg:hidden" aria-expanded={menu} onClick={() => setMenu(!menu)}><span>Módulos de gestión<strong>{pageLabel}</strong></span><ChevronDown /></button>
+          <Link href="/" className="admin-sidebar-brand" aria-label="RUNCTY, inicio"><Logo /></Link>
+          <div className="demo-admin-profile club-card">{isSystem ? <Shield className="system-panel-mark" aria-hidden="true" /> : <Image src={gacelasLogo} alt="Logo de Gacelas Running Team" width={44} height={44} />}<div><strong>{isSystem ? 'RUNCTY' : 'Gacelas Running Team'}</strong><span>{isSystem ? 'Administración del sistema' : 'Gestión del club'}</span></div></div>
+          <nav aria-label="Módulos administrativos" className="admin-sidebar-nav">
+            {visibleGroups.map(group => {
+              const current = group.items.some(item => item.id === page)
+              const open = current || !closed.includes(group.name)
+              return <div key={group.name} className="admin-nav-group">
+                <button type="button" className="admin-nav-group-toggle" aria-expanded={open} disabled={current} onClick={() => toggleGroup(group.name)}>
+                  <span>{group.name}</span><ChevronDown aria-hidden="true" />
+                </button>
+                {open && <div className="admin-nav-items">{group.items.map(({ id, label, icon: Icon }) => <button key={id} type="button" data-tour={`admin-${id}`} onClick={() => go(id)} aria-current={page === id ? 'page' : undefined} className={`admin-nav-item ${page === id ? 'is-active' : ''}`}>
+                  <Icon aria-hidden="true" /><span>{label}</span>
+                  {id === 'proposals' && state.customRoutes.some(r => r.status === 'Pendiente') && <b>{state.customRoutes.filter(r => r.status === 'Pendiente').length}</b>}
+                  {id === 'moderate' && pendingReports > 0 && <b>{pendingReports}</b>}
+                </button>)}</div>}
+              </div>
+            })}
+          </nav>
+          <div className="admin-sidebar-foot">
+            <Link href="/"><Home aria-hidden="true" />Inicio RUNCTY</Link>
+            {!isSystem && <Link href="/movil"><Smartphone aria-hidden="true" />Aplicación móvil</Link>}
+          </div>
+        </aside>
+        <div className="admin-main min-w-0">
+          <header className="admin-topbar">
+            <Link href="/" className="admin-topbar-logo lg:hidden" aria-label="RUNCTY, inicio"><Logo /></Link>
+            <div className="admin-topbar-title">
+              <span>{isSystem ? 'RUNCTY' : 'Club Deportivo Gacelas Running Team'}</span>
+              <strong>{isSystem ? 'Administración del sistema' : 'Gestión del club'}</strong>
+            </div>
+            <div className="admin-topbar-actions">
+              <span className="prototype-pill">Prototipo interactivo</span>
+              {!isSystem && <button type="button" className="role-switch" onClick={() => { startDemo('corredor'); router.push('/explorar') }}><RunnerIcon /><span>Aplicación del corredor</span></button>}
+              {SHOW_FUTURE && <button type="button" className="role-switch" onClick={() => setTour(true)}><GraduationCap /><span>Ver tutorial</span></button>}
+              <button type="button" className="admin-user-chip" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta">
+                <span className="admin-user-avatar" aria-hidden="true">{account?.name.charAt(0).toUpperCase()}</span>
+                <span className="admin-user-text"><strong>{account?.name.replace(' · ejemplo', '')}</strong><small>{roleLabel}</small></span>
+              </button>
+              <button type="button" className="admin-signout" onClick={signOut}><LogOut aria-hidden="true" />Salir</button>
+            </div>
+          </header>
+          <main className="admin-main-content min-w-0 px-5 py-7 sm:px-7 lg:px-9">{systemPages.has(page) && isSystem ? <SystemAdmin page={page} /> : <ClubAdmin page={page} go={go} />}</main>
+        </div>
+      </div>
+      {tour && <Tour label="Tutorial del panel" steps={tourSteps} onClose={() => { setTour(false); setMenu(false) }} />}
+    </div>
   return <div className="min-h-screen bg-ink text-copy">
         <header className="admin-shell-header mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 lg:px-8"><Link href="/" aria-label="RUNCTY, inicio"><Logo /></Link><nav className="flex flex-wrap items-center gap-5 text-sm"><span className="prototype-pill">Prototipo interactivo</span>{panel && !isSystem && <button type="button" className="role-switch" onClick={() => { startDemo('corredor'); router.push('/explorar') }}><RunnerIcon /><span>Aplicación del corredor</span></button>}{SHOW_FUTURE && panel && <button type="button" className="inline-flex min-h-11 items-center gap-2" onClick={() => setTour(true)}><GraduationCap className="size-4" />Ver tutorial</button>}<Link className="inline-flex min-h-11 items-center gap-2" href="/"><Home className="size-4" />Inicio</Link>{panel && !isSystem && <Link className="inline-flex min-h-11 items-center gap-2" href="/movil"><Smartphone className="size-4" />Aplicación móvil</Link>}{account && <button type="button" className="admin-account" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta"><CircleUserRound className="size-4" /><span>{account.name.replace(' · ejemplo', '')}</span></button>}{account && <button type="button" className="exit-button" onClick={async () => { if (await logout()) router.push('/') }}><LogOut />Salir</button>}</nav></header>
     {blocked ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Tu cuenta no tiene rol de administrador.</h1><p className="my-5 text-sm leading-7 text-muted">Los permisos administrativos los asigna un usuario autorizado. Tu cuenta conserva el acceso de corredor.</p><Button onClick={() => { startDemo('corredor'); router.push('/explorar') }}>Ir a modo corredor</Button></main> : user && !isDemo ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Prueba la gestión de RUNCTY.</h1><p className="my-5 text-sm leading-7 text-muted">Tienes una cuenta iniciada. Puedes cerrar esa sesión voluntariamente para abrir la demostración con datos ficticios.</p><Button onClick={openDemoAccess}>Ver acceso demostrativo</Button></main> : !panel ? <main className="admin-access-gate"><h1>Acceso demostrativo</h1><p>Elige una cuenta de muestra para revisar sus permisos. Este acceso no forma parte del registro normal.</p>{loading ? <p role="status">Cargando cuentas…</p> : <DemoAccess demonstration proceed={(accountId, mode, name, email, password, access) => {
       startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name, email, password, access)
       if (mode !== 'admin') router.push('/explorar')
     }} />}</main> :
-    <div className="mx-auto grid max-w-[1600px] lg:grid-cols-[260px_minmax(0,1fr)]">
-      <aside className={`demo-admin-menu ${menu ? 'menu-open' : ''} border-b border-line px-4 py-6 lg:border-r lg:border-b-0`}>
-        <button type="button" className="demo-admin-toggle lg:hidden" aria-expanded={menu} onClick={() => setMenu(!menu)}><span>Módulos de gestión<strong>{pageLabel}</strong></span><ChevronDown /></button>
-        <div className="demo-admin-profile club-card mb-6">{isSystem ? <Shield className="system-panel-mark" aria-hidden="true" /> : <Image src={gacelasLogo} alt="Logo de Gacelas Running Team" width={52} height={52} />}<div><strong>{isSystem ? 'RUNCTY' : 'Gacelas Running Team'}</strong><span>{isSystem ? 'Administración del sistema' : 'Gestión del club'}</span></div></div>
-        <nav aria-label="Módulos administrativos" className="grid gap-6 sm:grid-cols-3 lg:grid-cols-1">{visibleGroups.map(group => <div key={group.name}><h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-muted">{group.name}</h2><div className="space-y-1">{group.items.map(({ id, label, icon: Icon }) => <button key={id} data-tour={`admin-${id}`} onClick={() => go(id)} aria-current={page === id ? 'page' : undefined} className={'flex min-h-11 w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm ' + (page === id ? 'border-electric/30 bg-electric/15 text-copy' : 'border-transparent text-muted hover:bg-raised')}><Icon className="size-4 shrink-0 text-sport" /><span className="min-w-0 flex-1">{label}</span>{id === 'proposals' && state.customRoutes.some(r => r.status === 'Pendiente') && <span className="rounded-full bg-sport px-2 text-xs text-ink">{state.customRoutes.filter(r => r.status === 'Pendiente').length}</span>}{id === 'moderate' && state.incidents.some(i => i.status === 'Pendiente') && <span className="rounded-full bg-sport px-2 text-xs text-ink">{state.incidents.filter(i => i.status === 'Pendiente').length}</span>}</button>)}</div></div>)}</nav>
-        {SHOW_FUTURE && <p className="demo-admin-note mt-7 border-t border-line px-3 pt-5 text-xs leading-6 text-muted">Las rutas comunitarias se aprueban o rechazan únicamente desde esta experiencia web.</p>}
-      </aside>
-      <main className="admin-main-content min-w-0 px-5 py-7 sm:px-7 lg:px-9"><p className="mb-7 flex items-center gap-2 border-b border-line pb-5 text-sm text-muted">RUNCTY <ChevronRight className="size-3" />Gestión <ChevronRight className="size-3" /><span className="text-copy">{pageLabel}</span></p>{systemPages.has(page) && isSystem ? <SystemAdmin page={page} /> : <ClubAdmin page={page} go={go} />}</main>
-    </div>}
-    {tour && <Tour label="Tutorial del panel" steps={tourSteps} onClose={() => { setTour(false); setMenu(false) }} />}
+    null}
   </div>
 }

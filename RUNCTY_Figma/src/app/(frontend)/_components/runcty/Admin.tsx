@@ -1,4 +1,6 @@
 import { useId, useState } from 'react'
+import Image from 'next/image'
+import gacelasWhite from '../../../../../imagenes/gacelas_emblema_blanco.png'
 import {
   Activity,
   ArrowRight,
@@ -105,7 +107,7 @@ function AlertFields({
 }
 
 export function ClubAdmin({ page, go }: { page: string; go: (page: string) => void }) {
-  const { state } = useDemo(),
+  const { state, user } = useDemo(),
     all = useRoutes()
   if (page === 'moderate' || page === 'proposals')
     return <Moderation kind={page === 'moderate' ? 'incidents' : 'routes'} key={page} />
@@ -120,117 +122,188 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
   if (page === 'clubinfo') return <ClubInfo />
   const pending = state.incidents.filter((i) => i.status === 'Pendiente'),
     proposed = state.customRoutes.filter((r) => r.status === 'Pendiente')
+  const firstName = (user?.name ?? '').split(' ')[0]
+  const todayLabel = new Date().toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long' })
+  // Cifras del club, cada una con su tono suave para leerlas de un vistazo.
+  const kpis = [
+    { label: 'Reportes por revisar', value: pending.length, icon: ShieldAlert, target: 'moderate', tone: 'tone-brand' },
+    ...(SHOW_FUTURE
+      ? [{ label: 'Rutas propuestas', value: proposed.length, icon: Route, target: 'proposals', tone: 'tone-wine' }]
+      : []),
+    { label: 'Rutas oficiales', value: all.filter((r) => r.official).length, icon: Route, target: 'official', tone: 'tone-wine' },
+    { label: 'Espacios recomendados', value: state.spaces.length, icon: MapPin, target: 'adminspaces', tone: 'tone-green' },
+    { label: 'Aliados activos', value: state.sponsors.filter((s) => s.active).length, icon: Sparkles, target: 'sponsors', tone: 'tone-amber' },
+  ]
+  // Actividad reciente: decisiones del club y reportes nuevos, del más reciente al más antiguo.
+  const activity = [
+    ...state.moderation.map((m) => ({
+      id: m.id,
+      title: `${m.decision} · ${m.item}`,
+      time: Date.parse(m.date) || 0,
+      icon: Check,
+    })),
+    ...pending.map((i) => ({
+      id: i.id,
+      title: `Nuevo reporte · ${i.type}`,
+      time: i.createdAt,
+      icon: Flag,
+    })),
+  ]
+    .sort((a, b) => b.time - a.time)
+    .slice(0, 4)
+  const shortcuts = [
+    { title: 'Rutas y horarios', text: 'Oficiales y horarios recomendados', icon: Clock3, page: 'official', tone: 'tone-wine' },
+    { title: 'Espacios recomendados', text: 'Parques, estadios y senderos', icon: MapPin, page: 'adminspaces', tone: 'tone-green' },
+    { title: 'Zonas de riesgo', text: 'Con fuente y vigencia', icon: Shield, page: 'risks', tone: 'tone-brand' },
+    { title: 'Publicidad', text: 'Aliados y banners del club', icon: Megaphone, page: 'banners', tone: 'tone-amber' },
+  ]
   return (
-    <div>
-      <PageTitle
-        eyebrow={<span className="gacelas-brand">CLUB DEPORTIVO GACELAS RUNNING TEAM</span>}
-        title="Cuidamos cada recorrido."
-        subtitle="Información, revisiones y decisiones para una comunidad mejor informada."
-      >
-        <DemoTag />
-      </PageTitle>
-      <div className="admin-kpis">
-        {[
-          {
-            label: 'Reportes por revisar',
-            value: pending.length,
-            icon: ShieldAlert,
-            target: 'moderate',
-          },
-          ...(SHOW_FUTURE
-            ? [{ label: 'Rutas propuestas', value: proposed.length, icon: Route, target: 'proposals' }]
-            : []),
-          {
-            label: 'Rutas oficiales',
-            value: all.filter((r) => r.official).length,
-            icon: Check,
-            target: 'official',
-          },
-          {
-            label: 'Espacios recomendados',
-            value: state.spaces.length,
-            icon: MapPin,
-            target: 'adminspaces',
-          },
-          {
-            label: 'Aliados activos',
-            value: state.sponsors.filter((s) => s.active).length,
-            icon: Sparkles,
-            target: 'sponsors',
-          },
-        ].map(({ label, value, icon: I, target }) => (
-          <button key={label} onClick={() => go(target)}>
-            <I />
-            <strong>{value.toString().padStart(2, '0')}</strong>
-            <span>
-              {label}
-              <ChevronRight />
+    <div className="club-dashboard">
+      <header className="dashboard-greeting">
+        <div>
+          <h1>Hola{firstName ? `, ${firstName}` : ''}</h1>
+          <p>{todayLabel.charAt(0).toUpperCase() + todayLabel.slice(1)} · Resumen del club</p>
+        </div>
+      </header>
+      <div className="dashboard-kpis">
+        {kpis.map(({ label, value, icon: I, target, tone }) => (
+          <button key={label} type="button" className="dashboard-kpi" onClick={() => go(target)}>
+            <span className={`dashboard-icon ${tone}`}>
+              <I aria-hidden="true" />
+            </span>
+            <span className="dashboard-kpi-text">
+              <strong>{value}</strong>
+              <small>{label}</small>
             </span>
           </button>
         ))}
       </div>
-      <div className="admin-overview-grid">
-        <section className="admin-section">
-          <div className="section-heading">
-            <div>
-              <span className="eyebrow">PRIORIDAD DE REVISIÓN</span>
-              <h2>La comunidad ha aportado.</h2>
-            </div>
-            <button className="text-action" onClick={() => go('moderate')}>
-              Ver bandeja <ArrowRight />
+      <div className="dashboard-grid">
+        <div className="dashboard-main">
+          <section className="dashboard-hero" aria-label="Prioridad del club">
+            <Image src={gacelasWhite} alt="" aria-hidden className="dashboard-hero-mark" />
+            <span className="dashboard-hero-eyebrow">PRIORIDAD DEL CLUB</span>
+            <h2>
+              {pending.length
+                ? `${pending.length} ${pending.length === 1 ? 'reporte espera' : 'reportes esperan'} tu revisión`
+                : 'La bandeja está al día'}
+            </h2>
+            <p>
+              {pending.length
+                ? 'Solo lo que apruebes aparece en el mapa de los corredores.'
+                : 'No hay reportes pendientes. Revisa las decisiones recientes del club.'}
+            </p>
+            <button
+              type="button"
+              className="dashboard-hero-action"
+              onClick={() => go(pending.length ? 'moderate' : 'moderationlog')}
+            >
+              {pending.length ? 'Revisar reportes' : 'Ver historial'} <ArrowRight aria-hidden="true" />
             </button>
-          </div>
-          {pending.map((i) => (
-            <button className="admin-inbox-item" key={i.id} onClick={() => go('moderate')}>
-              <span>
-                <Flag />
-              </span>
+          </section>
+          <section className="dashboard-card">
+            <div className="dashboard-card-head">
               <div>
-                <strong>{i.type}</strong>
-                <p>{i.location} · {i.owner}</p>
+                <h2>Bandeja de revisión</h2>
+                <p>Reportes enviados por la comunidad</p>
               </div>
-              <Status value={i.status} />
-              <ChevronRight />
-            </button>
-          ))}
-          {!pending.length && (
-            <EmptyState title="Bandeja al día" description="Los nuevos reportes aparecerán aquí." />
-          )}
-        </section>
-        <aside className="club-overview">
-          <span className="eyebrow">ADMINISTRACIÓN DEL CLUB</span>
-          <h2>
-            Información que
-            <br />
-            acompaña.
-          </h2>
-          <p>
-            Los índices son referenciales. Las decisiones del club actualizan las vistas del
-            corredor.
-          </p>
-          <Button variant="secondary" onClick={() => go('moderationlog')}>
-            Historial de moderación <ArrowRight />
-          </Button>
+              <button type="button" className="text-action" onClick={() => go('moderate')}>
+                Ver bandeja <ArrowRight />
+              </button>
+            </div>
+            {pending.map((i) => (
+              <button className="admin-inbox-item" key={i.id} onClick={() => go('moderate')}>
+                <span>
+                  <Flag />
+                </span>
+                <div>
+                  <strong>{i.type}</strong>
+                  <p>
+                    {i.location} · {i.owner}
+                  </p>
+                </div>
+                <Status value={i.status} />
+                <ChevronRight />
+              </button>
+            ))}
+            {!pending.length && <p className="dashboard-empty">Sin reportes pendientes.</p>}
+          </section>
+          <section className="dashboard-card">
+            <div className="dashboard-card-head">
+              <div>
+                <h2>Accesos rápidos</h2>
+                <p>Lo que gestionas a diario, a un clic</p>
+              </div>
+            </div>
+            <div className="dashboard-shortcuts">
+              {shortcuts.map(({ title, text, icon: I, page, tone }) => (
+                <button key={title} type="button" onClick={() => go(page)}>
+                  <span className={`dashboard-icon ${tone}`}>
+                    <I aria-hidden="true" />
+                  </span>
+                  <span>
+                    <strong>{title}</strong>
+                    <small>{text}</small>
+                  </span>
+                  <ChevronRight aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </section>
+        </div>
+        <aside className="dashboard-side">
+          <section className="dashboard-card">
+            <div className="dashboard-card-head">
+              <div>
+                <h2>Actividad reciente</h2>
+                <p>
+                  {activity.length
+                    ? `${activity.length} ${activity.length === 1 ? 'movimiento' : 'movimientos'}`
+                    : 'Sin movimientos todavía'}
+                </p>
+              </div>
+              <button type="button" className="text-action" onClick={() => go('moderationlog')}>
+                Ver todo <ArrowRight />
+              </button>
+            </div>
+            <ul className="dashboard-activity">
+              {activity.map(({ id, title, time, icon: I }) => (
+                <li key={id}>
+                  <span className="dashboard-icon tone-brand">
+                    <I aria-hidden="true" />
+                  </span>
+                  <div>
+                    <strong>{title}</strong>
+                    <small>
+                      {new Date(time).toLocaleString('es', {
+                        day: 'numeric',
+                        month: 'short',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </small>
+                  </div>
+                </li>
+              ))}
+            </ul>
+            {!activity.length && (
+              <p className="dashboard-empty">Las revisiones del club aparecerán aquí.</p>
+            )}
+          </section>
+          <section className="dashboard-note">
+            <span className="dashboard-icon tone-brand">
+              <Shield aria-hidden="true" />
+            </span>
+            <div>
+              <strong>Información que acompaña</strong>
+              <p>
+                Los índices son referenciales. Las decisiones del club actualizan las vistas del
+                corredor.
+              </p>
+            </div>
+          </section>
         </aside>
       </div>
-      <section className="admin-section">
-        <div className="section-heading">
-          <h2>Accesos de gestión</h2>
-        </div>
-        <div className="admin-shortcuts">
-          {[
-            { title: 'Horarios y rutas oficiales', icon: Clock3, page: 'official' },
-            { title: 'Espacios y zonas de riesgo', icon: MapPin, page: 'risks' },
-            { title: 'Patrocinadores y publicidad', icon: Megaphone, page: 'sponsors' },
-          ].map(({ title, icon: I, page }) => (
-            <button key={title} onClick={() => go(page)}>
-              <I />
-              {title}
-              <ArrowRight />
-            </button>
-          ))}
-        </div>
-      </section>
     </div>
   )
 }
