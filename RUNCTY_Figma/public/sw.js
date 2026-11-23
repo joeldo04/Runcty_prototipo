@@ -1,6 +1,6 @@
 // Service worker de RUNCTY: la app siempre usa la red para no mostrar datos viejos.
 // Solo guarda una página de aviso para cuando el teléfono no tiene conexión.
-const CACHE = 'runcty-offline-v1'
+const CACHE = 'runcty-offline-v2'
 const OFFLINE = '/offline.html'
 
 self.addEventListener('install', (event) => {

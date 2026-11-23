@@ -31,9 +31,17 @@ const shareLogo = '/runcty-share-fucsia.png'
 const favicon = makeSiteSettings.icons?.icon || shareLogo
 const socialImage = makeSiteSettings.openGraph?.image || shareLogo
 const googleAnalyticsId = sanitizeHtmlAttribute(makeSiteSettings.analytics?.googleAnalyticsId)
+// Dirección pública para la vista previa al compartir el enlace (WhatsApp, redes).
+// NEXT_PUBLIC_SITE_URL llega como localhost cuando no hay URL de Figma; ahí se usa el dominio de Vercel.
+const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL
+const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : configuredUrl && !/localhost|127\.0\.0\.1/.test(configuredUrl)
+    ? configuredUrl
+    : 'https://runcty-prototipo-web-movil.vercel.app'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://runcty-prototipo-web-movil.vercel.app'),
+  metadataBase: new URL(siteUrl),
   title,
   description,
   robots: makeSiteSettings.robots?.index === false ? { follow: false, index: false } : undefined,
