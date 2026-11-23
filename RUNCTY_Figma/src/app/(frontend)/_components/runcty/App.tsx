@@ -368,27 +368,12 @@ function WebApp({
                 <Bell />
               </IconButton>
             )}
-            {isDemo && user?.role === 'corredor' && state.users.some((u) => u.id === user.id && isAdminUser(u)) && (
-              <Link className="role-switch" href="/demo/administracion" aria-label="Cambiar a modo administrador">
-                <Shield /><span>Modo administrador</span>
+            {user && (isDemo ? state.users.some(account => account.id === user.id && account.active && isAdminUser(account)) : user.role === 'club' || user.role === 'sistema') && !adminPage && (
+              <Link className="role-switch" href={isDemo ? '/demo/administracion' : user.role === 'sistema' ? '/gestion/users' : '/gestion/clubhome'} aria-label={user.role === 'sistema' ? 'Panel del sistema' : 'Panel del club'}>
+                <Shield /><span>{user.role === 'sistema' ? 'Panel del sistema' : 'Panel del club'}</span>
               </Link>
             )}
-            {user && user.role !== 'corredor' && (
-              <nav
-                aria-label="Espacios de tu cuenta"
-                className="flex items-center gap-3 text-xs font-semibold text-accent"
-              >
-                {isDemo ? (
-                  <Link href="/demo/administracion">Panel</Link>
-                ) : (
-                  <>
-                    <Link href="/explorar">Correr</Link>
-                    <Link href="/gestion/clubhome">Club</Link>
-                    {user.role === 'sistema' && <Link href="/gestion/users">Sistema</Link>}
-                  </>
-                )}
-              </nav>
-            )}
+            {adminPage && user?.role !== 'sistema' && <Link className="role-switch" href="/explorar">Aplicación del corredor</Link>}
             <Button variant="secondary" onClick={openAccount}>
               {user?.name ?? 'Iniciar sesión'}
             </Button>
@@ -496,7 +481,8 @@ function MobileApp({
 }) {
   const { state, user, isDemo, update, notify, openAccount, startDemo, logout } = useDemo(),
     all = useRoutes()
-  const [entry, setEntry] = useState<'welcome' | 'login' | 'register'>('welcome')
+  const router = useRouter()
+  const [entry, setEntry] = useState<'welcome' | 'login' | 'register' | 'demo'>('welcome')
   useThemeColor(user ? '#F7F5F7' : '#2A0A1F')
   const [page, setPage] = useState(startPage),
     [selected, setSelected] = useState<RouteData | null>(
@@ -505,8 +491,9 @@ function MobileApp({
     [trail, setTrail] = useState<string[]>([]),
     [notification, setNotification] = useState(false)
   const account = state.users.find((value) => value.id === user?.id)
-  // Las cuentas solo de administración no tienen experiencia de corredor.
-  const adminOnly = isDemo && !!account && account.role !== 'corredor'
+  // Un administrador del club conserva su experiencia de corredor; el sistema tiene su panel.
+  const adminOnly = user?.role === 'sistema' || (isDemo && account?.role === 'sistema')
+  const hasClubPanel = !!user && (isDemo ? !!account && account.active && account.role !== 'sistema' && isAdminUser(account) : user.role === 'club')
   useEffect(() => {
     if (isDemo && user && user.role !== 'corredor' && !adminOnly) startDemo('corredor')
   }, [adminOnly, isDemo, user?.role, startDemo])
@@ -668,6 +655,7 @@ function MobileApp({
                       <Bell />
                     </IconButton>
                   )}
+                  {hasClubPanel && <IconButton label="Panel del club" onClick={() => router.push(isDemo ? '/demo/administracion' : '/gestion/clubhome')}><Shield /></IconButton>}
                   <IconButton label="Salir" onClick={exitAccount}>
                     <LogOut />
                   </IconButton>
@@ -675,15 +663,18 @@ function MobileApp({
               </header>
             )}
             {!user ? (
-              entry === 'welcome' ? <MobileWelcome login={() => setEntry('login')} register={() => setEntry('register')} /> :
-                <DemoAccess mobile createInitially={entry === 'register'} back={() => setEntry('welcome')} proceed={(accountId, _mode, name, email) => startDemo('corredor', accountId, name, email)} />
+              entry === 'welcome' ? <MobileWelcome login={() => setEntry('login')} register={() => setEntry('register')} demo={() => setEntry('demo')} /> :
+                <DemoAccess mobile createInitially={entry === 'register'} demonstration={entry === 'demo'} back={() => setEntry('welcome')} proceed={(accountId, mode, name, email, password, access) => {
+                  startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name, email, password, access)
+                  if (mode === 'admin') router.push('/demo/administracion')
+                }} />
             ) : adminOnly ? (
               <div className="mobile-padded">
                 <EmptyState
-                  title="Esta cuenta es de administración"
-                  description="La app móvil es para corredores. Gestiona el club desde el panel web."
+                  title="Administración del sistema"
+                  description="Esta cuenta tiene acceso al panel del sistema. Usa una cuenta de corredor para recorrer la aplicación móvil."
                 >
-                  <Button onClick={toWeb}>Ir a la web</Button>
+                  <Button onClick={() => router.push(isDemo ? '/demo/administracion' : '/gestion/users')}>Ir al panel del sistema</Button>
                 </EmptyState>
               </div>
             ) : page === 'train' ? (

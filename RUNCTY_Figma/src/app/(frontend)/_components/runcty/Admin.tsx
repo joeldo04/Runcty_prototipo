@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import {
   Activity,
   ArrowRight,
@@ -41,6 +41,7 @@ import {
 } from './components'
 import {
   routeScore,
+  scheduleStatus,
   today,
   uid,
   isAdminUser,
@@ -917,127 +918,74 @@ function OfficialRoutes() {
   )
 }
 function SpacesAdmin() {
-  const { state, update, notify, isDemo } = useDemo(),
-    [edit, setEdit] = useState<Space | null>(null),
-    [remove, setRemove] = useState<string | null>(null)
-  return (
-    <div>
-      <PageTitle eyebrow="RECOMENDACIONES DEL CLUB" title="Espacios para la comunidad.">
-        <Button
-          onClick={() =>
-            setEdit({
-              id: uid(),
-              name: '',
-              type: 'Parque',
-              location: 'Loja',
-              hours: '08:00–17:00',
-              description: '',
-              coordinate: [-3.9736, -79.2027],
-            })
-          }
-        >
-          <Plus />
-          Nuevo espacio
-        </Button>
-      </PageTitle>
-      <div className="space-admin-list">
-        {state.spaces.map((s) => (
-          <article key={s.id}>
-            <MapPin />
-            <div>
-              <h3>{s.name}</h3>
-              <p>
-                {s.type} · {s.location} · {s.hours}
-              </p>
-              {s.alert && <span className="route-flag danger">No recomendado</span>}
-            </div>
-            <Button variant="secondary" onClick={() => setEdit(s)}>
-              Editar
-            </Button>
-            <button aria-label={`Eliminar ${s.name}`} onClick={() => setRemove(s.id)}>
-              <Trash2 />
-            </button>
-          </article>
-        ))}
-      </div>
-      {edit && (
-        <Modal title="Gestionar espacio" onClose={() => setEdit(null)}>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault()
-              if (!update((s) => ({
-                ...s,
-                moderation: logAlert(s, edit.name, s.spaces.find((sp) => sp.id === edit.id)?.alert, edit.alert),
-                spaces: s.spaces.some((sp) => sp.id === edit.id)
-                  ? s.spaces.map((sp) => (sp.id === edit.id ? edit : sp))
-                  : [...s.spaces, edit],
-              }))) return
-              setEdit(null)
-              notify('Sincronizando el espacio con la vista pública.')
-            }}
-          >
-            <label className="field">
-              Nombre
-              <input
-                required
-                value={edit.name}
-                onChange={(e) => setEdit({ ...edit, name: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              Tipo
-              <select
-                value={edit.type}
-                onChange={(e) => setEdit({ ...edit, type: e.target.value })}
-              >
-                <option>Parque</option>
-                <option>Sendero</option>
-                <option>Estadio</option>
-                <option>Ciclovía</option>
-                <option>Pista atlética</option>
-              </select>
-            </label>
-            <label className="field">
-              Ubicación
-              <input
-                required
-                value={edit.location}
-                onChange={(e) => setEdit({ ...edit, location: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              Horarios
-              <input
-                required
-                value={edit.hours}
-                onChange={(e) => setEdit({ ...edit, hours: e.target.value })}
-              />
-            </label>
-            <label className="field">
-              Descripción
-              <textarea
-                value={edit.description}
-                onChange={(e) => setEdit({ ...edit, description: e.target.value })}
-              />
-            </label>
-            {isDemo && <AlertFields value={edit.alert} onChange={(alert) => setEdit({ ...edit, alert })} />}
-            <Button type="submit">Guardar espacio</Button>
-          </form>
-        </Modal>
-      )}
-      {remove && (
-        <Confirm
-          title="¿Eliminar espacio?"
-          message="Dejará de aparecer entre las recomendaciones del club."
-          label="Eliminar"
-          onClose={() => setRemove(null)}
-          confirm={() =>
-            update((s) => ({ ...s, spaces: s.spaces.filter((sp) => sp.id !== remove) }))
-          }
-        />
-      )}
-    </div>
-  )
+  const { state, user, update, notify, isDemo } = useDemo()
+  const [edit, setEdit] = useState<Space | null>(null)
+  const [remove, setRemove] = useState<Space | null>(null)
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const fieldId = useId()
+  const actor = state.users.find(account => account.id === user?.id)
+  const allowed = isDemo ? !!actor && actor.active && isAdminUser(actor) : user?.role === 'club' || user?.role === 'sistema'
+  const existing = !!edit && state.spaces.some(space => space.id === edit.id)
+  const openEditor = (space: Space) => { setErrors({}); setEdit(space) }
+  const save = () => {
+    if (!edit || !allowed) return
+    const normalized = { ...edit, name: edit.name.trim(), location: edit.location.trim(), hours: edit.hours.trim(), description: edit.description.trim() }
+    const problems: Record<string, string> = {}
+    if (!normalized.name) problems.name = 'Escribe el nombre del espacio.'
+    if (!normalized.location) problems.location = 'Escribe la ubicación.'
+    const windows = normalized.hours.split(/\s*·\s*/)
+    const validHours = windows.every(window => /^([01]\d|2[0-3]):[0-5]\d\s*[–-]\s*([01]\d|2[0-3]):[0-5]\d$/.test(window) && window.slice(0,5) < window.slice(-5))
+    if (!scheduleStatus(normalized.hours, '08:00') || !validHours)
+      problems.hours = 'Usa un horario válido, por ejemplo 05:30–19:00.'
+    if (normalized.alert && !normalized.alert.reason.trim()) problems.alert = 'Escribe el motivo de la advertencia.'
+    setErrors(problems)
+    if (Object.keys(problems).length) return
+    if (!update(current => ({
+      ...current,
+      moderation: logAlert(current, normalized.name, current.spaces.find(space => space.id === normalized.id)?.alert, normalized.alert),
+      spaces: existing ? current.spaces.map(space => space.id === normalized.id ? normalized : space) : [...current.spaces, normalized],
+    }))) return
+    setEdit(null)
+    notify(existing ? 'Cambios del espacio guardados.' : 'Espacio creado.')
+  }
+  if (!allowed) return <EmptyState title="Acceso restringido" description="Necesitas permisos administrativos para gestionar los espacios del club." />
+  return <div className="admin-list-page">
+    <PageTitle eyebrow="GESTIÓN DEL CLUB" title="Espacios recomendados." subtitle="Lugares y horarios publicados para la comunidad.">
+      <Button onClick={() => openEditor({ id: uid(), name: '', type: 'Parque', location: 'Loja', hours: '08:00–17:00', description: '', coordinate: [-3.9736,-79.2027] })}><Plus />Nuevo espacio</Button>
+    </PageTitle>
+    <p className="admin-list-summary" role="status">{state.spaces.length} {state.spaces.length === 1 ? 'espacio registrado' : 'espacios registrados'}</p>
+    {state.spaces.length ? <div className="data-table-wrap admin-records-wrap">
+      <table className="data-table admin-records-table spaces-records"><caption className="sr-only">Espacios recomendados del club</caption>
+        <thead><tr><th scope="col">Espacio</th><th scope="col">Categoría</th><th scope="col">Ubicación</th><th scope="col">Horario recomendado</th><th scope="col" className="admin-actions-heading">Acciones</th></tr></thead>
+        <tbody>{state.spaces.map(space => <tr key={space.id}>
+          <td data-label="Espacio" className="admin-record-name"><strong>{space.name}</strong>{space.alert && <small className="text-low">No recomendado</small>}</td>
+          <td data-label="Categoría">{space.type}</td>
+          <td data-label="Ubicación" className="admin-record-location">{space.location}</td>
+          <td data-label="Horario recomendado" className="admin-record-hours">{space.hours}</td>
+          <td data-label="Acciones" className="admin-actions-cell"><div className="admin-record-actions">
+            <Button variant="secondary" aria-label={'Editar ' + space.name} onClick={() => openEditor(space)}><Edit3 />Editar</Button>
+            <Button variant="ghost" className="admin-icon-action" aria-label={'Eliminar ' + space.name} title={'Eliminar ' + space.name} onClick={() => setRemove(space)}><Trash2 /></Button>
+          </div></td>
+        </tr>)}</tbody>
+      </table>
+    </div> : <EmptyState title="Aún no hay espacios recomendados" description="Crea un espacio para publicarlo en las recomendaciones del club." />}
+    {edit && <Modal title={existing ? 'Editar espacio' : 'Nuevo espacio'} onClose={() => setEdit(null)}>
+      <form className="admin-edit-form" noValidate onSubmit={event => { event.preventDefault(); save() }}>
+        <label className="field" htmlFor={fieldId + '-name'}>Nombre<input id={fieldId + '-name'} aria-label="Nombre" required autoFocus value={edit.name} aria-invalid={!!errors.name} aria-describedby={errors.name ? fieldId + '-name-error' : undefined} onChange={event => setEdit({ ...edit, name: event.target.value })} />{errors.name && <small className="field-error" id={fieldId + '-name-error'}>{errors.name}</small>}</label>
+        <label className="field">Categoría<select value={edit.type} onChange={event => setEdit({ ...edit, type: event.target.value })}>{['Parque','Sendero','Estadio','Ciclovía','Pista atlética'].map(type => <option key={type}>{type}</option>)}</select></label>
+        <label className="field" htmlFor={fieldId + '-location'}>Ubicación<input id={fieldId + '-location'} aria-label="Ubicación" required value={edit.location} aria-invalid={!!errors.location} aria-describedby={errors.location ? fieldId + '-location-error' : undefined} onChange={event => setEdit({ ...edit, location: event.target.value })} />{errors.location && <small className="field-error" id={fieldId + '-location-error'}>{errors.location}</small>}</label>
+        <label className="field" htmlFor={fieldId + '-hours'}>Horario recomendado<input id={fieldId + '-hours'} aria-label="Horario recomendado" required placeholder="05:30–19:00" value={edit.hours} aria-invalid={!!errors.hours} aria-describedby={errors.hours ? fieldId + '-hours-error' : fieldId + '-hours-help'} onChange={event => setEdit({ ...edit, hours: event.target.value })} /><small id={fieldId + '-hours-help'}>Usa franjas como 05:30–19:00 o 08:00–10:00 · 14:00–17:00.</small>{errors.hours && <small className="field-error" id={fieldId + '-hours-error'}>{errors.hours}</small>}</label>
+        <label className="field">Descripción<textarea value={edit.description} onChange={event => setEdit({ ...edit, description: event.target.value })} /></label>
+        {isDemo && <AlertFields value={edit.alert} onChange={alert => setEdit({ ...edit, alert })} />}
+        {Object.keys(errors).length > 0 && <p className="form-error" role="alert">{Object.values(errors).join(' ')}</p>}
+        <div className="admin-form-actions"><Button variant="secondary" onClick={() => setEdit(null)}>Cancelar</Button><Button type="submit">{existing ? 'Guardar cambios' : 'Crear espacio'}</Button></div>
+      </form>
+    </Modal>}
+    {remove && <Confirm title="¿Eliminar espacio?" message={'Se eliminará «' + remove.name + '» de las recomendaciones del club.'} label="Eliminar espacio" onClose={() => setRemove(null)} confirm={() => {
+      if (!allowed || !update(current => ({ ...current, spaces: current.spaces.filter(space => space.id !== remove.id) }))) return false
+      notify('Espacio eliminado de las recomendaciones.')
+    }} />}
+  </div>
 }
 function RiskAdmin() {
   const { state, update, notify } = useDemo(),
@@ -1367,31 +1315,38 @@ export function SystemAdmin({ page }: { page: string }) {
     [sensitive, setSensitive] = useState<string | null>(null),
     [roleChange, setRoleChange] = useState<DemoUser | null>(null),
     [importing, setImporting] = useState<string | null>(null)
+  const actor = state.users.find(account => account.id === user?.id)
+  const allowed = isDemo ? !!actor && actor.active && actor.role === 'sistema' : user?.role === 'sistema'
+  if (!allowed) return <EmptyState title="Acceso restringido al sistema" description="Tu cuenta no tiene permisos para administrar usuarios, ciudades o redes viales." />
   if (page === 'cities')
-    return (
-      <>
-        <PageTitle eyebrow="COBERTURA DEL SISTEMA" title="Ciudades y red de calles." />
-        {state.cities.map(city => <div className="city-network-card" key={city.id}>
-          <MapPin />
-          <div>
-            <h2>{city.name}</h2>
-            <p>{city.networkReady ? 'Red registrada y validada por el sistema' : 'Pendiente de carga y validación de la red'}</p>
-            <small>{city.id === 'loja' ? `${state.roads.length} tramos publicados` : 'La vista cartográfica de esta versión está centrada en Loja.'}</small>
-          </div>
-          <Status value={city.enabled ? 'Activo' : 'Inactivo'} />
-          <Button disabled={!city.networkReady} variant="secondary" onClick={() => {
-            if (update(s => ({ ...s, cities: s.cities.map(value => value.id === city.id ? { ...value, enabled: !value.enabled } : value) })))
-              notify('Sincronizando la disponibilidad de la ciudad.')
-          }}>{city.enabled ? 'Deshabilitar' : 'Habilitar'}</Button>
-          {isDemo && <Button variant="secondary" onClick={() => setImporting(city.id)}>Cargar red</Button>}
-        </div>)}
-        {!state.cities.length && <EmptyState title="Aún no hay ciudades configuradas" description="Registra las ciudades y su red vial validada en Payload. No se simulan importaciones ni se inventa cobertura." />}
-        <div className="info-strip">
-          {isDemo ? 'La cartografía base procede de OpenStreetMap y OpenFreeMap. Carga la red de una ciudad para habilitarla.' : 'La cartografía base procede de OpenStreetMap / CARTO. Las redes y los índices se administran en Payload; no hay un importador automático conectado.'}
-        </div>
-        {state.cities.filter((city) => city.id === importing).map((city) => <NetworkImport key={city.id} city={city} close={() => setImporting(null)} />)}
-      </>
-    )
+    return <div className="admin-list-page">
+      <PageTitle eyebrow="ADMINISTRACIÓN DEL SISTEMA" title="Ciudades y red vial." subtitle="La habilitación requiere una red vial cargada y validada." />
+      <p className="admin-list-summary" role="status">{state.cities.length} {state.cities.length === 1 ? 'ciudad registrada' : 'ciudades registradas'}</p>
+      {state.cities.length ? <div className="data-table-wrap admin-records-wrap">
+        <table className="data-table admin-records-table city-records"><caption className="sr-only">Ciudades y estado de su red vial</caption>
+          <thead><tr><th scope="col">Ciudad</th><th scope="col">Red vial</th><th scope="col">Tramos registrados</th><th scope="col">Disponibilidad</th><th scope="col" className="admin-actions-heading">Acciones</th></tr></thead>
+          <tbody>{state.cities.map(city => {
+            const count = city.streetCount ?? (city.id === 'loja' ? state.roads.length : city.networkReady ? null : 0)
+            const cannotEnable = !city.enabled && !city.networkReady
+            return <tr key={city.id}>
+              <td data-label="Ciudad" className="admin-record-name"><strong>{city.name}</strong></td>
+              <td data-label="Red vial"><span className={'admin-state ' + (city.networkReady ? 'is-ready' : '')}>{city.networkReady ? 'Validada' : 'Pendiente'}</span>{!city.networkReady && <small>Requiere carga y validación</small>}</td>
+              <td data-label="Tramos registrados" className="admin-record-count"><strong>{count ?? '—'}</strong>{count === null && <small>Conteo no disponible</small>}</td>
+              <td data-label="Disponibilidad"><span className={'admin-state ' + (city.enabled ? 'is-enabled' : '')}>{city.enabled ? 'Habilitada' : 'Deshabilitada'}</span></td>
+              <td data-label="Acciones" className="admin-actions-cell"><div className="admin-record-actions">
+                {isDemo && <Button variant="secondary" aria-label={'Cargar red de ' + city.name} onClick={() => setImporting(city.id)}>Cargar red</Button>}
+                <Button variant="secondary" disabled={cannotEnable} title={cannotEnable ? 'Primero carga y valida la red vial de esta ciudad.' : undefined} aria-label={(city.enabled ? 'Deshabilitar ' : 'Habilitar ') + city.name} onClick={() => {
+                  if (!allowed || (!city.enabled && !city.networkReady)) return
+                  if (update(current => ({ ...current, cities: current.cities.map(value => value.id === city.id ? { ...value, enabled: !value.enabled } : value) }))) notify(city.enabled ? city.name + ' deshabilitada.' : city.name + ' habilitada.')
+                }}>{city.enabled ? 'Deshabilitar' : 'Habilitar'}</Button>
+              </div></td>
+            </tr>
+          })}</tbody>
+        </table>
+      </div> : <EmptyState title="Aún no hay ciudades configuradas" description="Las ciudades registradas aparecerán aquí junto con el estado de su red vial." />}
+      <p className="admin-list-footnote">{isDemo ? 'La demostración valida archivos y conserva el conteo de tramos en esta pestaña. El mapa de muestra permanece centrado en Loja.' : 'La cartografía utiliza OpenStreetMap. Solo las ciudades con red validada pueden habilitarse.'}</p>
+      {state.cities.filter(city => city.id === importing).map(city => <NetworkImport key={city.id} city={city} close={() => setImporting(null)} />)}
+    </div>
   if (page === 'parameters')
     return (
       <>
@@ -1525,7 +1480,7 @@ export function SystemAdmin({ page }: { page: string }) {
           message={
             isAdminUser(roleChange)
               ? `${roleChange.name} seguirá siendo corredor, pero ya no podrá entrar al panel del club.${roleChange.id === user?.id ? ' Es tu propia cuenta: saldrás del panel ahora.' : ''}`
-              : `${roleChange.name} podrá elegir entre corredor y administrador del club al iniciar sesión.`
+              : `${roleChange.name} conservará sus funciones de corredor y tendrá acceso adicional al panel del club.`
           }
           label={isAdminUser(roleChange) ? 'Quitar rol' : 'Dar rol'}
           onClose={() => setRoleChange(null)}
@@ -1542,7 +1497,7 @@ export function SystemAdmin({ page }: { page: string }) {
       {sensitive && (
         <Confirm
           title="¿Cambiar el estado de la cuenta?"
-          message="La actualización se guardará en Payload. Una cuenta desactivada no podrá iniciar sesión ni acceder a sus datos privados."
+          message="Una cuenta desactivada no podrá iniciar sesión ni acceder a sus datos privados. Puedes reactivarla desde este panel."
           label="Confirmar cambio"
           onClose={() => setSensitive(null)}
           confirm={() => {

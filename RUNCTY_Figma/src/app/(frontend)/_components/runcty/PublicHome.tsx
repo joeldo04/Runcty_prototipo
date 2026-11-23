@@ -220,7 +220,7 @@ function AppSimulation() {
 }
 
 export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') => void }) {
-  const { state, user, openAccount, openRegistration } = useDemo()
+  const { state, user, openAccount, openRegistration, openDemoAccess } = useDemo()
   useThemeColor('#2A0A1F')
   const router = useRouter()
   const routes = (state.catalog.length ? state.catalog : DEMO_ROUTES).length
@@ -339,9 +339,9 @@ export function PublicHome({ enter }: { enter: (experience: 'web' | 'mobile') =>
             </article>
             <article>
               <span><ShieldCheck /></span>
-              <h3>Administración</h3>
-              <p>Revisión de rutas y reportes, publicidad, y roles de usuarios.</p>
-              <Button variant="secondary" onClick={openAccount}>Entrar con dos roles <ArrowRight /></Button>
+              <h3>Acceso demostrativo</h3>
+              <p>Cuentas de muestra con permisos de corredor, administrador del club y administrador del sistema. Solo para la presentación.</p>
+              <Button variant="secondary" onClick={openDemoAccess}>Elegir cuenta de muestra <ArrowRight /></Button>
             </article>
           </div>
         </div>

@@ -2,11 +2,10 @@
 
 import { useId, useState } from 'react'
 import Image from 'next/image'
-import Link from 'next/link'
-import { ArrowRight, Check, Eye, EyeOff, MailCheck, MapPin, Monitor, Route, ShieldCheck, Users } from 'lucide-react'
+import { ArrowRight, Check, Eye, EyeOff, MailCheck, Monitor, Route, Users } from 'lucide-react'
 import { BackButton, Button, IconButton, Modal, RunnerIcon } from './components'
 import { isAdminUser, withEmails, type DemoUser } from './data'
-import { DEMO_USERS } from './demo-seed'
+import { DEMO_ACCESS_PASSWORD, DEMO_USERS } from './demo-seed'
 import { useDemo } from './store'
 import { SHOW_FUTURE } from './features'
 import brandMark from '../../../../../imagenes/logo_runcty.png'
@@ -138,194 +137,139 @@ function RecoverPassword({ back }: { back: () => void }) {
   )
 }
 
-function RoleChoice({ account, choose, back }: {
-  account: DemoUser; choose: (mode: 'corredor' | 'admin') => void; back: () => void
-}) {
-  return (
-    <>
-      <h2>Hola, {account.name.split(' ')[0]}</h2>
-      <p className="auth-copy">Tu cuenta tiene dos roles. ¿Cómo quieres entrar?</p>
-      <div className="role-options">
-        <button type="button" onClick={() => choose('corredor')}>
-          <span><RunnerIcon /></span>
-          <div><strong>Corredor</strong><small>Rutas, entrenamientos y seguridad.</small></div>
-          <ArrowRight />
-        </button>
-        <button type="button" onClick={() => choose('admin')}>
-          <span><ShieldCheck /></span>
-          <div><strong>Administrador del club</strong><small>Rutas, reportes, espacios y publicidad.</small></div>
-          <ArrowRight />
-        </button>
-      </div>
-      <p className="auth-note">Podrás cambiar de modo cuando quieras sin cerrar sesión.</p>
-      <div className="auth-links"><button type="button" onClick={back}>Usar otra cuenta</button></div>
-    </>
-  )
-}
+type AccessProceed = (accountId?: string, mode?: 'corredor' | 'admin', name?: string, email?: string, password?: string, access?: 'normal' | 'demo') => void
 
-export function DemoAccess({ createInitially = false, mobile = false, back, proceed }: {
-  createInitially?: boolean; mobile?: boolean; back?: () => void
-  proceed: (accountId?: string, mode?: 'corredor' | 'admin', name?: string, email?: string) => void
+export function DemoAccess({ createInitially = false, demonstration = false, mobile = false, back, proceed }: {
+  createInitially?: boolean; demonstration?: boolean; mobile?: boolean; back?: () => void; proceed: AccessProceed
 }) {
-  const { state } = useDemo()
-  const [create, setCreate] = useState(createInitially),
-    [visible, setVisible] = useState(false),
-    [error, setError] = useState(''),
-    [view, setView] = useState<'form' | 'recover' | 'roles' | 'verify'>('form'),
-    [created, setCreated] = useState<{ name: string; email: string } | null>(null)
+  const { state, checkPreviewAccess } = useDemo()
+  const [create, setCreate] = useState(createInitially)
+  const [demoView, setDemoView] = useState(demonstration)
+  const [visible, setVisible] = useState(false)
+  const [error, setError] = useState('')
+  const [view, setView] = useState<'form' | 'recover' | 'verify'>('form')
+  const [submitting, setSubmitting] = useState(false)
+  const [created, setCreated] = useState<{ name: string; email: string; password: string } | null>(null)
   const passwordId = useId()
-  const cities = Array.from(new Set(['Loja', ...state.cities.filter((city) => city.enabled).map((city) => city.name)]))
-  // Registro como en la app real: todos los campos son obligatorios.
+  const known = state.users.length ? state.users : DEMO_USERS
+  const accounts = known.filter(account => account.active && DEMO_USERS.some(sample => sample.id === account.id))
+  const [accountId, setAccountId] = useState(accounts[0]?.id)
+  const account = accounts.find(value => value.id === accountId) ?? accounts[0]
+  const cities = Array.from(new Set(state.cities.filter(city => city.enabled).map(city => city.name)))
   const register = (data: FormData) => {
     const text = (key: string) => String(data.get(key) ?? '').trim()
-    const email = text('email'), birth = text('nacimiento')
+    const email = text('email').toLowerCase(), birth = text('nacimiento'), password = String(data.get('password') ?? '')
     if (!text('nombres') || !text('apellidos')) return 'Escribe tus nombres y apellidos.'
     if (!/^\S+@\S+\.\S+$/.test(email)) return 'Revisa el correo: debe tener el formato nombre@dominio.com.'
-    if (String(data.get('password') ?? '').length < 8) return 'La contraseña debe tener al menos 8 caracteres.'
+    if (known.some(value => value.email?.toLowerCase() === email)) return 'Ya existe una cuenta con ese correo. Inicia sesión.'
+    if (password.length < 8) return 'La contraseña debe tener al menos 8 caracteres.'
     if (!birth) return 'Indica tu fecha de nacimiento.'
-    if (birth > latestBirth()) return `Debes tener al menos ${MIN_AGE} años para crear una cuenta.`
-    if (!text('ciudad')) return 'Elige tu ciudad.'
+    if (birth > latestBirth()) return 'Debes tener al menos ' + MIN_AGE + ' años para crear una cuenta.'
+    if (!cities.includes(text('ciudad'))) return 'Elige una ciudad habilitada.'
     if (!data.get('terminos')) return 'Acepta los términos de uso para continuar.'
-    setCreated({ name: `${text('nombres')} ${text('apellidos')}`, email })
+    setCreated({ name: text('nombres') + ' ' + text('apellidos'), email, password })
     setView('verify')
     return ''
   }
-  const accounts = (state.users.length ? state.users : DEMO_USERS).filter(
-    (account) => account.active && (!mobile || account.role === 'corredor'),
-  )
-  const [accountId, setAccountId] = useState(accounts[0]?.id)
-  const account = accounts.find((value) => value.id === accountId) ?? accounts[0]
-  const switchMode = () => {
-    setCreate(!create)
-    setError('')
-  }
-  const signIn = (name?: string) => {
-    if (create || !account) return proceed(undefined, undefined, name)
-    if (mobile) return proceed(account.id)
-    if (account.role !== 'corredor') return proceed(account.id, 'admin')
-    if (isAdminUser(account)) return setView('roles')
-    proceed(account.id)
-  }
-  const form = view === 'recover' ? <RecoverPassword back={() => setView('form')} /> :
-    view === 'roles' && account ? <RoleChoice account={account} back={() => setView('form')} choose={(mode) => proceed(account.id, mode)} /> :
-    view === 'verify' && created ? (
-      <div className="auth-done auth-verify" role="status">
-        <span><MailCheck /></span>
-        <h2>Revisa tu correo</h2>
-        <p>Enviamos un enlace de verificación a <strong>{created.email}</strong>. Ábrelo para activar tu cuenta.</p>
-        <Button variant="orange" className="w-full" onClick={() => proceed(undefined, undefined, created.name, created.email)}>
-          Abrir enlace de verificación <ArrowRight />
-        </Button>
-        <div className="auth-links"><button type="button" onClick={() => setView('form')}>Corregir mis datos</button></div>
+  const switchMode = () => { setCreate(!create); setError(''); setView('form'); setSubmitting(false) }
+  const form = demoView ? (
+    <div className="auth-demo-access">
+      <span className="auth-prototype-label"><Monitor aria-hidden="true" /> Acceso demostrativo independiente</span>
+      <h2>Cuentas de muestra</h2>
+      <p className="auth-copy">Solo para recorrer el prototipo durante la presentación. Cada cuenta tiene sus permisos previamente asignados.</p>
+      <div className="account-options" role="group" aria-label="Cuentas de demostración">
+        {accounts.map(value => <button key={value.id} type="button" aria-pressed={value.id === account?.id} className={value.id === account?.id ? 'selected' : ''} onClick={() => setAccountId(value.id)}>
+          <div><strong>{value.name}</strong><small>{value.email}</small></div>
+          <span className="auth-assigned-role">{accountRoles(value)}</span>
+        </button>)}
       </div>
-    ) : (
+      {!accounts.length && <p className="auth-note">No hay cuentas de muestra activas.</p>}
+      <Button className="w-full" disabled={!account} onClick={() => {
+        if (account) proceed(account.id, account.role === 'sistema' || account.role === 'club' ? 'admin' : 'corredor', undefined, undefined, undefined, 'demo')
+      }}>Entrar en demostración <ArrowRight /></Button>
+      <p className="auth-note">Para probar el formulario normal con estas cuentas, usa el correo de la cuenta y la contraseña de muestra <strong>{DEMO_ACCESS_PASSWORD}</strong>. No uses credenciales reales.</p>
+      <div className="auth-links"><button type="button" onClick={() => { setDemoView(false); setCreate(false); setError('') }}>Volver al inicio de sesión</button></div>
+    </div>
+  ) : view === 'recover' ? <RecoverPassword back={() => setView('form')} /> : view === 'verify' && created ? (
+    <div className="auth-done auth-verify" role="status">
+      <span><MailCheck /></span>
+      <h2>Revisa tu correo</h2>
+      <p>Enviamos un enlace de verificación a <strong>{created.email}</strong>. Ábrelo para activar tu cuenta.</p>
+      <p className="auth-note">En este prototipo puedes simular la verificación. No se envía un correo real.</p>
+      <Button className="w-full" onClick={() => proceed(undefined, 'corredor', created.name, created.email, created.password, 'normal')}>Simular verificación de correo <ArrowRight /></Button>
+      <div className="auth-links"><button type="button" onClick={() => setView('form')}>Corregir mis datos</button></div>
+    </div>
+  ) : (
     <>
       <h2>{create ? 'Crea tu cuenta' : 'Bienvenido'}</h2>
-      <form
-        className="auth-form"
-        noValidate
-        onSubmit={(event) => {
-          event.preventDefault()
-          const data = new FormData(event.currentTarget)
-          if (create) {
-            setError(register(data))
-            return
-          }
-          const email = String(data.get('email') ?? '').trim()
-          if (email && !/^\S+@\S+\.\S+$/.test(email)) {
-            setError('Revisa el correo: debe tener el formato nombre@dominio.com.')
-            return
-          }
-          setError('')
-          signIn()
-        }}
-      >
-        {create && (
-          <div className="auth-row">
-            <label className="field">Nombres<input name="nombres" placeholder="Tus nombres" autoComplete="given-name" maxLength={60} /></label>
-            <label className="field">Apellidos<input name="apellidos" placeholder="Tus apellidos" autoComplete="family-name" maxLength={60} /></label>
-          </div>
-        )}
-        {!create && (
-          <div className="field">
-            <span>Elige tu cuenta</span>
-            <div className="account-options" role="group" aria-label="Elige tu cuenta">
-              {accounts.map((value) => (
-                <button key={value.id} type="button" aria-pressed={value.id === account?.id} className={value.id === account?.id ? 'selected' : ''} onClick={() => setAccountId(value.id)}>
-                  <strong>{value.name.replace(' · ejemplo', '')}</strong>
-                  <small>{accountRoles(value)}</small>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-        <label className="field">Correo electrónico<input name="email" type="email" inputMode="email" placeholder="nombre@correo.com" autoComplete="off" aria-invalid={!!error} /></label>
+      <p className="auth-copy">{create ? 'Tu cuenta se creará como corredor.' : 'Ingresa con tu correo y contraseña. Tus accesos dependen de los permisos de tu cuenta.'}</p>
+      <form className="auth-form" noValidate aria-busy={submitting} onSubmit={event => {
+        event.preventDefault()
+        const data = new FormData(event.currentTarget)
+        if (create) { setError(register(data)); return }
+        const email = String(data.get('email') ?? '').trim(), password = String(data.get('password') ?? '')
+        if (!/^\S+@\S+\.\S+$/.test(email)) { setError('Escribe un correo válido.'); return }
+        if (!password) { setError('Escribe tu contraseña.'); return }
+        const matched = checkPreviewAccess(email, password)
+        if (!matched) { setError('El correo o la contraseña no son correctos, o la cuenta no está activa.'); return }
+        setError('')
+        setSubmitting(true)
+        proceed(matched.id, matched.role === 'sistema' ? 'admin' : 'corredor', undefined, undefined, undefined, 'normal')
+      }}>
+        {create && <div className="auth-row">
+          <label className="field">Nombres<input name="nombres" required placeholder="Tus nombres" autoComplete="given-name" maxLength={60} /></label>
+          <label className="field">Apellidos<input name="apellidos" required placeholder="Tus apellidos" autoComplete="family-name" maxLength={60} /></label>
+        </div>}
+        <label className="field">Correo electrónico<input name="email" required type="email" inputMode="email" placeholder="nombre@correo.com" autoComplete="username" /></label>
         <div className="field">
           <label htmlFor={passwordId}>Contraseña</label>
           <div className="auth-password">
-            <input id={passwordId} name="password" type={visible ? 'text' : 'password'} placeholder={create ? 'Mínimo 8 caracteres' : 'Tu contraseña'} autoComplete={create ? 'new-password' : 'off'} />
-            <IconButton label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={visible} onClick={() => setVisible(!visible)}>
-              {visible ? <EyeOff /> : <Eye />}
-            </IconButton>
+            <input id={passwordId} name="password" required type={visible ? 'text' : 'password'} placeholder={create ? 'Mínimo 8 caracteres' : 'Tu contraseña'} autoComplete={create ? 'new-password' : 'current-password'} />
+            <IconButton label={visible ? 'Ocultar contraseña' : 'Mostrar contraseña'} aria-pressed={visible} onClick={() => setVisible(!visible)}>{visible ? <EyeOff /> : <Eye />}</IconButton>
           </div>
         </div>
-        {create && (
-          <div className="auth-row">
-            <label className="field">Fecha de nacimiento<input name="nacimiento" type="date" max={latestBirth()} /></label>
-            <label className="field">Ciudad
-              <select name="ciudad" defaultValue="Loja">
-                {cities.map((city) => <option key={city}>{city}</option>)}
-              </select>
-            </label>
-          </div>
-        )}
-        {create && (
-          <label className="checkbox auth-terms">
-            <input name="terminos" type="checkbox" />
-            Acepto los términos de uso y la política de privacidad de RUNCTY.
-          </label>
-        )}
+        {create && <div className="auth-row">
+          <label className="field">Fecha de nacimiento<input name="nacimiento" required type="date" max={latestBirth()} /></label>
+          <label className="field">Ciudad<select name="ciudad" required defaultValue={cities[0] ?? ''}><option value="" disabled>Selecciona una ciudad</option>{cities.map(city => <option key={city}>{city}</option>)}</select></label>
+        </div>}
+        {create && !cities.length && <p role="alert" className="form-error">No hay ciudades habilitadas para registrarse.</p>}
+        {create && <label className="checkbox auth-terms"><input name="terminos" type="checkbox" required />Acepto los términos de uso y la política de privacidad de RUNCTY.</label>}
         {error && <p role="alert" className="form-error">{error}</p>}
-        {!create && <p className="auth-note">Puedes dejar los campos vacíos.</p>}
-        <Button type="submit" variant="orange" className="w-full">{create ? 'Crear cuenta' : 'Iniciar sesión'}<ArrowRight /></Button>
+        <Button type="submit" className="w-full" disabled={submitting || (create && !cities.length)}>{submitting ? 'Ingresando…' : create ? 'Crear cuenta' : 'Iniciar sesión'}<ArrowRight /></Button>
       </form>
       <div className="auth-links">
         {SHOW_FUTURE && !create && <button type="button" onClick={() => setView('recover')}>Recuperar contraseña</button>}
         <button type="button" onClick={switchMode}>{create ? '¿Ya tienes una cuenta? Inicia sesión' : 'Crear cuenta'}</button>
       </div>
+      <div className="auth-demo-entry"><span>Prototipo interactivo · usa datos de prueba.</span><button type="button" onClick={() => { setDemoView(true); setError('') }}><Monitor aria-hidden="true" /> Acceso demostrativo</button></div>
     </>
   )
-  if (!mobile)
-    return (
-      <section className="auth-card auth-modal" aria-label="Acceso a RUNCTY">
-        {form}
-        <Link href="/demo/administracion" className="auth-admin"><Monitor className="size-4" /> Ver administración de demostración <ArrowRight className="size-4" /></Link>
-      </section>
-    )
-  return (
-    <section className="auth-screen navy-zone" aria-label="Acceso a RUNCTY">
-      <div className="auth-top">
-        {back && <BackButton onClick={back}>Volver</BackButton>}
-        <BrandHeader />
-      </div>
-      <div className="auth-body">
-        <div className="auth-intro"><AuthIntro /></div>
-        <div className="auth-card">{form}</div>
-      </div>
-    </section>
-  )
+  if (!mobile) return <section className="auth-card auth-modal" aria-label="Acceso a RUNCTY">{form}</section>
+  return <section className="auth-screen navy-zone" aria-label="Acceso a RUNCTY">
+    <div className="auth-top">{back && <BackButton onClick={back}>Volver</BackButton>}<BrandHeader /></div>
+    <div className="auth-body"><div className="auth-intro"><AuthIntro /></div><div className="auth-card">{form}</div></div>
+  </section>
 }
 
-export function AccountPreview({ create, close, proceed }: {
-  create: boolean; close: () => void; proceed: (accountId?: string, mode?: 'corredor' | 'admin', name?: string, email?: string) => void
+export function AccountPreview({ create, demonstration = false, close, proceed }: {
+  create: boolean; demonstration?: boolean; close: () => void; proceed: AccessProceed
 }) {
-  const { user, isDemo, logout } = useDemo()
-  return <Modal title={user ? 'Tu cuenta RUNCTY' : create ? 'Crear cuenta RUNCTY' : 'Acceso a RUNCTY'} onClose={close}>
-    {user ? <div className="space-y-5"><h3 className="text-2xl font-bold">Hola, {user.name}.</h3><p className="text-sm leading-6 text-muted">{isDemo ? 'Estás en una demostración local. La actividad solo dura en esta pestaña.' : 'Tienes una sesión activa. Tus permisos se gestionan en el servidor.'}</p><Button className="w-full" onClick={close}>Continuar explorando <ArrowRight /></Button><Button variant="secondary" className="w-full" onClick={() => void logout()}>Cambiar de cuenta</Button><Button variant="ghost" className="w-full" onClick={async () => { if (await logout()) close() }}>Cerrar sesión</Button></div> : <DemoAccess createInitially={create} proceed={proceed} />}
+  const { user, isDemo, logout, demonstrationAccess } = useDemo()
+  const [switchingDemo, setSwitchingDemo] = useState(demonstration)
+  const showDemo = demonstration || switchingDemo
+  return <Modal title={showDemo ? 'Acceso demostrativo' : user ? 'Tu cuenta RUNCTY' : create ? 'Crear cuenta RUNCTY' : 'Acceso a RUNCTY'} onClose={close}>
+    {user && !isDemo && showDemo ? <div className="space-y-5"><p>Cierra tu sesión para abrir las cuentas de muestra del prototipo.</p><Button onClick={async () => { await logout() }}>Cerrar sesión y ver demostración</Button></div> : user && !showDemo ?
+      <div className="space-y-5">
+        <h3 className="text-2xl font-bold">Hola, {user.name}.</h3>
+        <p className="text-sm leading-6 text-muted">{isDemo ? 'Prototipo interactivo. Los datos de esta presentación solo duran en esta pestaña.' : 'Tu sesión está activa. Tus accesos corresponden a los permisos asignados a tu cuenta.'}</p>
+        <Button className="w-full" onClick={close}>Continuar explorando <ArrowRight /></Button>
+        <Button variant="secondary" className="w-full" onClick={async () => { if (demonstrationAccess) setSwitchingDemo(true); else await logout() }}>Cambiar de cuenta</Button>
+        <Button variant="ghost" className="w-full" onClick={async () => { if (await logout()) close() }}>Cerrar sesión</Button>
+      </div> : <DemoAccess createInitially={create} demonstration={showDemo} proceed={proceed} />}
   </Modal>
 }
 
-export function MobileWelcome({ login, register }: { login: () => void; register: () => void }) {
+export function MobileWelcome({ login, register, demo }: { login: () => void; register: () => void; demo: () => void }) {
   return (
     <section className="welcome-screen">
       <div className="welcome-photo">
@@ -379,6 +323,7 @@ export function MobileWelcome({ login, register }: { login: () => void; register
           <Button variant="secondary" className="w-full" onClick={login}>
             Ya tengo una cuenta
           </Button>
+          <button type="button" className="welcome-demo-link" onClick={demo}>Acceso demostrativo</button>
         </div>
       </div>
     </section>

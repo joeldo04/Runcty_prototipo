@@ -116,8 +116,12 @@ export interface DemoUser {
   role: string
   active: boolean
   admin?: boolean
+  email?: string
 }
-export const isAdminUser = (user: DemoUser) => user.admin ?? user.role !== 'corredor'
+export const isAdminUser = (user: DemoUser) => user.role === 'sistema' || user.role === 'club' || user.admin === true
+// En el prototipo, el modo solicitado nunca concede permisos a la cuenta.
+export const assignedAccessRole = (account: DemoUser, requested: 'corredor' | 'club' | 'sistema' = 'corredor'): 'corredor' | 'club' | 'sistema' =>
+  account.role === 'sistema' ? 'sistema' : requested === 'club' && isAdminUser(account) ? 'club' : 'corredor'
 export interface Space {
   id: string
   name: string

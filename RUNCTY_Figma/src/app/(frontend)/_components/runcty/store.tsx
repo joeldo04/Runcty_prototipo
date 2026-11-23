@@ -14,6 +14,7 @@ import { Check, Cloud, LoaderCircle, RefreshCw } from 'lucide-react'
 import { AccountPreview } from './Onboarding'
 import {
   today,
+  assignedAccessRole,
   pointAlong,
   uid,
   withEmails,
@@ -34,7 +35,7 @@ import {
   type SurveyAnswers,
 } from './data'
 import type { PublicRuncty } from '@/lib/runcty-queries'
-import { DEMO_CITY, DEMO_ROADS, DEMO_ROUTES, DEMO_SPACES, DEMO_SPONSORS, DEMO_BANNERS, DEMO_USERS, demoReport } from './demo-seed'
+import { DEMO_CITY, DEMO_ROADS, DEMO_ROUTES, DEMO_SPACES, DEMO_SPONSORS, DEMO_BANNERS, DEMO_USERS, DEMO_ACCESS_PASSWORD, demoReport } from './demo-seed'
 import type { User } from '@/payload-types'
 import { loadRunctySession, saveRunctyChanges, signOutRuncty } from '@/app/(frontend)/actions'
 
@@ -70,7 +71,7 @@ export interface DemoState {
   users: DemoUser[]
   risks: RiskZone[]
   comments: { id: string; text: string; status: string; reason?: string; routeId?: string }[]
-  cities: { id: string; name: string; networkReady: boolean; enabled: boolean }[]
+  cities: { id: string; name: string; networkReady: boolean; enabled: boolean; streetCount?: number }[]
   clubDescription: string
   clubName: string
   heroImage: { url: string; alt: string; width: number; height: number } | null
@@ -107,7 +108,7 @@ const currentSlot = (): TimeSlot => {
   )
   return hour >= 4 && hour < 7 ? '05:30' : hour >= 7 && hour < 11 ? '08:00' : hour >= 11 && hour < 17 ? '14:00' : '19:00'
 }
-function initialState(data: PublicRuncty): DemoState {
+function initialState(data: PublicRuncty | DemoState): DemoState {
   const date = today()
   const time = currentSlot()
   return {
@@ -221,7 +222,10 @@ type Store = {
   notify: (message: string) => void
   openAccount: () => void
   openRegistration: () => void
-  startDemo: (role?: 'corredor' | 'club' | 'sistema', accountId?: string, name?: string, email?: string) => void
+  openDemoAccess: () => void
+  demonstrationAccess: boolean
+  checkPreviewAccess: (email: string, password: string) => DemoUser | null
+  startDemo: (role?: 'corredor' | 'club' | 'sistema', accountId?: string, name?: string, email?: string, password?: string, access?: 'normal' | 'demo') => void
   logout: () => Promise<boolean>
   hydrateSession: (data: Partial<DemoState>, user: AppUser | null) => void
 }
@@ -238,7 +242,10 @@ export function DemoProvider({
     [user, setUser] = useState<AppUser | null>(null),
     [loading, setLoading] = useState(false)
   const [isDemo, setIsDemo] = useState(false)
-  const [accountMode, setAccountMode] = useState<'login' | 'register' | null>(null)
+  const [accountMode, setAccountMode] = useState<'login' | 'register' | 'demo' | null>(null)
+  const [demonstrationAccess, setDemonstrationAccess] = useState(false)
+  // Las contraseñas de la maqueta no se envían ni se guardan en el navegador.
+  const previewPasswords = useRef(new Map<string, string>())
   const demoRef = useRef(false)
   const [message, setMessage] = useState(''),
     [pending, setPending] = useState(0),
@@ -392,7 +399,8 @@ export function DemoProvider({
       userRef.current = null
       setUser(null)
       // Los roles asignados sobreviven al cierre para probarlos con otra cuenta.
-      const clean = { ...initialState(publicRef.current), users: ref.current.users }
+      const clean = { ...initialState(ref.current), users: ref.current.users }
+      setDemonstrationAccess(false)
       ref.current = clean
       setState(clean)
       version.current++
@@ -427,25 +435,30 @@ export function DemoProvider({
     router.refresh()
     return true
   }
-  const startDemo = useCallback((role: 'corredor' | 'club' | 'sistema' = 'corredor', accountId?: string, chosenName?: string, chosenEmail?: string) => {
+  const startDemo = useCallback((role: 'corredor' | 'club' | 'sistema' = 'corredor', accountId?: string, chosenName?: string, chosenEmail?: string, password?: string, access?: 'normal' | 'demo') => {
     if ((userRef.current && !demoRef.current) || pendingRef.current || failed.current.length) return
     const wasDemo = demoRef.current
-    demoRef.current = true
-    setIsDemo(true)
-    version.current++
     const current = ref.current
     const known = current.users.length ? current.users : DEMO_USERS
     // Solo crear cuenta trae nombre, aunque esté vacío: siempre nace como corredor.
     const created = chosenName !== undefined
-    // Solo se conserva una cuenta creada: repetir el nombre la reutiliza y otra la reemplaza.
-    const isCreated = (value: DemoUser) => value.id.startsWith('cuenta-')
-    const newName = chosenName || 'Corredor nuevo'
-    const existing = created ? known.find((value) => isCreated(value) && value.name === newName) : undefined
-    const fresh: DemoUser | null = created && !existing
-      ? { id: `cuenta-${uid()}`, name: newName, role: 'corredor', active: true, admin: false }
+    const email = chosenEmail?.trim().toLowerCase()
+    if (created && (!email || !password || password.length < 8 || known.some(value => value.email?.toLowerCase() === email))) {
+      setMessage('No se pudo crear la cuenta. Revisa el correo y la contraseña.')
+      return
+    }
+    const newName = chosenName?.trim() || 'Corredor nuevo'
+    const fresh: DemoUser | null = created
+      ? { id: 'cuenta-' + uid(), name: newName, email, role: 'corredor', active: true, admin: false }
       : null
-    const users = fresh ? [...known.filter((value) => !isCreated(value)), fresh] : known
-    const account = existing ?? fresh ?? known.find((value) => value.id === (accountId ?? userRef.current?.id)) ?? DEMO_USERS[0]
+    const users = fresh ? [...known, fresh] : known
+    const account = fresh ?? known.find(value => value.id === (accountId ?? userRef.current?.id))
+    if (!account || !account.active) return
+    demoRef.current = true
+    setIsDemo(true)
+    version.current++
+    if (fresh && password) previewPasswords.current.set(fresh.id, password)
+    if (access) setDemonstrationAccess(access === 'demo')
     const sameAccount = wasDemo && userRef.current?.id === account.id
     const name = chosenName || (sameAccount ? current.profile.name : account.name)
     accept(
@@ -453,7 +466,7 @@ export function DemoProvider({
         // Only fill missing catalog values for local demonstration; never overwrite CMS records.
         roads: current.roads.length ? current.roads : DEMO_ROADS,
         catalog: current.catalog.length ? current.catalog : DEMO_ROUTES,
-        spaces: current.spaces.length ? current.spaces : DEMO_SPACES,
+        spaces: current.users.length || current.spaces.length ? current.spaces : DEMO_SPACES,
         sponsors: current.sponsors.length ? current.sponsors : DEMO_SPONSORS,
         banners: current.banners.length ? current.banners : DEMO_BANNERS,
         users,
@@ -479,13 +492,21 @@ export function DemoProvider({
           name,
           level: 'Intermedio',
           public: false,
-          email: chosenEmail || 'corredor@example.invalid',
+          email: chosenEmail || account.email || 'corredor@example.invalid',
         },
       },
-      { id: account.id, name, role: role === 'club' && account.role === 'sistema' ? 'sistema' : role },
+      { id: account.id, name, role: created ? 'corredor' : assignedAccessRole(account, role) },
     )
     setAccountMode(null)
   }, [accept])
+  const checkPreviewAccess = (email: string, password: string) => {
+    const known = ref.current.users.length ? ref.current.users : DEMO_USERS
+    const account = known.find(value => value.email?.toLowerCase() === email.trim().toLowerCase())
+    if (!account?.active) return null
+    const expected = previewPasswords.current.get(account.id) ??
+      (DEMO_USERS.some(value => value.id === account.id) ? DEMO_ACCESS_PASSWORD : undefined)
+    return expected && password === expected ? account : null
+  }
   return (
     <Context.Provider
       value={{
@@ -499,6 +520,9 @@ export function DemoProvider({
         notify,
         openAccount: () => setAccountMode('login'),
         openRegistration: () => setAccountMode('register'),
+        openDemoAccess: () => setAccountMode('demo'),
+        demonstrationAccess,
+        checkPreviewAccess,
         startDemo,
         logout,
         hydrateSession,
@@ -508,10 +532,11 @@ export function DemoProvider({
       {accountMode && (
         <AccountPreview
           create={accountMode === 'register'}
+          demonstration={accountMode === 'demo'}
           close={() => setAccountMode(null)}
-          proceed={(accountId, mode, name, email) => {
+          proceed={(accountId, mode, name, email, password, access) => {
             if (userRef.current && !demoRef.current) { setAccountMode(null); return }
-            startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name, email)
+            startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name, email, password, access)
             if (mode === 'admin') router.push('/demo/administracion')
             else if (!window.location.pathname.startsWith('/movil')) router.push('/explorar')
           }}

@@ -27,12 +27,13 @@ const title = makeSiteSettings.title ?? defaultTitle
 const description =
   makeSiteSettings.description ??
   'Rutas, comunidad y herramientas de seguridad para correr en Loja, Ecuador.'
-const favicon = makeSiteSettings.icons?.icon
-const socialImage = makeSiteSettings.openGraph?.image
+const shareLogo = '/runcty-share-fucsia.png'
+const favicon = makeSiteSettings.icons?.icon || shareLogo
+const socialImage = makeSiteSettings.openGraph?.image || shareLogo
 const googleAnalyticsId = sanitizeHtmlAttribute(makeSiteSettings.analytics?.googleAnalyticsId)
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://runcty-prototipo-web-movil.vercel.app'),
   title,
   description,
   robots: makeSiteSettings.robots?.index === false ? { follow: false, index: false } : undefined,
@@ -42,7 +43,7 @@ export const metadata: Metadata = {
   openGraph: {
     title,
     description,
-    images: socialImage ? [socialImage] : undefined,
+    images: [{ url: socialImage, alt: 'RUNCTY · Corre con información' }],
   },
   twitter: socialImage
     ? {

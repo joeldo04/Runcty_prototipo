@@ -80,11 +80,13 @@ export const demoReport = (): Incident => {
   const createdAt = Date.now() - 3 * 86400000
   return {id:'demo-report-perros',type:'Perros',location:'Entorno de Jipiro',coordinate:[-3.9792,-79.2020],date:new Date(createdAt).toISOString().slice(0,10),time:'07:10',description:'Reporte ficticio para demostrar los avisos de la ruta.',status:'Aprobado',owner:'Luis Ordóñez',owned:false,createdAt}
 }
+// Solo para la presentación; no son credenciales de la aplicación real.
+export const DEMO_ACCESS_PASSWORD = 'Runcty2026!'
 export const DEMO_USERS: DemoUser[] = [
-  {id:'runcty-demo-carlos',name:'Carlos',role:'corredor',active:true,admin:true},
-  {id:'runcty-demo-ana',name:'Ana',role:'corredor',active:true,admin:false},
-  {id:'demo-user-club',name:'Gestión Gacelas',role:'club',active:true,admin:true},
-  {id:'demo-user-sistema',name:'Sistema RUNCTY',role:'sistema',active:true,admin:true},
+  {id:'runcty-demo-carlos',email:'carlos@runcty.demo',name:'Carlos',role:'corredor',active:true,admin:true},
+  {id:'runcty-demo-ana',email:'ana@runcty.demo',name:'Ana',role:'corredor',active:true,admin:false},
+  {id:'demo-user-club',email:'club@runcty.demo',name:'Gestión Gacelas',role:'club',active:true,admin:true},
+  {id:'demo-user-sistema',email:'sistema@runcty.demo',name:'Sistema RUNCTY',role:'sistema',active:true,admin:true},
 ]
 export const DEMO_SPONSORS: Sponsor[] = [
   {id:'demo-gacelas',name:'Gacelas Running Team',message:'En Gacelas no entrenas solo: entrenas con planificación, coaches reales y una comunidad que te acompaña todo el año. Inscripciones abiertas.',contact:'Material del Club Deportivo Gacelas Running Team · cliente de referencia',active:true,visual:'club',image:{url:gacelasBanner.src,alt:'Publicidad del Club Deportivo Gacelas Running Team: inscripciones abiertas, planes Running y Running + Fuerza',width:gacelasBanner.width,height:gacelasBanner.height}},

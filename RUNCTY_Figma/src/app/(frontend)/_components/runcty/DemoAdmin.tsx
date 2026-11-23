@@ -10,7 +10,8 @@ import { Button, Logo, RunnerIcon } from './components'
 import { isAdminUser } from './data'
 import { useDemo } from './store'
 import { Tour } from './Tour'
-import { DEMO_ROUTES, DEMO_USERS } from './demo-seed'
+import { DEMO_ROUTES } from './demo-seed'
+import { DemoAccess } from './Onboarding'
 import { SHOW_FUTURE } from './features'
 
 const allGroups = [
@@ -48,14 +49,14 @@ const systemSteps = [
   { id: 'parameters', target: 'admin-parameters', title: 'Pesos del índice', text: 'Consulta la fórmula y las franjas de precaución.' },
 ]
 export default function DemoAdmin() {
-  const { state, user, isDemo, loading, startDemo, logout, update, openAccount } = useDemo()
+  const { state, user, isDemo, loading, startDemo, logout, update, openAccount, openDemoAccess } = useDemo()
   const router = useRouter()
   const account = state.users.find(value => value.id === user?.id)
-  const blocked = isDemo && !!account && !isAdminUser(account)
+  const blocked = isDemo && !!user && (!account || !account.active || !isAdminUser(account))
   const [page, setPage] = useState('clubhome')
   const [menu, setMenu] = useState(false)
-  const started = useRef(false), seeded = useRef(false)
-  const panel = isDemo && !blocked
+  const seeded = useRef(false)
+  const panel = isDemo && !!account && account.active && isAdminUser(account)
   // El sistema ve también los módulos del club; el club nunca ve los del sistema.
   const isSystem = account?.role === 'sistema'
   const visibleGroups = isSystem
@@ -73,13 +74,7 @@ export default function DemoAdmin() {
     if (isSystem) setPage('users')
   }, [isSystem])
   useEffect(() => {
-    if (started.current || loading || (user && !isDemo) || blocked) return
-    started.current = true
-    const admins = (state.users.length ? state.users : DEMO_USERS).filter(value => value.active && isAdminUser(value))
-    startDemo('club', user ? undefined : admins[0]?.id)
-  }, [blocked, isDemo, loading, startDemo, state.users, user])
-  useEffect(() => {
-    if (seeded.current || !isDemo || user?.role === 'corredor') return
+    if (seeded.current || !panel) return
     seeded.current = true
     update(current => {
       const sample = current.catalog[0] ?? DEMO_ROUTES[0]
@@ -96,25 +91,28 @@ export default function DemoAdmin() {
         }],
       }
     })
-  }, [isDemo, update, user])
+  }, [panel, update])
   const go = (target: string) => {
-    if (!isDemo) return
+    if (!panel || !visibleGroups.some(group => group.items.some(item => item.id === target))) return
     setPage(target)
     setMenu(false)
     window.scrollTo({ top: 0 })
   }
   const pageLabel = groups.flatMap(g => g.items).find(i => i.id === page)?.label
   return <div className="min-h-screen bg-ink text-copy">
-        <header className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 lg:px-8"><Link href="/" aria-label="RUNCTY, inicio"><Logo /></Link><nav className="flex flex-wrap items-center gap-5 text-sm">{account?.role === 'corredor' && !blocked && <button type="button" className="role-switch" onClick={() => { startDemo('corredor'); router.push('/explorar') }}><RunnerIcon /><span>Modo corredor</span></button>}{SHOW_FUTURE && panel && <button type="button" className="inline-flex min-h-11 items-center gap-2" onClick={() => setTour(true)}><GraduationCap className="size-4" />Ver tutorial</button>}<Link className="inline-flex min-h-11 items-center gap-2" href="/"><Home className="size-4" />Inicio</Link>{account?.role === 'corredor' && <Link className="inline-flex min-h-11 items-center gap-2" href="/movil"><Smartphone className="size-4" />Aplicación móvil</Link>}{account && <button type="button" className="admin-account" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta"><CircleUserRound className="size-4" /><span>{account.name.replace(' · ejemplo', '')}</span></button>}{account && <button type="button" className="exit-button" onClick={async () => { if (await logout()) router.push('/') }}><LogOut />Salir</button>}</nav></header>
-    {blocked ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Tu cuenta no tiene rol de administrador.</h1><p className="my-5 text-sm leading-7 text-muted">Un administrador puede asignártelo desde Usuarios y roles. Mientras tanto sigues teniendo tu acceso de corredor.</p><Button onClick={() => { startDemo('corredor'); router.push('/explorar') }}>Ir a modo corredor</Button></main> : user && !isDemo ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Prueba la gestión de RUNCTY.</h1><p className="my-5 text-sm leading-7 text-muted">Tienes una cuenta iniciada. Puedes cerrar esa sesión voluntariamente para abrir la demostración con datos ficticios.</p><Button onClick={async () => { if (await logout()) startDemo('club') }}>Cerrar sesión y abrir demostración</Button></main> : !isDemo ? <main className="p-10" aria-busy="true">Preparando demostración…</main> :
+        <header className="admin-shell-header mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 border-b border-line px-5 py-5 lg:px-8"><Link href="/" aria-label="RUNCTY, inicio"><Logo /></Link><nav className="flex flex-wrap items-center gap-5 text-sm"><span className="prototype-pill">Prototipo interactivo</span>{panel && !isSystem && <button type="button" className="role-switch" onClick={() => { startDemo('corredor'); router.push('/explorar') }}><RunnerIcon /><span>Aplicación del corredor</span></button>}{SHOW_FUTURE && panel && <button type="button" className="inline-flex min-h-11 items-center gap-2" onClick={() => setTour(true)}><GraduationCap className="size-4" />Ver tutorial</button>}<Link className="inline-flex min-h-11 items-center gap-2" href="/"><Home className="size-4" />Inicio</Link>{panel && !isSystem && <Link className="inline-flex min-h-11 items-center gap-2" href="/movil"><Smartphone className="size-4" />Aplicación móvil</Link>}{account && <button type="button" className="admin-account" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta"><CircleUserRound className="size-4" /><span>{account.name.replace(' · ejemplo', '')}</span></button>}{account && <button type="button" className="exit-button" onClick={async () => { if (await logout()) router.push('/') }}><LogOut />Salir</button>}</nav></header>
+    {blocked ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Tu cuenta no tiene rol de administrador.</h1><p className="my-5 text-sm leading-7 text-muted">Los permisos administrativos los asigna un usuario autorizado. Tu cuenta conserva el acceso de corredor.</p><Button onClick={() => { startDemo('corredor'); router.push('/explorar') }}>Ir a modo corredor</Button></main> : user && !isDemo ? <main className="mx-auto max-w-xl px-5 py-16"><h1 className="text-3xl font-bold">Prueba la gestión de RUNCTY.</h1><p className="my-5 text-sm leading-7 text-muted">Tienes una cuenta iniciada. Puedes cerrar esa sesión voluntariamente para abrir la demostración con datos ficticios.</p><Button onClick={openDemoAccess}>Ver acceso demostrativo</Button></main> : !panel ? <main className="admin-access-gate"><h1>Acceso demostrativo</h1><p>Elige una cuenta de muestra para revisar sus permisos. Este acceso no forma parte del registro normal.</p>{loading ? <p role="status">Cargando cuentas…</p> : <DemoAccess demonstration proceed={(accountId, mode, name, email, password, access) => {
+      startDemo(mode === 'admin' ? 'club' : 'corredor', accountId, name, email, password, access)
+      if (mode !== 'admin') router.push('/explorar')
+    }} />}</main> :
     <div className="mx-auto grid max-w-[1600px] lg:grid-cols-[260px_minmax(0,1fr)]">
       <aside className={`demo-admin-menu ${menu ? 'menu-open' : ''} border-b border-line px-4 py-6 lg:border-r lg:border-b-0`}>
         <button type="button" className="demo-admin-toggle lg:hidden" aria-expanded={menu} onClick={() => setMenu(!menu)}><span>Módulos de gestión<strong>{pageLabel}</strong></span><ChevronDown /></button>
-        <div className="demo-admin-profile club-card mb-6"><Image src={gacelasLogo} alt="Logo de Gacelas Running Team" width={52} height={52} /><div><strong>Gacelas Running Team</strong><span>{isSystem ? 'Administración del sistema' : 'Gestión del club'}</span></div></div>
+        <div className="demo-admin-profile club-card mb-6">{isSystem ? <Shield className="system-panel-mark" aria-hidden="true" /> : <Image src={gacelasLogo} alt="Logo de Gacelas Running Team" width={52} height={52} />}<div><strong>{isSystem ? 'RUNCTY' : 'Gacelas Running Team'}</strong><span>{isSystem ? 'Administración del sistema' : 'Gestión del club'}</span></div></div>
         <nav aria-label="Módulos administrativos" className="grid gap-6 sm:grid-cols-3 lg:grid-cols-1">{visibleGroups.map(group => <div key={group.name}><h2 className="mb-2 px-3 text-xs font-semibold uppercase tracking-widest text-muted">{group.name}</h2><div className="space-y-1">{group.items.map(({ id, label, icon: Icon }) => <button key={id} data-tour={`admin-${id}`} onClick={() => go(id)} aria-current={page === id ? 'page' : undefined} className={'flex min-h-11 w-full items-center gap-3 rounded-xl border px-3 py-2 text-left text-sm ' + (page === id ? 'border-electric/30 bg-electric/15 text-copy' : 'border-transparent text-muted hover:bg-raised')}><Icon className="size-4 shrink-0 text-sport" /><span className="min-w-0 flex-1">{label}</span>{id === 'proposals' && state.customRoutes.some(r => r.status === 'Pendiente') && <span className="rounded-full bg-sport px-2 text-xs text-ink">{state.customRoutes.filter(r => r.status === 'Pendiente').length}</span>}{id === 'moderate' && state.incidents.some(i => i.status === 'Pendiente') && <span className="rounded-full bg-sport px-2 text-xs text-ink">{state.incidents.filter(i => i.status === 'Pendiente').length}</span>}</button>)}</div></div>)}</nav>
         {SHOW_FUTURE && <p className="demo-admin-note mt-7 border-t border-line px-3 pt-5 text-xs leading-6 text-muted">Las rutas comunitarias se aprueban o rechazan únicamente desde esta experiencia web.</p>}
       </aside>
-      <main className="min-w-0 px-5 py-7 sm:px-7 lg:px-9"><p className="mb-7 flex items-center gap-2 border-b border-line pb-5 text-sm text-muted">RUNCTY <ChevronRight className="size-3" />Gestión <ChevronRight className="size-3" /><span className="text-copy">{pageLabel}</span></p>{systemPages.has(page) && isSystem ? <SystemAdmin page={page} /> : <ClubAdmin page={page} go={go} />}</main>
+      <main className="admin-main-content min-w-0 px-5 py-7 sm:px-7 lg:px-9"><p className="mb-7 flex items-center gap-2 border-b border-line pb-5 text-sm text-muted">RUNCTY <ChevronRight className="size-3" />Gestión <ChevronRight className="size-3" /><span className="text-copy">{pageLabel}</span></p>{systemPages.has(page) && isSystem ? <SystemAdmin page={page} /> : <ClubAdmin page={page} go={go} />}</main>
     </div>}
     {tour && <Tour label="Tutorial del panel" steps={tourSteps} onClose={() => { setTour(false); setMenu(false) }} />}
   </div>

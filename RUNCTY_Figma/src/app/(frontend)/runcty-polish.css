@@ -853,3 +853,75 @@
 .runcty-app .profile-navigation > button:last-child { border-bottom: 0; }
 .runcty-app .profile-navigation strong { font-size: 14px; font-weight: 600; line-height: 1.3; }
 .runcty-app .profile-navigation > button > span svg { width: 20px; height: 20px; }
+/* Accesos asignados y listados administrativos: mismos tokens y componentes del prototipo. */
+.runcty-app .admin-list-page { min-width: 0; }
+.runcty-app .admin-list-page > .page-heading { align-items: flex-start; gap: 20px; margin-bottom: 20px; }
+.runcty-app .admin-list-page > .page-heading p { max-width: 560px; }
+.runcty-app .admin-list-page .heading-actions { padding-top: 4px; }
+.runcty-app .admin-list-summary { margin-bottom: 12px; color: var(--color-muted); font-size: 13px; line-height: 1.5; }
+.runcty-app .admin-records-wrap { border: 0; border-radius: 0; background: var(--color-panel); }
+.runcty-app .admin-records-table { min-width: 760px; font-size: 13px; line-height: 1.5; }
+.runcty-app .admin-records-table :is(th, td) { padding: 14px 16px; vertical-align: middle; }
+.runcty-app .admin-records-table th { padding-top: 12px; padding-bottom: 12px; background: var(--color-shell); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.runcty-app .admin-records-table :is(th, td):first-child { padding-left: 12px; }
+.runcty-app .admin-records-table :is(th, td):last-child { padding-right: 12px; }
+.runcty-app .admin-record-name { min-width: 140px; }
+.runcty-app .admin-record-name strong { font-size: 14px; font-weight: 650; }
+.runcty-app .admin-records-table td small { margin-top: 4px; font-size: 12px; line-height: 1.4; color: var(--color-muted); }
+.runcty-app .admin-record-location { max-width: 260px; overflow-wrap: anywhere; }
+.runcty-app .admin-record-hours { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.runcty-app .admin-record-count { font-variant-numeric: tabular-nums; }
+.runcty-app .admin-record-count strong { font-size: 15px; font-weight: 600; }
+.runcty-app .admin-actions-heading { text-align: right; }
+.runcty-app .admin-record-actions { display: flex; align-items: center; justify-content: flex-end; gap: 8px; }
+.runcty-app .admin-record-actions .button { min-height: 44px; padding: 10px 14px; font-size: 13px; white-space: nowrap; box-shadow: none; }
+.runcty-app .admin-record-actions .admin-icon-action { width: 44px; padding: 10px; }
+.runcty-app .admin-record-actions svg { width: 16px; height: 16px; flex-shrink: 0; stroke-width: 2; }
+.runcty-app .admin-state { display: inline-flex; align-items: center; gap: 6px; min-height: 26px; padding: 3px 8px; border-radius: 6px; background: var(--color-raised); color: var(--color-muted); font-size: 12px; font-weight: 600; white-space: nowrap; }
+.runcty-app .admin-state:is(.is-ready, .is-enabled) { background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .admin-list-footnote { max-width: 760px; margin-top: 16px; color: var(--color-muted); font-size: 12px; line-height: 1.6; }
+.runcty-app .admin-edit-form { display: flex; flex-direction: column; gap: 16px; }
+.runcty-app .admin-edit-form .field > small { font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--color-muted); }
+.runcty-app .admin-edit-form .field > .field-error { color: var(--color-primary-pressed); }
+.runcty-app .admin-edit-form [aria-invalid='true'] { border-color: var(--color-primary); }
+.runcty-app .admin-form-actions { display: flex; justify-content: flex-end; gap: 8px; padding-top: 16px; border-top: 1px solid var(--color-line); }
+.runcty-app .admin-shell-header nav { gap: 12px; }
+.runcty-app .prototype-pill { padding: 4px 9px; border-radius: 999px; background: var(--color-primary-soft); color: var(--color-primary-pressed); font-size: 12px; font-weight: 600; line-height: 1.5; }
+.runcty-app .system-panel-mark { display: grid; place-items: center; width: 40px; height: 40px; padding: 9px; border-radius: 12px; background: var(--color-primary-soft); color: var(--color-primary); }
+.runcty-app .admin-access-gate { width: 100%; max-width: 560px; margin: 0 auto; padding: 32px 20px; }
+.runcty-app .auth-prototype-label { display: inline-flex; align-items: center; gap: 8px; color: var(--color-muted); font-size: 12px; line-height: 1.4; }
+.runcty-app .auth-prototype-label svg { width: 16px; height: 16px; flex-shrink: 0; }
+.runcty-app .auth-demo-access { display: flex; flex-direction: column; gap: 14px; }
+.runcty-app .auth-demo-access .account-options button { display: grid; grid-template-columns: minmax(0, 1fr) minmax(90px, 38%); gap: 12px; min-height: 68px; padding: 12px; }
+.runcty-app .auth-demo-access .account-options :is(strong, small) { display: block; }
+.runcty-app .auth-demo-access .account-options small { overflow-wrap: anywhere; }
+.runcty-app .auth-assigned-role { font-size: 12px; line-height: 1.4; color: var(--color-muted); text-align: right; }
+.runcty-app .auth-demo-entry { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--color-line); text-align: center; }
+.runcty-app .auth-demo-entry > span { font-size: 12px; line-height: 1.5; color: var(--color-muted); }
+.runcty-app .auth-demo-entry button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; color: var(--color-primary); font-size: 13px; font-weight: 600; }
+.runcty-app .auth-demo-entry button svg { width: 16px; height: 16px; flex-shrink: 0; }
+.runcty-app .welcome-demo-link { width: 100%; min-height: 44px; color: inherit; font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 4px; }
+@media (max-width: 700px) {
+  .runcty-app .admin-list-page > .page-heading { flex-direction: column; align-items: stretch; gap: 16px; }
+  .runcty-app .admin-list-page .heading-actions { padding-top: 0; }
+  .runcty-app .admin-records-table { min-width: 0; }
+  .runcty-app .admin-records-table thead { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+  .runcty-app .admin-records-table :is(tbody, tr) { display: block; width: 100%; }
+  .runcty-app .admin-records-table tbody > tr { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px 16px; padding: 16px 0; border-bottom: 1px solid var(--color-line); }
+  .runcty-app .admin-records-table tbody > tr:last-child { border-bottom: 0; }
+  .runcty-app .admin-records-table td, .runcty-app .admin-records-table :is(td:first-child, td:last-child) { display: block; min-width: 0; max-width: none; padding: 0; border: 0; white-space: normal; }
+  .runcty-app .admin-records-table td::before { display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 11px; font-weight: 500; content: attr(data-label); }
+  .runcty-app .admin-records-table :is(.admin-record-name, .admin-actions-cell) { grid-column: 1 / -1; }
+  .runcty-app .admin-records-table :is(.admin-record-name, .admin-actions-cell)::before { display: none; }
+  .runcty-app .admin-record-name strong { font-size: 16px; }
+  .runcty-app .admin-records-table td small { margin-top: 4px; }
+  .runcty-app .admin-record-actions { justify-content: flex-start; }
+  .runcty-app .admin-record-location { overflow-wrap: anywhere; }
+  .runcty-app .spaces-records .admin-record-hours { grid-column: 1 / -1; }
+  .runcty-app .admin-shell-header { position: relative; gap: 12px; padding-top: 16px; padding-bottom: 16px; }
+  .runcty-app .admin-shell-header nav { width: 100%; gap: 8px 12px; }
+  .runcty-app .admin-shell-header .prototype-pill { position: absolute; top: 22px; right: 20px; font-size: 10px; }
+  .runcty-app .admin-shell-header .admin-account { max-width: 100%; border: 0; border-radius: 0; padding: 0; }
+  .runcty-app .admin-shell-header .admin-account span { overflow-wrap: anywhere; }
+  .runcty-app .admin-form-actions .button { padding-right: 14px; padding-left: 14px; }
+}

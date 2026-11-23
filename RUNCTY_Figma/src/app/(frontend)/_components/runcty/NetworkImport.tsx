@@ -63,22 +63,24 @@ function readNetwork(text: string, limits?: Limits): Result {
 }
 
 export function NetworkImport({ city, close }: { city: City; close: () => void }) {
-  const { update, notify } = useDemo()
+  const { state, user, isDemo, update, notify } = useDemo()
+  const allowed = isDemo ? state.users.some(account => account.id === user?.id && account.active && account.role === 'sistema') : user?.role === 'sistema'
   const [result, setResult] = useState<Result | null>(null)
   const [error, setError] = useState('')
   const limits = LIMITS[city.id]
   const load = (text: string) => {
     try {
+      if (!allowed) throw new Error('Tu cuenta no tiene permisos para cargar redes viales.')
       const summary = readNetwork(text, limits)
-      setResult(summary)
-      setError('')
-      update((s) => ({
+      if (!update((s) => ({
         ...s,
         cities: s.cities.map((value) =>
-          value.id === city.id ? { ...value, networkReady: true } : value,
+          value.id === city.id ? { ...value, networkReady: true, streetCount: summary.streets } : value,
         ),
-      }))
-      notify(`Red de ${city.name} cargada.`)
+      }))) return
+      setResult(summary)
+      setError('')
+      notify(`Red de ${city.name} validada: ${summary.streets} tramos.`)
     } catch (problem) {
       setResult(null)
       setError((problem as Error).message)
