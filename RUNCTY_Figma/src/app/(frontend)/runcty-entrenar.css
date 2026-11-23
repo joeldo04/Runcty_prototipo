@@ -589,3 +589,86 @@ html, body { overscroll-behavior: none; }
 @media (hover: none) {
   .runcty-app :is(.dashboard-kpi, .dashboard-hero-action):hover { transform: none; }
 }
+
+/* ===== Web del corredor con el mismo lenguaje del panel ===== */
+/* Menú lateral vino con la sección activa en píldora magenta. */
+.runcty-app .web-app .sidebar {
+  color-scheme: dark;
+  --color-ink: #140A11; --color-shell: #1A0D16; --color-panel: #22121C; --color-raised: #2E1826; --color-line: #3A2431;
+  --color-lilac: #FF4FA3; --color-info: #FF4FA3; --color-accent: #FF4FA3; --color-sport-ink: #FF8CC6;
+  --color-copy: #F5EEF3; --color-muted: #BFAFB9; --color-dim: #A6949F;
+  border-right: 0; background: #2A0A1F; color: var(--color-copy);
+}
+.runcty-app .web-app .sidebar-brand > span:last-child { color: var(--color-muted); }
+.runcty-app .web-app .sidebar .experience-switch { border: 1px solid rgb(255 255 255 / 12%); border-radius: 12px; background: rgb(255 255 255 / 4%); color: #E9DCE5; }
+.runcty-app .web-app .sidebar .experience-switch:hover { background: rgb(255 255 255 / 8%); color: #fff; }
+.runcty-app .web-app .sidebar .nav-section-label { color: var(--color-muted); }
+.runcty-app .web-app .sidebar nav a { min-height: 44px; border: 0; border-radius: 12px; background: transparent; font-weight: 600; color: #E9DCE5; transition: background-color .15s, color .15s, box-shadow .15s; }
+.runcty-app .web-app .sidebar nav a > svg { color: #FF8CC6; }
+.runcty-app .web-app .sidebar nav a:hover { background: rgb(255 255 255 / 7%); color: #fff; }
+.runcty-app .web-app .sidebar nav a.active { background: var(--color-primary); color: #fff; box-shadow: 0 8px 18px rgb(209 16 111 / 35%); }
+.runcty-app .web-app .sidebar nav a.active > svg { color: #fff; }
+.runcty-app .web-app .sidebar nav a > b { background: #fff; color: var(--color-primary); }
+.runcty-app .web-app .sidebar :is(.guest-invite, .sidebar-safety) { border: 1px solid rgb(255 255 255 / 10%); border-radius: 16px; background: rgb(255 255 255 / 5%); color: #E9DCE5; }
+.runcty-app .web-app .sidebar :is(.guest-invite, .sidebar-safety) p { color: var(--color-muted); }
+.runcty-app .web-app .sidebar-account { border-radius: 14px; color: #E9DCE5; }
+.runcty-app .web-app .sidebar-account:hover { background: rgb(255 255 255 / 7%); }
+.runcty-app .web-app .sidebar-account .avatar { background: linear-gradient(135deg, #5A0E3D, #D1106F); color: #fff; }
+
+/* Barra superior blanca y fija, con el título de la sección y la cuenta. */
+.runcty-app .web-app .topbar { position: sticky; top: 0; z-index: 40; min-height: 72px; border-bottom: 1px solid var(--color-line); background: rgb(255 255 255 / 94%); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+.runcty-app .web-app .topbar-breadcrumb { display: flex; flex-direction: column; gap: 0; font-size: 18px; font-weight: 800; letter-spacing: -.01em; color: var(--color-copy); }
+.runcty-app .web-app .topbar-breadcrumb > span { font-size: 12px; font-weight: 600; letter-spacing: 0; color: var(--color-muted); }
+.runcty-app .web-app .topbar-breadcrumb > svg { display: none; }
+.runcty-app .web-app .topbar-actions { gap: 10px; }
+.runcty-app .web-app .topbar-actions > :is(.catalog-search-shortcut, .mobile-preview-shortcut, .role-switch) { min-height: 44px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: 999px; background: #fff; }
+.runcty-app .web-app .topbar-actions > :is(.catalog-search-shortcut, .mobile-preview-shortcut, .role-switch):hover { border-color: #F3C2DA; }
+@media (max-width: 767px) {
+  .runcty-app .web-app .topbar-breadcrumb { font-size: 15px; }
+  .runcty-app .web-app .topbar-breadcrumb > span, .runcty-app .web-app .admin-user-text { display: none; }
+  .runcty-app .web-app .admin-user-chip { padding: 4px; }
+}
+
+/* Fondo gris suave para que las tarjetas blancas resalten. */
+.runcty-app .web-app .web-main { background: var(--color-shell); }
+.runcty-app .web-app :is(.route-card, .planner-panel, .route-insights, .security-section, .place-item) { border: 1px solid var(--color-line); border-radius: 18px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 4%), 0 8px 22px rgb(26 20 24 / 5%); }
+.runcty-app .web-app .route-card { transition: border-color .15s, box-shadow .15s, transform .15s; }
+.runcty-app .web-app .route-card:hover { border-color: #F3C2DA; box-shadow: 0 12px 28px rgb(26 20 24 / 9%); transform: translateY(-2px); }
+
+/* Encabezado de Explorar: una sola tarjeta destacada en degradado de marca. */
+.runcty-app .web-app .explore-hero { border: 0; border-radius: 22px; background: linear-gradient(120deg, #2A0A1F 0%, #5A0E3D 55%, #D1106F 100%); box-shadow: 0 16px 34px rgb(90 14 61 / 24%); }
+.runcty-app .web-app .explore-hero-scrim { display: none; }
+.runcty-app .web-app .explore-hero-emblem { opacity: .14; }
+.runcty-app .web-app .explore-hero > .relative { padding: 28px 32px; }
+.runcty-app .web-app .explore-hero .eyebrow { color: #FFC2DE; }
+.runcty-app .web-app .explore-hero .page-heading h1 { color: #fff; }
+.runcty-app .web-app .explore-hero h1 .text-lilac { color: #FFC2DE; }
+.runcty-app .web-app .explore-hero .page-heading p { color: #F1E4EC; }
+.runcty-app .web-app .explore-hero > .relative > .flex > span { color: #F1E4EC; }
+.runcty-app .web-app .explore-hero > .relative > .flex > span svg { color: #FFC2DE; }
+.runcty-app .web-app .explore-hero .button-primary { border-color: #fff; background: #fff; color: var(--color-primary); box-shadow: 0 6px 16px rgb(0 0 0 / 18%); }
+.runcty-app .web-app .explore-hero .button-primary:hover { background: #FFF5FA; }
+.runcty-app .web-app .explore-hero .button-secondary { border-color: rgb(255 255 255 / 45%); background: transparent; color: #fff; }
+.runcty-app .web-app .explore-hero .button-secondary:hover { border-color: #fff; background: rgb(255 255 255 / 10%); color: #fff; }
+
+/* Perfil (web y móvil): cifras y opciones como tarjetas claras con íconos en tono suave. */
+.runcty-app .profile-heading { padding: 18px; border: 1px solid var(--color-line); border-radius: 20px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 4%); }
+.runcty-app .profile-numbers > span { border: 1px solid var(--color-line); border-radius: 18px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 4%); }
+.runcty-app .profile-numbers i { width: 34px; height: 34px; flex: 0 0 34px; border-radius: 12px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .profile-navigation { gap: 12px; }
+.runcty-app .profile-navigation > button { border: 1px solid var(--color-line); border-radius: 16px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 4%); }
+.runcty-app .profile-navigation > button:hover { border-color: #F3C2DA; background: #FFFAFC; }
+.runcty-app .profile-navigation > button > span { display: grid; place-items: center; width: 38px; height: 38px; flex: 0 0 38px; border-radius: 12px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .profile-navigation strong { font-size: 14px; }
+.runcty-app .profile-navigation > button.profile-danger { border-color: rgb(217 58 43 / 28%); }
+.runcty-app .profile-navigation > button.profile-danger > span { background: rgb(217 58 43 / 10%); color: var(--color-risk); }
+.runcty-app .profile-navigation > button.profile-danger strong { color: var(--color-risk-ink); }
+
+/* Módulos del panel: títulos sobrios como el resumen y tablas en tarjetas. */
+.runcty-app .admin-main-content .page-heading h1 { font-family: var(--font-sans); font-size: 26px; font-weight: 800; line-height: 1.2; letter-spacing: -.02em; text-transform: none; }
+.runcty-app .admin-main-content :is(.data-table-wrap, .admin-records-wrap) { overflow: hidden; border: 1px solid var(--color-line); border-radius: 18px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 4%), 0 8px 22px rgb(26 20 24 / 5%); }
+.runcty-app .admin-main-content .admin-records-table th { background: #FBF8FA; }
+.runcty-app .admin-main-content :is(.admin-section, .sponsor-admin-card, .risk-item, .city-network-card) { border-radius: 18px; background: #fff; box-shadow: 0 1px 2px rgb(26 20 24 / 4%); }
+@media (hover: none) {
+  .runcty-app .web-app .route-card:hover { transform: none; }
+}

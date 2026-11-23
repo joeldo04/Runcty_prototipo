@@ -374,13 +374,22 @@ function WebApp({
               </Link>
             )}
             {adminPage && user?.role !== 'sistema' && <Link className="role-switch" href="/explorar">Aplicación del corredor</Link>}
-            <Button variant="secondary" onClick={openAccount}>
-              {user?.name ?? 'Iniciar sesión'}
-            </Button>
+            {user ? (
+              // Misma ficha de cuenta que el panel: inicial, nombre y rol.
+              <button type="button" className="admin-user-chip" onClick={openAccount} aria-label="Tu cuenta y cambiar de cuenta">
+                <span className="admin-user-avatar" aria-hidden="true">{user.name.charAt(0).toUpperCase()}</span>
+                <span className="admin-user-text">
+                  <strong>{user.name}</strong>
+                  <small>{role === 'club' ? 'Administrador del club' : role === 'sistema' ? 'Administrador del sistema' : 'Corredor'}</small>
+                </span>
+              </button>
+            ) : (
+              <Button onClick={openAccount}>Iniciar sesión</Button>
+            )}
             {user && (
               <button
                 type="button"
-                className="exit-button"
+                className="admin-signout"
                 onClick={async () => {
                   if (await logout()) router.push('/')
                 }}
