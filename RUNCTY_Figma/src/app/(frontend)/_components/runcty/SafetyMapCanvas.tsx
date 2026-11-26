@@ -45,6 +45,8 @@ export interface Props {
   compact?: boolean
   // Ruta destacada en magenta sobre los tramos coloreados por seguridad.
   highlight?: RouteData | null
+  // Alternativa para comparar (ruta más corta), punteada en gris debajo de la ruta principal.
+  compare?: Coordinate[] | null
 }
 
 const labelElement = (text: string) => {
@@ -86,9 +88,11 @@ export default function SafetyMap(props: Props) {
   const streetLines = useRef<Map<string, L.Polyline>>(new Map())
   const night = time === '19:00' || time === '05:30'
   // Route views can be recreated on a shared-state update without changing their geometry.
+  // Sin ruta (entrenamiento libre) se encuadra el recorrido grabado.
+  const fitGeometry = props.route?.geometry.length ? props.route.geometry : props.track
   const fitKey =
-    props.fitRoute && props.route?.geometry.length
-      ? JSON.stringify([props.route.id, props.route.geometry, props.animateKey])
+    props.fitRoute && fitGeometry && fitGeometry.length > 1
+      ? JSON.stringify([props.route?.id ?? 'track', fitGeometry, props.animateKey])
       : ''
 
   useEffect(() => {
@@ -445,6 +449,16 @@ export default function SafetyMap(props: Props) {
     const timers: ReturnType<typeof setTimeout>[] = []
     let animation: Animation | undefined
     group.clearLayers()
+    if (props.compare && props.compare.length > 1)
+      L.polyline(props.compare, {
+        color: '#3F3F46',
+        weight: 4,
+        opacity: 0.9,
+        dashArray: '2 9',
+        lineCap: 'round',
+        className: 'compare-route',
+        interactive: false,
+      }).addTo(group)
     const geometry = props.route?.geometry ?? props.points ?? []
     if (geometry.length > 1) {
       // Ruta prevista en vino de marca: no se confunde con el índice ni con "Tu recorrido" (magenta).
@@ -545,10 +559,13 @@ export default function SafetyMap(props: Props) {
     props.guide,
     props.route?.segmentIds,
     props.highlight?.geometry,
+    props.compare,
   ])
 
   useEffect(() => {
-    const geometry = propsRef.current.route?.geometry
+    const geometry = propsRef.current.route?.geometry.length
+      ? propsRef.current.route.geometry
+      : propsRef.current.track
     if (fitKey && geometry?.length)
       map.current?.fitBounds(L.latLngBounds(geometry), {
         padding: propsRef.current.preview ? [16, 20] : [50, 65],

@@ -1,4 +1,4 @@
-import { useId, useState } from 'react'
+import { useId, useMemo, useState } from 'react'
 import Image from 'next/image'
 import gacelasWhite from '../../../../../imagenes/gacelas_emblema_blanco.png'
 import {
@@ -8,6 +8,7 @@ import {
   ChevronRight,
   Clock3,
   Edit3,
+  Eraser,
   Flag,
   MapPin,
   Megaphone,
@@ -22,10 +23,12 @@ import {
   ShieldAlert,
   Handshake,
   Trash2,
+  Undo2,
   Users,
   X,
 } from 'lucide-react'
 import SafetyMap from './SafetyMap'
+import { traceRoute } from './Planner'
 import { SHOW_FUTURE } from './features'
 import {
   activeBanners,
@@ -47,7 +50,9 @@ import {
   today,
   uid,
   isAdminUser,
+  length,
   type Banner,
+  type Coordinate,
   type ClubAlert,
   type DemoUser,
   type Incident,
@@ -132,7 +137,7 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
       : []),
     { label: 'Rutas oficiales', value: all.filter((r) => r.official).length, icon: Route, target: 'official', tone: 'tone-wine' },
     { label: 'Espacios recomendados', value: state.spaces.length, icon: MapPin, target: 'adminspaces', tone: 'tone-green' },
-    { label: 'Aliados activos', value: state.sponsors.filter((s) => s.active).length, icon: Handshake, target: 'sponsors', tone: 'tone-amber' },
+    { label: 'Patrocinadores activos', value: state.sponsors.filter((s) => s.active).length, icon: Handshake, target: 'sponsors', tone: 'tone-amber' },
   ]
   // Actividad reciente: decisiones del club y reportes nuevos, del más reciente al más antiguo.
   const activity = [
@@ -155,7 +160,7 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
     { title: 'Rutas y horarios', text: 'Oficiales y horarios recomendados', icon: Clock3, page: 'official', tone: 'tone-wine' },
     { title: 'Espacios recomendados', text: 'Parques, estadios y senderos', icon: MapPin, page: 'adminspaces', tone: 'tone-green' },
     { title: 'Zonas de riesgo', text: 'Con fuente y vigencia', icon: Shield, page: 'risks', tone: 'tone-brand' },
-    { title: 'Publicidad', text: 'Aliados y banners del club', icon: Megaphone, page: 'banners', tone: 'tone-amber' },
+    { title: 'Publicidad', text: 'Patrocinadores y banners del club', icon: Megaphone, page: 'banners', tone: 'tone-amber' },
   ]
   return (
     <div className="club-dashboard">
@@ -558,9 +563,9 @@ function SponsorAdmin({ initialTab }: { initialTab: string }) {
   return (
     <div>
       <PageTitle
-        eyebrow="ALIADOS QUE IMPULSAN RUNCTY"
+        eyebrow="PATROCINADORES Y PUBLICIDAD"
         title="Patrocinios con propósito."
-        subtitle="Aliados del club, publicidad discreta y publicación bajo tu control."
+        subtitle="Patrocinadores, publicidad discreta y publicación bajo tu control."
       >
         <Button variant="secondary" onClick={newBanner}>
           <Plus />
@@ -859,14 +864,141 @@ function SponsorAdmin({ initialTab }: { initialTab: string }) {
   )
 }
 
+// Borrador del formulario de rutas del club (RF-028).
+type RouteDraft = {
+  id: string
+  isNew: boolean
+  name: string
+  desc: string
+  difficulty: string
+  points: Coordinate[]
+  geometry: Coordinate[]
+  segmentIds: string[]
+}
+const ROUTE_DIFFICULTIES = ['Baja', 'Media', 'Alta']
+// Ritmo referencial (min/km) por dificultad, el mismo de las rutas de ejemplo.
+const DIFFICULTY_PACE: Record<string, number> = { Baja: 7.2, Media: 6.6, Alta: 6 }
+// baseline_rating: valoración base del club en escala de 1 a 5 (no es el índice de seguridad).
+const BASELINE_VALUES = [1, 2, 3, 4, 5]
+const validBaseline = (value?: number) =>
+  typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 5
+
 function OfficialRoutes() {
   const { state, update, notify, isDemo } = useDemo(),
     all = useRoutes(),
-    [edit, setEdit] = useState<RouteData | null>(null)
+    [edit, setEdit] = useState<RouteData | null>(null),
+    [draft, setDraft] = useState<RouteDraft | null>(null),
+    [draftError, setDraftError] = useState(''),
+    [removing, setRemoving] = useState<RouteData | null>(null)
+  // El dibujo reutiliza el trazado punto a punto del planificador (solo en esta gestión del club).
+  const traced = useMemo(
+    () =>
+      draft && draft.points.length
+        ? traceRoute(draft.points, state.time, state.date, state.incidents, state.risks, state.roads)
+        : null,
+    [draft, state.time, state.date, state.incidents, state.risks, state.roads],
+  )
+  const draftGeometry = traced && traced.geometry.length > 1 ? traced.geometry : (draft?.geometry ?? [])
+  const draftKm = length(draftGeometry)
+  const draftPreview: RouteData | null =
+    draft && draftGeometry.length > 1
+      ? {
+          id: draft.id,
+          name: draft.name || 'Nueva ruta',
+          area: 'Loja',
+          km: +draftKm.toFixed(2),
+          min: Math.max(1, Math.round(draftKm * (DIFFICULTY_PACE[draft.difficulty] ?? 6.6))),
+          difficulty: draft.difficulty,
+          desc: draft.desc,
+          segmentIds: traced?.segmentIds ?? draft.segmentIds,
+          geometry: draftGeometry,
+        }
+      : null
+  const openNew = () => {
+    setDraftError('')
+    setDraft({ id: `club-${uid()}`, isNew: true, name: '', desc: '', difficulty: 'Baja', points: [], geometry: [], segmentIds: [] })
+  }
+  const openEdit = (route: RouteData) => {
+    setDraftError('')
+    setDraft({
+      id: route.id,
+      isNew: false,
+      name: route.name,
+      desc: route.desc,
+      difficulty: ROUTE_DIFFICULTIES.includes(route.difficulty) ? route.difficulty : 'Media',
+      points: [],
+      geometry: route.geometry,
+      segmentIds: route.segmentIds,
+    })
+  }
+  const saveDraft = () => {
+    if (!draft) return
+    const name = draft.name.trim()
+    if (!name) return setDraftError('Escribe el nombre de la ruta.')
+    if (draftGeometry.length < 2 || draftKm < 0.03)
+      return setDraftError('Dibuja el trazado: marca al menos dos puntos sobre el mapa.')
+    const fields = {
+      name,
+      desc: draft.desc.trim(),
+      difficulty: draft.difficulty,
+      geometry: draftGeometry,
+      segmentIds: traced?.segmentIds ?? draft.segmentIds,
+      km: +draftKm.toFixed(2),
+      min: Math.max(1, Math.round(draftKm * (DIFFICULTY_PACE[draft.difficulty] ?? 6.6))),
+    }
+    if (draft.isNew) {
+      // Toda ruta nueva nace sin el distintivo oficial; el club lo asigna después desde Gestionar.
+      const route: RouteData = {
+        id: draft.id,
+        area: 'Loja',
+        ...fields,
+        official: false,
+        verified: true,
+        private: false,
+        status: 'Aprobado',
+        owner: state.clubName,
+        recommended: '',
+        date: today(),
+      }
+      if (!update((s) => ({ ...s, customRoutes: [...s.customRoutes, route] }))) return
+      notify('Ruta creada. Queda sin distintivo oficial hasta que el club lo asigne.')
+    } else {
+      if (
+        !update((s) => ({
+          ...s,
+          routeOverrides: { ...s.routeOverrides, [draft.id]: { ...s.routeOverrides[draft.id], ...fields } },
+        }))
+      )
+        return
+      notify('Cambios de la ruta guardados.')
+    }
+    setDraft(null)
+  }
+  const removeRoute = () => {
+    if (!removing) return false
+    const id = removing.id
+    const accepted = update((s) => {
+      const overrides = { ...s.routeOverrides }
+      delete overrides[id]
+      return {
+        ...s,
+        catalog: s.catalog.filter((r) => r.id !== id),
+        customRoutes: s.customRoutes.filter((r) => r.id !== id),
+        savedIds: s.savedIds.filter((value) => value !== id),
+        routeOverrides: overrides,
+      }
+    })
+    if (!accepted) return false
+    notify('Ruta eliminada.')
+  }
   const save = () => {
     if (!edit) return
     if (edit.alert && !edit.alert.reason.trim()) {
       notify('Escribe el motivo de la marca.')
+      return
+    }
+    if (edit.baseline !== undefined && !validBaseline(edit.baseline)) {
+      notify('La línea base debe ser un valor entre 1 y 5.')
       return
     }
     const previous = all.find((r) => r.id === edit.id)?.alert
@@ -889,19 +1021,25 @@ function OfficialRoutes() {
     notify('Sincronizando los criterios y horarios de la ruta.')
   }
   return (
-    <div>
+    <div className="admin-list-page">
       <PageTitle
         eyebrow="CRITERIOS Y VALIDACIÓN DEL CLUB"
         title="Rutas oficiales y horarios."
-        subtitle="Distintivos, línea base y revisión anual."
-      />
-      <div className="data-table-wrap">
-        <table className="data-table">
+        subtitle="Crea y edita los trazados del club, sus distintivos, línea base y revisión anual."
+      >
+        <Button onClick={openNew}>
+          <Plus />
+          Nueva ruta
+        </Button>
+      </PageTitle>
+      <div className="data-table-wrap admin-records-wrap">
+        <table className="data-table admin-records-table official-records">
           <thead>
             <tr>
               <th>Ruta</th>
               <th>Distintivo</th>
               <th>Horarios recomendados</th>
+              <th>Línea base</th>
               <th>Validación</th>
               <th>Acciones</th>
             </tr>
@@ -911,11 +1049,13 @@ function OfficialRoutes() {
               .filter((r) => !r.private || r.status === 'Aprobado')
               .map((r) => (
                 <tr key={r.id}>
-                  <td>
+                  <td data-label="Ruta" className="admin-record-name">
                     <strong>{r.name}</strong>
-                    <small>{r.km} km</small>
+                    <small>
+                      {r.km} km · {r.difficulty}
+                    </small>
                   </td>
-                  <td>
+                  <td data-label="Distintivo">
                     {r.official ? (
                       <OfficialBadge />
                     ) : (
@@ -923,21 +1063,37 @@ function OfficialRoutes() {
                     )}
                     {r.alert && <span className="route-flag danger">No recomendado</span>}
                   </td>
-                  <td>{r.recommended}</td>
-                  <td>{r.validated ?? 'Pendiente de validación anual'}</td>
-                  <td>
-                    <Button
-                      variant="secondary"
-                      onClick={() =>
-                        setEdit({
-                          ...r,
-                          baseline: r.baseline ?? 75,
-                          validated: r.validated ?? today(),
-                        })
-                      }
-                    >
-                      Gestionar
-                    </Button>
+                  <td data-label="Horarios recomendados">{r.recommended || <span className="muted">Sin horario</span>}</td>
+                  <td data-label="Línea base">{validBaseline(r.baseline) ? `${r.baseline} / 5` : <span className="muted">Sin valorar</span>}</td>
+                  <td data-label="Validación">{r.validated ?? 'Pendiente de validación anual'}</td>
+                  <td data-label="Acciones" className="admin-actions-cell">
+                    <div className="admin-record-actions">
+                      <Button
+                        variant="secondary"
+                        onClick={() =>
+                          setEdit({
+                            ...r,
+                            baseline: validBaseline(r.baseline) ? r.baseline : undefined,
+                            validated: r.validated ?? today(),
+                          })
+                        }
+                      >
+                        Gestionar
+                      </Button>
+                      <Button variant="secondary" aria-label={`Editar ${r.name}`} onClick={() => openEdit(r)}>
+                        <Edit3 />
+                        Editar
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        className="admin-icon-action"
+                        aria-label={`Eliminar ${r.name}`}
+                        title={`Eliminar ${r.name}`}
+                        onClick={() => setRemoving(r)}
+                      >
+                        <Trash2 />
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -962,14 +1118,21 @@ function OfficialRoutes() {
             />
           </label>
           <label className="field">
-            Línea base de referencia (0–100)
-            <input
-              type="number"
-              min={0}
-              max={100}
-              value={edit.baseline ?? 75}
-              onChange={(e) => setEdit({ ...edit, baseline: +e.target.value })}
-            />
+            Línea base de referencia (1 a 5)
+            <select
+              value={edit.baseline ?? ''}
+              onChange={(e) =>
+                setEdit({ ...edit, baseline: e.target.value ? Number(e.target.value) : undefined })
+              }
+            >
+              <option value="">Sin valorar</option>
+              {BASELINE_VALUES.map((value) => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+            <small>1 es la valoración más baja y 5 la más alta.</small>
           </label>
           <label className="field">
             Fecha de validación
@@ -981,11 +1144,123 @@ function OfficialRoutes() {
           </label>
           {isDemo && <AlertFields value={edit.alert} onChange={(alert) => setEdit({ ...edit, alert })} />}
           <p className="muted">
-            La línea base se registra como referencia del club. El índice horario continúa
-            calculándose por tramos.
+            La línea base es la valoración de referencia del club. El índice de seguridad continúa
+            calculándose por tramos y horario.
           </p>
           <Button onClick={save}>Guardar cambios</Button>
         </Modal>
+      )}
+      {draft && (
+        <Modal title={draft.isNew ? 'Nueva ruta' : 'Editar ruta'} onClose={() => setDraft(null)} wide>
+          <form
+            className="route-editor"
+            noValidate
+            onSubmit={(event) => {
+              event.preventDefault()
+              saveDraft()
+            }}
+          >
+            <div className="route-editor-fields">
+              <label className="field">
+                Nombre
+                <input
+                  required
+                  autoFocus
+                  maxLength={80}
+                  value={draft.name}
+                  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+                  placeholder="Ej. Circuito Parque Jipiro"
+                />
+              </label>
+              <label className="field">
+                Descripción
+                <textarea
+                  rows={3}
+                  maxLength={400}
+                  value={draft.desc}
+                  onChange={(e) => setDraft({ ...draft, desc: e.target.value })}
+                  placeholder="Cuenta cómo es el recorrido y qué tener en cuenta."
+                />
+              </label>
+              <label className="field">
+                Dificultad
+                <select
+                  value={draft.difficulty}
+                  onChange={(e) => setDraft({ ...draft, difficulty: e.target.value })}
+                >
+                  {ROUTE_DIFFICULTIES.map((value) => (
+                    <option key={value}>{value}</option>
+                  ))}
+                </select>
+              </label>
+              <div className="route-editor-distance" aria-live="polite">
+                <span>Distancia calculada</span>
+                <strong>
+                  {draftKm.toFixed(2)}
+                  <small> km</small>
+                </strong>
+                <small>Se calcula sola a partir del trazado.</small>
+              </div>
+            </div>
+            <div className="route-editor-map-wrap">
+              <p className="route-editor-hint">
+                {draft.points.length
+                  ? `${draft.points.length} ${draft.points.length === 1 ? 'punto marcado' : 'puntos marcados'}. Arrastra A o B para ajustar.`
+                  : draft.isNew
+                    ? 'Pulsa sobre el mapa para marcar los puntos del recorrido.'
+                    : 'Se muestra el trazado actual. Pulsa sobre el mapa para dibujar uno nuevo.'}
+              </p>
+              <div className="route-editor-map">
+                <SafetyMap
+                  drawing
+                  points={draft.points}
+                  onPoints={(points) => setDraft((current) => (current ? { ...current, points } : current))}
+                  route={draftPreview}
+                  fitRoute={!draft.points.length && !!draftPreview}
+                  showReports={false}
+                />
+              </div>
+              <div className="route-edit-tools">
+                <Button
+                  variant="ghost"
+                  disabled={!draft.points.length}
+                  onClick={() => setDraft({ ...draft, points: draft.points.slice(0, -1) })}
+                >
+                  <Undo2 />
+                  Deshacer
+                </Button>
+                <Button
+                  variant="ghost"
+                  disabled={!draft.points.length}
+                  onClick={() => setDraft({ ...draft, points: [] })}
+                >
+                  <Eraser />
+                  Limpiar
+                </Button>
+              </div>
+            </div>
+            {draftError && (
+              <p className="form-error" role="alert">
+                {draftError}
+              </p>
+            )}
+            <div className="admin-form-actions">
+              <Button type="button" variant="secondary" onClick={() => setDraft(null)}>
+                Cancelar
+              </Button>
+              <Button type="submit">{draft.isNew ? 'Crear ruta' : 'Guardar cambios'}</Button>
+            </div>
+          </form>
+        </Modal>
+      )}
+      {removing && (
+        <Confirm
+          title="¿Eliminar esta ruta?"
+          message={`Se eliminará «${removing.name}» del catálogo del club. Los entrenamientos ya guardados conservan su recorrido.`}
+          label="Eliminar ruta"
+          onClose={() => setRemoving(null)}
+          confirm={removeRoute}
+        />
       )}
     </div>
   )

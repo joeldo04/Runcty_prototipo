@@ -172,6 +172,22 @@ export function Score({ value, large = false }: { value: number | null; coverage
     <Shield aria-hidden="true" /><span>{condition.label}</span>
   </span>
 }
+// Avatar del corredor: el mismo componente en el encabezado móvil y en Perfil.
+// Toma el nombre del perfil (se actualiza al editarlo) y, si no hay, el de la cuenta.
+export function UserAvatar({ size = 40, className = '' }: { size?: number; className?: string }) {
+  const { state, user } = useDemo()
+  const name = (state.profile.name || user?.name || '').trim()
+  const initial = name ? name.charAt(0).toLocaleUpperCase('es') : 'R'
+  return (
+    <span
+      className={`user-avatar ${className}`}
+      style={{ '--avatar-size': `${size}px` } as React.CSSProperties}
+      aria-hidden="true"
+    >
+      {initial}
+    </span>
+  )
+}
 export function SafetyNote() {
   return (
     <p className="safety-note">
@@ -336,11 +352,13 @@ export function Modal({
   children,
   onClose,
   wide = false,
+  className = '',
 }: {
   title: string
   children: ReactNode
   onClose: () => void
   wide?: boolean
+  className?: string
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const closeRef = useRef(onClose)
@@ -386,7 +404,7 @@ export function Modal({
         aria-modal="true"
         aria-label={title}
         ref={ref}
-        className={`modal ${wide ? 'modal-wide' : ''}`}
+        className={['modal', wide && 'modal-wide', className].filter(Boolean).join(' ')}
       >
         <IconButton label="Cerrar ventana" onClick={onClose}>
           <X />
@@ -671,10 +689,10 @@ export function AdCarousel({
     <section className="allies-section">
       <div className="section-heading">
         <div>
-          <span className="eyebrow">ALIADOS DE RUNCTY</span>
+          <span className="eyebrow">PUBLICIDAD</span>
         </div>
       </div>
-      <div className="ad-track" ref={track} onScroll={follow} role="region" aria-label="Anuncios de aliados, desliza para ver más">
+      <div className="ad-track" ref={track} onScroll={follow} role="region" aria-label="Anuncios publicitarios, desliza para ver más">
         {ads.map((ad, i) => {
           const owner = sponsorOf(ad.sponsorId)
           return (

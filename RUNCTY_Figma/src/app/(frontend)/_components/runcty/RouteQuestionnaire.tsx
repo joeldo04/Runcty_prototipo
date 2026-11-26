@@ -5,6 +5,7 @@ import { Check, MessageSquare, Shield, Star } from 'lucide-react'
 import { Button, Modal } from './components'
 import { uid, type RouteData } from './data'
 import { useDemo, type DemoState, type RouteFeedback } from './store'
+import { SHOW_FUTURE } from './features'
 
 type Question = 'iluminacion' | 'presencia_personas' | 'transito_peligroso' | 'sensacion_seguridad'
 const questions: { key: Question; text: string; help: string }[] = [
@@ -75,11 +76,12 @@ export function FeedbackStars({ value }: { value: number }) {
 export function RouteFeedbackCard({ route, open }: { route: RouteData; open: () => void }) {
   const { state, user } = useDemo()
   const previous = (state.routeFeedback ?? []).find(item => item.id_ruta === route.id && item.id_usuario === user?.id)
-  const completed = state.trainings.some(training => training.route.id === route.id)
+  // Con el entrenamiento libre no hay ruta asignada: la valoración se hace desde aquí si la recorriste.
+  const completed = !SHOW_FUTURE || state.trainings.some(training => training.route.id === route.id)
   return <section className="route-feedback-card" aria-label="Cuestionario de experiencia">
     <span className="feedback-icon"><MessageSquare /></span>
     <div><span className="eyebrow">TU EXPERIENCIA CUENTA</span><h2>{previous ? 'Así viviste esta ruta.' : '¿Cómo estuvo tu recorrido?'}</h2>
-      <p>{previous ? 'Puedes actualizar tus respuestas cuando vuelvas a recorrerla.' : completed ? 'Cuatro preguntas rápidas para ayudar a otros corredores.' : 'Al terminar un entrenamiento en esta ruta podrás compartir tu experiencia.'}</p>
+      <p>{previous ? 'Puedes actualizar tus respuestas cuando vuelvas a recorrerla.' : completed ? (SHOW_FUTURE ? 'Cuatro preguntas rápidas para ayudar a otros corredores.' : 'Si ya recorriste esta ruta, cuatro preguntas rápidas ayudan a otros corredores.') : 'Al terminar un entrenamiento en esta ruta podrás compartir tu experiencia.'}</p>
       {previous && <FeedbackStars value={previous.puntuacion} />}
     </div>
     <Button variant={completed ? 'orange' : 'secondary'} onClick={open}>{previous ? 'Actualizar cuestionario' : completed ? 'Responder cuestionario' : 'Ver cuestionario'}</Button>
@@ -101,7 +103,7 @@ export default function RouteQuestionnaire({ route, close }: { route: RouteData;
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState('')
   const answered = questions.every(question => answers[question.key] !== null) && stars > 0
-  const completed = state.trainings.some(training => training.route.id === route.id)
+  const completed = !SHOW_FUTURE || state.trainings.some(training => training.route.id === route.id)
   const eligible = !!user && isDemo && completed
   return <Modal title={saved ? 'Gracias por compartir tu experiencia' : 'Cuéntanos cómo fue tu ruta'} onClose={close}>
     {saved ? <div className="feedback-confirmation" role="status"><span className="feedback-confirmed-icon"><Check /></span><h3>Tu experiencia quedó registrada.</h3><FeedbackStars value={stars} /><p>{comment.trim() ? 'Tu comentario está pendiente de revisión. ' : ''}Puedes actualizar tus respuestas desde el detalle de la ruta. Este resultado no certifica su seguridad.</p><Button className="full" onClick={close}>Continuar</Button></div> : <form className="route-questionnaire" onSubmit={event => {
@@ -117,7 +119,7 @@ export default function RouteQuestionnaire({ route, close }: { route: RouteData;
       else setError('No se pudieron guardar tus respuestas.')
     }}>
       <p className="feedback-route-name">{route.name}</p><p className="feedback-intro">Responde según lo que observaste en este recorrido.</p>
-      {!eligible && <p className="info-strip">Puedes conocer el cuestionario aquí. Para enviarlo, completa antes un entrenamiento.</p>}
+      {!eligible && <p className="info-strip">{completed ? 'Puedes conocer el cuestionario aquí. Las valoraciones se guardan en la demostración.' : 'Puedes conocer el cuestionario aquí. Para enviarlo, completa antes un entrenamiento.'}</p>}
       {questions.map(question => <fieldset className="feedback-question" key={question.key}>
         <legend>{question.text}</legend><p id={`${formId}-${question.key}-help`}>{question.help}</p>
         <div className="feedback-options">{[true, false].map(value => <label key={String(value)} className={`feedback-choice ${answers[question.key] === value ? 'selected' : ''}`}>

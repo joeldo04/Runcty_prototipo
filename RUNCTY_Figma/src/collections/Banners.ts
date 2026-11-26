@@ -3,7 +3,7 @@ import { isStaff, staffOnly } from '@/access/runcty'
 import { publicHooks } from '@/hooks/runcty'
 export const Banners: CollectionConfig = {
   slug: 'banners',
-  admin: { useAsTitle: 'title', group: 'RUNCTY · Aliados' },
+  admin: { useAsTitle: 'title', group: 'RUNCTY · Publicidad' },
   access: {
     read: ({ req }) => isStaff(req.user) || { status: { equals: 'Publicado' } },
     create: staffOnly,

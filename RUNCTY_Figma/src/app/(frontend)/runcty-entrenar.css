@@ -729,3 +729,209 @@ html, body { overscroll-behavior: none; }
   .runcty-app .community-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .runcty-app .community-poster { flex-direction: column; align-items: flex-start; }
 }
+
+/* RF-028 · Gestión de rutas del club: formulario con trazado punto a punto */
+.runcty-app .route-editor { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 16px 24px; margin-top: 16px; }
+.runcty-app .route-editor-fields { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.runcty-app .route-editor-fields .field { margin: 0; }
+.runcty-app .route-editor-fields textarea { min-height: 92px; resize: vertical; }
+.runcty-app .route-editor-distance { display: grid; gap: 2px; padding: 14px 16px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-primary-soft, #FCE4F0); }
+.runcty-app .route-editor-distance > span { color: var(--color-muted); font-size: 12px; font-weight: 600; }
+.runcty-app .route-editor-distance strong { color: var(--color-copy); font-size: 28px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.runcty-app .route-editor-distance strong small { font-size: 14px; font-weight: 600; }
+.runcty-app .route-editor-distance > small { color: var(--color-muted); font-size: 12px; }
+.runcty-app .route-editor-map-wrap { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.runcty-app .route-editor-hint { margin: 0; color: var(--color-muted); font-size: 13px; line-height: 1.45; }
+.runcty-app .route-editor-map { position: relative; height: 360px; overflow: hidden; border: 1px solid var(--color-line); border-radius: 18px; }
+.runcty-app .route-editor-map > * { height: 100%; }
+.runcty-app .route-editor .form-error,
+.runcty-app .route-editor .admin-form-actions { grid-column: 1 / -1; margin: 0; }
+.runcty-app .official-records .admin-record-actions { flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .runcty-app .route-editor { grid-template-columns: minmax(0, 1fr); }
+  .runcty-app .route-editor-map { height: 300px; }
+  .runcty-app .official-records td[data-label="Validación"] { grid-column: 1 / -1; }
+}
+
+/* Entrenamiento libre: estado listo para grabar, sin selector de ruta */
+.runcty-app .free-ready { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); }
+.runcty-app .free-ready-icon { display: grid; flex: 0 0 40px; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .free-ready-icon svg { width: 20px; height: 20px; }
+.runcty-app .free-ready strong { display: block; color: var(--color-copy); font-size: 16px; font-weight: 700; line-height: 1.3; }
+.runcty-app .free-ready p { margin: 4px 0 0; color: var(--color-muted); font-size: 13px; line-height: 1.45; }
+.runcty-app .training-trace-legend.only-track > span i { background: #E6197F; }
+/* Sin internet: el GPS sigue bien; solo cambia el aviso de conexión */
+.runcty-app .training-top-tools { gap: 6px; }
+.runcty-app .recording-gps .net-chip { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; padding: 2px 8px; border-radius: 999px; background: rgb(242 162 12 / 22%); color: #FFD27A; font-size: 11px; font-weight: 700; }
+.runcty-app .recording-gps .net-chip svg { width: 12px; height: 12px; }
+.runcty-app .recording-gps.no-internet small { color: var(--color-copy); }
+
+/* SOS rojo y a la altura del botón principal del dock */
+.runcty-app { --color-sos: #DC2626; --color-sos-pressed: #991B1B; }
+.runcty-app .dock-sos { align-self: flex-end; padding-bottom: 32px; }
+.runcty-app .record-dock .sos-button { background: var(--color-sos); box-shadow: 0 0 0 4px rgb(220 38 38 / 16%), 0 6px 14px rgb(220 38 38 / 28%); }
+.runcty-app .record-dock .sos-button::before { background: var(--color-sos-pressed); }
+.runcty-app .record-dock .sos-button > small { top: calc(100% + 14px); }
+.runcty-app .training-sharing .sos-button { background: var(--color-sos); box-shadow: 0 6px 16px rgb(220 38 38 / 30%); }
+.runcty-app .training-sharing .sos-button::before { background: var(--color-sos-pressed); }
+
+/* Modal de finalizar entrenamiento */
+.runcty-app .modal.finish-modal { display: flex; flex-direction: column; align-items: center; max-width: 380px; padding: 32px 24px 24px; overflow: hidden; text-align: center; }
+.runcty-app .modal.finish-modal::before { content: ''; position: absolute; top: -56px; right: -56px; width: 150px; height: 150px; border-radius: 50%; background: radial-gradient(circle at 30% 70%, rgb(209 16 111 / 14%), rgb(209 16 111 / 0) 70%); pointer-events: none; }
+.runcty-app .modal.finish-modal::after { content: ''; position: absolute; top: 18px; right: 52px; width: 54px; height: 54px; background-image: radial-gradient(rgb(209 16 111 / 22%) 1.4px, transparent 1.6px); background-size: 9px 9px; pointer-events: none; }
+.runcty-app .modal.finish-modal > h2 { order: 0; margin: 0; padding: 0 12px; color: var(--color-copy); font-size: 21px; font-weight: 750; line-height: 1.25; }
+.runcty-app .finish-modal-icon { position: relative; z-index: 1; order: -1; display: grid; place-items: center; width: 64px; height: 64px; margin-bottom: 18px; border-radius: 18px; background: var(--color-primary-soft); color: var(--color-primary); }
+.runcty-app .finish-modal-icon svg { width: 34px; height: 34px; }
+.runcty-app .finish-modal-text { order: 1; max-width: 290px; margin: 10px 0 22px; color: var(--color-muted); font-size: 14px; line-height: 1.5; }
+.runcty-app .finish-modal-actions { order: 2; display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.runcty-app .finish-modal-actions .button { min-height: 50px; border-radius: 14px; font-size: 15px; }
+.runcty-app .finish-modal-actions .button svg { width: 18px; height: 18px; }
+.runcty-app .finish-modal-actions .button-secondary { border-color: var(--color-primary); background: transparent; color: var(--color-primary); }
+.runcty-app .record-dock .modal.finish-modal .button { flex-direction: row; gap: 8px; }
+
+/* Entre dos puntos: ruta segura frente a la más corta */
+.runcty-app .route-compare { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+.runcty-app .route-compare-item { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; padding: 12px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-panel); }
+.runcty-app .route-compare-item.is-safe { border-color: rgb(209 16 111 / 35%); background: var(--color-primary-soft); }
+.runcty-app .route-compare-label { display: inline-flex; align-items: center; gap: 6px; color: var(--color-copy); font-size: 12px; font-weight: 700; }
+.runcty-app .route-compare-label i { display: block; width: 18px; height: 0; border-top: 4px solid var(--color-brand-wine); border-radius: 4px; }
+.runcty-app .route-compare-item.is-shortest .route-compare-label i { border-top: 3px dotted #3F3F46; border-radius: 0; }
+.runcty-app .route-compare-item strong { color: var(--color-copy); font-size: 24px; font-weight: 750; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.runcty-app .route-compare-item strong small { font-size: 13px; }
+.runcty-app .route-compare-item p { margin: 0 0 4px; color: var(--color-muted); font-size: 12px; line-height: 1.4; }
+.runcty-app .route-compare-note { grid-column: 1 / -1; margin: 0; color: var(--color-muted); font-size: 12px; line-height: 1.5; }
+
+/* Avatar compartido (encabezado móvil y Perfil): degradado morado oscuro → fucsia, inicial en blanco */
+.runcty-app .user-avatar { display: grid; flex: 0 0 var(--avatar-size, 40px); place-items: center; width: var(--avatar-size, 40px); height: var(--avatar-size, 40px); border: 0; border-radius: 50%; background: linear-gradient(140deg, #3D0B4A 0%, #8A1166 52%, #E6197F 100%); color: #fff; font-size: calc(var(--avatar-size, 40px) * .44); font-weight: 700; line-height: 1; letter-spacing: 0; box-shadow: none; user-select: none; }
+.runcty-app .profile-heading .user-avatar.profile-avatar { width: var(--avatar-size); height: var(--avatar-size); flex: 0 0 var(--avatar-size); border: 0; border-radius: 50%; background: linear-gradient(140deg, #3D0B4A 0%, #8A1166 52%, #E6197F 100%); color: #fff; font-size: calc(var(--avatar-size) * .44); box-shadow: none; }
+.runcty-app .header-avatar { display: grid; place-items: center; width: 44px; height: 44px; margin-right: -3px; padding: 0; border: 0; border-radius: 50%; background: transparent; -webkit-tap-highlight-color: transparent; }
+.runcty-app .header-avatar:focus { outline: none; }
+.runcty-app .header-avatar:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 1px; }
+.runcty-app .header-avatar:active .user-avatar { transform: scale(.96); }
+
+/* Perfil móvil: espaciado, bordes y alturas unificados */
+.runcty-app .phone-frame .profile-heading { gap: 12px; padding: 4px 0 16px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.runcty-app .phone-frame .profile-heading h1 { margin: 4px 0 0; }
+.runcty-app .phone-frame .profile-heading .edit-profile { min-height: 44px; padding: 0 16px; border: 1px solid var(--color-line); border-radius: 14px; background: #fff; color: var(--color-primary-pressed); font-size: 13px; font-weight: 600; }
+.runcty-app .phone-frame .profile-numbers { gap: 12px; }
+.runcty-app .phone-frame .profile-numbers > span { justify-content: flex-start; gap: 8px; min-height: 0; padding: 14px 16px; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; box-shadow: none; }
+.runcty-app .phone-frame .profile-numbers > span + span { border-left: 1px solid var(--color-line); }
+.runcty-app .phone-frame .profile-numbers i { width: 32px; height: 32px; flex: 0 0 32px; border-radius: 10px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .phone-frame .profile-numbers strong { font-size: 22px; }
+.runcty-app .phone-frame .profile-navigation,
+.runcty-app .phone-frame .profile-account-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action) { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px 16px; border: 1px solid var(--color-line); border-radius: 16px; background: #fff; box-shadow: none; text-align: left; -webkit-tap-highlight-color: transparent; }
+.runcty-app .phone-frame .profile-navigation > button:last-child { border-bottom: 1px solid var(--color-line); }
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action) > span { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action) > span svg { width: 18px; height: 18px; }
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action) > div { flex: 1; min-width: 0; }
+.runcty-app .phone-frame :is(.profile-navigation, .profile-account-action) strong { display: block; color: var(--color-copy); font-size: 14px; font-weight: 600; line-height: 1.3; }
+.runcty-app .phone-frame :is(.profile-navigation, .profile-account-action) p { margin: 2px 0 0; color: var(--color-muted); font-size: 12px; line-height: 1.35; }
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action) > svg { flex: 0 0 16px; width: 16px; height: 16px; margin-left: auto; color: var(--color-muted); }
+.runcty-app .profile-account { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--color-line); }
+.runcty-app .profile-account h2 { margin: 0 0 10px; color: var(--color-muted); font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.runcty-app .profile-account-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.runcty-app .profile-account-action { display: flex; align-items: center; gap: 12px; min-height: 64px; padding: 12px 16px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); text-align: left; }
+.runcty-app .profile-account-action > span { display: grid; flex: 0 0 36px; place-items: center; width: 36px; height: 36px; border-radius: 11px; background: var(--color-raised); color: var(--color-copy); }
+.runcty-app .profile-account-action > span svg { width: 18px; height: 18px; }
+.runcty-app .profile-account-action > div { flex: 1; min-width: 0; }
+.runcty-app .profile-account-action strong { display: block; font-size: 14px; font-weight: 600; }
+.runcty-app .profile-account-action p { margin: 2px 0 0; color: var(--color-muted); font-size: 12px; }
+.runcty-app .profile-account-action > svg { flex: 0 0 16px; width: 16px; height: 16px; color: var(--color-muted); }
+.runcty-app .phone-frame .profile-account-action:not(.is-danger) > span { background: var(--color-raised); color: var(--color-copy); }
+.runcty-app .profile-account-action.is-danger { border-color: rgb(220 38 38 / 28%); }
+.runcty-app .profile-account-action.is-danger > span { background: rgb(220 38 38 / 10%); color: #DC2626; }
+.runcty-app .profile-account-action.is-danger strong { color: #B91C1C; }
+.runcty-app .profile-account-action.is-danger > svg { color: #DC2626; }
+.runcty-app .phone-frame .profile-account-action.is-danger { border-color: rgb(220 38 38 / 28%); }
+.runcty-app .phone-frame .profile-account-action.is-danger > span { background: rgb(220 38 38 / 10%); color: #DC2626; }
+.runcty-app .phone-frame .profile-account-action.is-danger strong { color: #B91C1C; }
+.runcty-app .phone-frame .profile-account-action.is-danger > svg { color: #DC2626; }
+.runcty-app .phone-frame .profile-account-actions { grid-template-columns: minmax(0, 1fr); }
+.runcty-app .phone-frame .profile-screen { gap: 16px; padding-bottom: 24px; }
+.runcty-app .phone-frame .profile-screen > * { margin-block: 0; }
+.runcty-app .phone-frame .profile-screen > .profile-account { margin-top: 8px; }
+/* Sin bordes rosados persistentes al tocar en móvil: el hover solo existe con puntero fino */
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action, .edit-profile):hover { border-color: var(--color-line); background: #fff; }
+.runcty-app .phone-frame .profile-account-action.is-danger:hover { border-color: rgb(220 38 38 / 28%); }
+.runcty-app :is(.profile-navigation > button, .profile-account-action, .edit-profile):focus:not(:focus-visible) { outline: none; }
+.runcty-app :is(.profile-navigation > button, .profile-account-action, .edit-profile):focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.runcty-app .phone-frame :is(.profile-navigation > button, .profile-account-action):active { background: var(--color-shell); }
+@media (hover: hover) and (pointer: fine) {
+  .runcty-app .profile-account-action:hover { border-color: #F3C2DA; background: #FFFAFC; }
+  .runcty-app .profile-account-action.is-danger:hover { border-color: rgb(220 38 38 / 45%); background: #FEF2F2; }
+}
+@media (max-width: 640px) {
+  .runcty-app .profile-account-actions { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Tipos de incidente con icono propio */
+.runcty-app .incident-types > button > span.incident-type-icon { display: grid; flex: 0 0 34px; place-items: center; width: 34px; height: 34px; border-radius: 10px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .incident-types > button > span.incident-type-icon svg { width: 19px; height: 19px; margin: 0; color: currentColor; }
+.runcty-app .incident-types > button.selected > span.incident-type-icon { background: var(--color-primary); color: #fff; }
+.runcty-app .incident-types > button { line-height: 1.3; text-align: left; }
+
+/* Reporte enviado: confirmación, detalle, seguimiento y acciones */
+.runcty-app .report-sent { display: flex; flex-direction: column; align-items: center; gap: 0; max-width: 520px; margin: 0 auto; padding-top: 12px; padding-bottom: 28px; text-align: center; }
+.runcty-app .report-sent .success-mark { width: 64px; height: 64px; margin-bottom: 14px; border-radius: 50%; background: rgb(23 131 74 / 12%); color: var(--color-safe); box-shadow: 0 0 0 8px rgb(23 131 74 / 6%); }
+.runcty-app .report-sent .success-mark svg { width: 30px; height: 30px; stroke-width: 2.6; }
+.runcty-app .report-sent > .eyebrow { margin: 0; color: var(--color-primary); font-size: 12px; font-weight: 700; letter-spacing: .1em; }
+.runcty-app .report-sent > h1 { margin: 6px 0 0; color: var(--color-copy); font-size: 26px; font-weight: 750; line-height: 1.15; }
+.runcty-app .report-sent-subtitle { max-width: 360px; margin: 8px 0 20px; color: var(--color-muted); font-size: 14px; line-height: 1.5; }
+.runcty-app .report-sent-card { width: 100%; overflow: hidden; border: 1px solid var(--color-line); border-radius: 18px; background: var(--color-panel); text-align: left; }
+.runcty-app .report-sent-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--color-line); }
+.runcty-app .report-sent-type-icon { display: grid; flex: 0 0 40px; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .report-sent-type-icon svg { width: 21px; height: 21px; }
+.runcty-app .report-sent-head > div { flex: 1; min-width: 0; }
+.runcty-app .report-sent-head small { display: block; color: var(--color-muted); font-size: 12px; }
+.runcty-app .report-sent-head strong { display: block; color: var(--color-copy); font-size: 15px; font-weight: 700; line-height: 1.3; }
+.runcty-app .report-sent-chip { flex: none; padding: 5px 10px; border-radius: 999px; background: rgb(242 162 12 / 16%); color: #8A5300; font-size: 12px; font-weight: 700; }
+.runcty-app .report-sent-details { display: grid; gap: 10px; margin: 0; padding: 14px 16px; }
+.runcty-app .report-sent-details > div { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.runcty-app .report-sent-details dt { display: inline-flex; flex: none; align-items: center; gap: 6px; color: var(--color-muted); font-size: 13px; }
+.runcty-app .report-sent-details dt svg { width: 15px; height: 15px; }
+.runcty-app .report-sent-details dd { min-width: 0; margin: 0; color: var(--color-copy); font-size: 13px; font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+.runcty-app .report-sent-map { height: 140px; margin: 0 16px 16px; overflow: hidden; border: 1px solid var(--color-line); border-radius: 14px; }
+.runcty-app .report-sent-map > * { height: 100%; min-height: 0; }
+.runcty-app .report-sent-map .route-point { border: 4px solid #fff; border-radius: 50%; background: var(--color-primary); box-shadow: 0 0 0 6px rgb(209 16 111 / 22%), 0 2px 6px rgb(0 0 0 / 25%); }
+.runcty-app .report-sent-map .route-point span { display: none; }
+.runcty-app .report-sent-map :is(.map-location, .map-actions, .safety-legend, .cartography-status) { display: none; }
+.runcty-app .report-timeline { width: 100%; margin-top: 16px; padding: 16px; border: 1px solid var(--color-line); border-radius: 18px; background: var(--color-panel); text-align: left; }
+.runcty-app .report-timeline h2 { margin: 0 0 12px; color: var(--color-copy); font-size: 15px; font-weight: 700; }
+.runcty-app .report-timeline ol { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.runcty-app .report-timeline li { position: relative; display: flex; align-items: flex-start; gap: 12px; padding-bottom: 16px; }
+.runcty-app .report-timeline li:last-child { padding-bottom: 0; }
+.runcty-app .report-timeline li:not(:last-child)::after { content: ''; position: absolute; top: 24px; bottom: 2px; left: 11px; width: 2px; border-radius: 2px; background: var(--color-line); }
+.runcty-app .report-timeline li.done:not(:last-child)::after { background: var(--color-safe); }
+.runcty-app .report-timeline li > span { position: relative; z-index: 1; display: grid; flex: 0 0 24px; place-items: center; width: 24px; height: 24px; border: 2px solid var(--color-line); border-radius: 50%; background: var(--color-panel); }
+.runcty-app .report-timeline li.done > span { border-color: var(--color-safe); background: var(--color-safe); color: #fff; }
+.runcty-app .report-timeline li.done > span svg { width: 14px; height: 14px; stroke-width: 3; }
+.runcty-app .report-timeline li.current > span { border-color: #F2A20C; }
+.runcty-app .report-timeline li.current > span::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: #F2A20C; }
+.runcty-app .report-timeline strong { display: block; color: var(--color-copy); font-size: 14px; font-weight: 600; line-height: 1.3; }
+.runcty-app .report-timeline li:not(.done):not(.current) strong { color: var(--color-muted); }
+.runcty-app .report-timeline small { display: block; margin-top: 2px; color: var(--color-muted); font-size: 12px; }
+.runcty-app .report-sent-actions { display: grid; gap: 10px; width: 100%; margin-top: 20px; }
+.runcty-app .report-sent-actions .button { min-height: 50px; border-radius: 14px; }
+.runcty-app .report-sent .demo-tag { margin-top: 14px; }
+
+/* Historial móvil: las etiquetas de los totales no se cortan a mitad de palabra */
+.runcty-app .phone-frame .activity-totals > span { overflow-wrap: normal; word-break: normal; hyphens: none; font-size: 12px; }
+
+/* Rutas oficiales: en pantallas medianas cada ruta pasa a tarjeta para que las acciones no se corten */
+@media (max-width: 1180px) {
+  .runcty-app .official-records { min-width: 0; }
+  .runcty-app .official-records thead { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); }
+  .runcty-app .official-records :is(tbody, tr) { display: block; width: 100%; }
+  .runcty-app .official-records tbody > tr { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px 16px; padding: 16px 0; border-bottom: 1px solid var(--color-line); }
+  .runcty-app .official-records tbody > tr:last-child { border-bottom: 0; }
+  .runcty-app .official-records td, .runcty-app .official-records :is(td:first-child, td:last-child) { display: block; min-width: 0; max-width: none; padding: 0; border: 0; white-space: normal; }
+  .runcty-app .official-records td::before { display: block; margin-bottom: 4px; color: var(--color-muted); font-size: 11px; font-weight: 500; content: attr(data-label); }
+  .runcty-app .official-records :is(.admin-record-name, .admin-actions-cell) { grid-column: 1 / -1; }
+  .runcty-app .official-records :is(.admin-record-name, .admin-actions-cell)::before { display: none; }
+  .runcty-app .official-records .admin-record-name strong { font-size: 16px; }
+  .runcty-app .official-records .admin-record-actions { justify-content: flex-start; }
+}
+@media (max-width: 700px) {
+  .runcty-app .official-records tbody > tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

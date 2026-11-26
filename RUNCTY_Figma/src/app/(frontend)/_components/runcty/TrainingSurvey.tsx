@@ -51,8 +51,11 @@ export const isRouteRating = (answers?: SurveyAnswers): answers is RouteRating =
 
 export default function TrainingSurvey({
   finish,
+  rateRoute = true,
 }: {
   finish: (answers?: SurveyAnswers) => void
+  // En el entrenamiento libre no hay ruta que calificar: la valoración se hace desde el detalle de la ruta.
+  rateRoute?: boolean
 }) {
   const [step, setStep] = useState(0),
     [answers, setAnswers] = useState<SurveyAnswers>({}),
@@ -61,7 +64,7 @@ export default function TrainingSurvey({
   const heading = useRef<HTMLHeadingElement>(null),
     advancing = useRef<ReturnType<typeof setTimeout> | null>(null)
   const question = surveyQuestions[step],
-    total = surveyQuestions.length + 1
+    total = surveyQuestions.length + (rateRoute ? 1 : 0)
   useEffect(() => {
     heading.current?.focus({ preventScroll: true })
   }, [step])
@@ -72,11 +75,13 @@ export default function TrainingSurvey({
   useEffect(() => cancelAdvance, [])
   const choose = (value: boolean) => {
     if (advancing.current) return
-    setAnswers({ ...answers, [question.key]: value })
+    const next = { ...answers, [question.key]: value }
+    setAnswers(next)
     // Pausa breve para que se vea la opción marcada antes de avanzar.
     advancing.current = setTimeout(() => {
       advancing.current = null
-      setStep(step + 1)
+      if (!rateRoute && step === surveyQuestions.length - 1) finish(next)
+      else setStep(step + 1)
     }, 260)
   }
   const rate = (stars: number) => {
@@ -108,7 +113,7 @@ export default function TrainingSurvey({
         {question ? (
           <div className="survey-question" key={question.key}>
             <h2 ref={heading} tabIndex={-1} id="survey-question">
-              {question.text}
+              {rateRoute ? question.text : question.text.replace('¿La ruta', '¿El recorrido')}
             </h2>
             <div className="survey-options" role="group" aria-labelledby="survey-question">
               {[true, false].map((value) => {

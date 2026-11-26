@@ -23,7 +23,11 @@ import {
   scheduleStatus,
   uid,
   type Coordinate,
+  type Incident,
+  type RiskZone,
   type RouteData,
+  type Street,
+  type TimeSlot,
 } from './data'
 import { useDemo, useRoutes } from './store'
 import { SHOW_FUTURE } from './features'
@@ -46,6 +50,22 @@ const plannerModes = {
 const plannerOrder: PlannerMode[] = ['manual', 'calculate', 'recommend']
 // Esta versión entrega dos modos: primero la recomendación y, como extra, entre dos puntos.
 const deliveredOrder: PlannerMode[] = ['recommend', 'calculate']
+
+// Trazado punto a punto: une los puntos por la red vial y, si no hay red, los ajusta al nodo
+// más cercano. Lo usan el modo manual del planificador y la gestión de rutas del club.
+export function traceRoute(
+  points: Coordinate[],
+  time: TimeSlot,
+  date: string,
+  incidents: Incident[],
+  risks: RiskZone[],
+  roads: Street[],
+) {
+  const computed = calculatePath(points, time, date, incidents, risks, roads)
+  const geometry =
+    computed.geometry.length > 1 ? computed.geometry : points.map((point) => nearestNode(point, roads))
+  return { geometry, segmentIds: computed.segmentIds, km: length(geometry) }
+}
 
 export default function Planner({
   mobile = false,
@@ -76,13 +96,19 @@ export default function Planner({
     () => calculatePath(draft.points, state.time, state.date, state.incidents, state.risks, state.roads),
     [draft.points, state.time, state.date, state.incidents, state.risks, state.roads],
   )
-  const manualGeometry = draft.points.map(point => nearestNode(point, state.roads))
-  const geometry =
-    draft.mode === 'manual'
-      ? computed.geometry.length > 1
-        ? computed.geometry
-        : manualGeometry
-      : computed.geometry
+  const manual = useMemo(
+    () => traceRoute(draft.points, state.time, state.date, state.incidents, state.risks, state.roads),
+    [draft.points, state.time, state.date, state.incidents, state.risks, state.roads],
+  )
+  // "Entre dos puntos" compara la ruta segura con la más corta por la misma red vial.
+  const shortest = useMemo(
+    () =>
+      draft.mode === 'calculate'
+        ? calculatePath(draft.points, state.time, state.date, state.incidents, state.risks, state.roads, 'shortest')
+        : null,
+    [draft.mode, draft.points, state.time, state.date, state.incidents, state.risks, state.roads],
+  )
+  const geometry = draft.mode === 'manual' ? manual.geometry : computed.geometry
   const km = length(geometry)
   const preview: RouteData = useMemo(
     () => ({
@@ -103,6 +129,26 @@ export default function Planner({
     [draft.name, geometry, computed.segmentIds, km, user],
   )
   const result = routeScore(preview, state.time, state.date, state.incidents, state.risks, state.roads)
+  const shortestKm = shortest ? length(shortest.geometry) : 0
+  const shortestRoute: RouteData | null =
+    shortest && shortest.geometry.length > 1
+      ? {
+          ...preview,
+          id: 'draft-shortest',
+          name: 'Ruta más corta',
+          km: +shortestKm.toFixed(2),
+          min: Math.max(1, Math.round(shortestKm * 7)),
+          segmentIds: shortest.segmentIds,
+          geometry: shortest.geometry,
+        }
+      : null
+  const shortestResult = shortestRoute
+    ? routeScore(shortestRoute, state.time, state.date, state.incidents, state.risks, state.roads)
+    : null
+  // Si miden lo mismo se consideran la misma ruta (la red puede tener tramos equivalentes).
+  const sameRoute =
+    !!shortest &&
+    (shortest.segmentIds.join('|') === computed.segmentIds.join('|') || Math.abs(km - shortestKm) < 0.01)
   const available = allRoutes.filter((r) => (!r.private || r.status === 'Aprobado') && !r.alert)
   const inSchedule = (r: RouteData) => (scheduleStatus(r.recommended, state.time)?.inside === false ? 0 : 1)
   const matches = available
@@ -135,18 +181,15 @@ export default function Planner({
     setSavedId(null)
   }
   const calculate = () => {
-    const a =
-      origin === 'jipiro'
-        ? EXAMPLE_POINTS[0]
-        : origin === 'valle'
-          ? EXAMPLE_POINTS[1]
-          : EXAMPLE_POINTS[2]
-    const b =
-      destination === 'centro'
-        ? EXAMPLE_POINTS[2]
-        : destination === 'valle'
-          ? EXAMPLE_POINTS[1]
-          : EXAMPLE_POINTS[0]
+    // Lugares de partida y llegada sobre la red vial de Loja.
+    const places: Record<string, Coordinate> = {
+      jipiro: EXAMPLE_POINTS[0],
+      valle: EXAMPLE_POINTS[1],
+      centro: EXAMPLE_POINTS[2],
+      sur: [-3.9966, -79.2042],
+    }
+    const a = places[origin] ?? EXAMPLE_POINTS[0]
+    const b = places[destination] ?? EXAMPLE_POINTS[2]
     if (origin === destination) {
       notify('Elige un origen y destino diferentes.')
       return
@@ -230,6 +273,7 @@ export default function Planner({
             points={draft.points}
             onPoints={(points) => setPoints(draft.mode === 'calculate' ? points.slice(-2) : points)}
             route={ready ? preview : null}
+            compare={ready && draft.mode === 'calculate' && !sameRoute ? shortestRoute?.geometry : null}
             animateKey={animateKey}
             fitRoute={ready}
             showReports
@@ -290,6 +334,7 @@ export default function Planner({
                   <option value="jipiro">Parque Jipiro</option>
                   <option value="valle">El Valle</option>
                   <option value="centro">Orillas del Zamora</option>
+                  <option value="sur">Sur · Vía occidental</option>
                 </select>
               </label>
               <label className="field">
@@ -305,6 +350,7 @@ export default function Planner({
                   <option value="centro">Orillas del Zamora</option>
                   <option value="valle">El Valle</option>
                   <option value="jipiro">Parque Jipiro</option>
+                  <option value="sur">Sur · Vía occidental</option>
                 </select>
               </label>
             </div>
@@ -431,6 +477,44 @@ export default function Planner({
                     <Check />
                     {computed.segmentIds.length ? 'Ruta sobre la red vial' : 'Trazado manual sin validar'}<span>{state.time}</span>
                   </div>
+                  {draft.mode === 'calculate' && shortestRoute && shortestResult ? (
+                    <div className="route-compare">
+                      <div className="route-compare-item is-safe">
+                        <span className="route-compare-label">
+                          <i aria-hidden="true" />
+                          Ruta segura
+                        </span>
+                        <strong>
+                          {km.toFixed(2)}
+                          <small> km</small>
+                        </strong>
+                        <p>
+                          {preview.min} min · Índice {result.score === null ? 'sin datos' : `${Math.round(result.score)}/100`}
+                        </p>
+                        <Score value={result.score} coverage={result.coverage} />
+                      </div>
+                      <div className="route-compare-item is-shortest">
+                        <span className="route-compare-label">
+                          <i aria-hidden="true" />
+                          Ruta más corta
+                        </span>
+                        <strong>
+                          {shortestKm.toFixed(2)}
+                          <small> km</small>
+                        </strong>
+                        <p>
+                          {shortestRoute.min} min · Índice{' '}
+                          {shortestResult.score === null ? 'sin datos' : `${Math.round(shortestResult.score)}/100`}
+                        </p>
+                        <Score value={shortestResult.score} coverage={shortestResult.coverage} />
+                      </div>
+                      <p className="route-compare-note">
+                        {sameRoute
+                          ? 'En este trayecto la ruta más corta coincide con la ruta segura.'
+                          : `La ruta segura recorre ${Math.max(0, km - shortestKm).toFixed(2)} km más porque prioriza los tramos con mejor índice de seguridad a las ${state.time}.`}
+                      </p>
+                    </div>
+                  ) : (
                   <div className="route-result-main">
                     <div>
                       <strong>
@@ -444,6 +528,7 @@ export default function Planner({
                     </div>
                     <Score value={result.score} coverage={result.coverage} />
                   </div>
+                  )}
                   {SHOW_FUTURE && (
                     <Button
                       className="full"
@@ -464,10 +549,12 @@ export default function Planner({
                     >
                       Ver detalles
                     </button>
-                    <button onClick={() => run(preview)}>
-                      <Play />
-                      Correr esta ruta
-                    </button>
+                    {SHOW_FUTURE && (
+                      <button onClick={() => run(preview)}>
+                        <Play />
+                        Correr esta ruta
+                      </button>
+                    )}
                   </div>
                 </div>
               ) : (

@@ -38,7 +38,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { BackButton, Button, EmptyState, IconButton, Logo, Modal, PageTitle, RunnerIcon, useThemeColor } from './components'
+import { BackButton, Button, EmptyState, IconButton, Logo, Modal, PageTitle, RunnerIcon, UserAvatar, useThemeColor } from './components'
 import { isAdminUser, type Role, type RouteData } from './data'
 import { useDemo, useRoutes } from './store'
 import SafetyMap from './SafetyMap'
@@ -598,8 +598,9 @@ function MobileApp({
       openAccount()
       return
     }
-    if (!route?.geometry.length || route.km <= 0) {
-      notify(SHOW_FUTURE ? 'Elige o crea una ruta antes de entrenar.' : 'Elige una ruta antes de entrenar.')
+    // En esta versión se entrena en modo libre: no hace falta elegir ruta antes de grabar.
+    if (SHOW_FUTURE && (!route?.geometry.length || route.km <= 0)) {
+      notify('Elige o crea una ruta antes de entrenar.')
       return
     }
     update((s) => ({
@@ -666,9 +667,16 @@ function MobileApp({
                     </IconButton>
                   )}
                   {hasClubPanel && <IconButton label="Panel del club" onClick={() => router.push(isDemo ? '/demo/administracion' : '/gestion/clubhome')}><Shield /></IconButton>}
-                  <IconButton label="Salir" onClick={exitAccount}>
-                    <LogOut />
-                  </IconButton>
+                  {/* El avatar lleva a Perfil; Cerrar sesión está al final de esa pantalla. */}
+                  <button
+                    type="button"
+                    className="header-avatar"
+                    aria-label="Ir a tu perfil"
+                    aria-current={page === 'profile' ? 'page' : undefined}
+                    onClick={() => go('profile')}
+                  >
+                    <UserAvatar size={38} />
+                  </button>
                 </div>
               </header>
             )}

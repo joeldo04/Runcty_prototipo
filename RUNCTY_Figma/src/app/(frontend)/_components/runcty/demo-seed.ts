@@ -96,8 +96,8 @@ export const DEMO_USERS: DemoUser[] = [
 ]
 export const DEMO_SPONSORS: Sponsor[] = [
   {id:'demo-gacelas',name:'Gacelas Running Team',message:'En Gacelas no entrenas solo: entrenas con planificación, coaches reales y una comunidad que te acompaña todo el año. Inscripciones abiertas.',contact:'Material del Club Deportivo Gacelas Running Team · cliente de referencia',active:true,visual:'club',image:{url:gacelasBanner.src,alt:'Publicidad del Club Deportivo Gacelas Running Team: inscripciones abiertas, planes Running y Running + Fuerza',width:gacelasBanner.width,height:gacelasBanner.height}},
-  {id:'demo-utpl',name:'UTPL',message:'Tu futuro también está en movimiento. Matrículas abiertas.',contact:'Aliado de RUNCTY',active:true,visual:'university',image:{url:utplBanner.src,alt:'Publicidad UTPL proporcionada por el proyecto',width:utplBanner.width,height:utplBanner.height}},
-  {id:'demo-cuxibamba',name:'Farmacias Cuxibamba',message:'¿Te duelen los pies después de correr? Tu bienestar también forma parte del recorrido.',contact:'Aliado de RUNCTY',active:true,visual:'health',image:{url:cuxibambaBanner.src,alt:'Publicidad Farmacias Cuxibamba proporcionada por el proyecto',width:cuxibambaBanner.width,height:cuxibambaBanner.height}},
+  {id:'demo-utpl',name:'UTPL',message:'Tu futuro también está en movimiento. Matrículas abiertas.',contact:'Patrocinador de ejemplo',active:true,visual:'university',image:{url:utplBanner.src,alt:'Publicidad UTPL proporcionada por el proyecto',width:utplBanner.width,height:utplBanner.height}},
+  {id:'demo-cuxibamba',name:'Farmacias Cuxibamba',message:'¿Te duelen los pies después de correr? Tu bienestar también forma parte del recorrido.',contact:'Patrocinador de ejemplo',active:true,visual:'health',image:{url:cuxibambaBanner.src,alt:'Publicidad Farmacias Cuxibamba proporcionada por el proyecto',width:cuxibambaBanner.width,height:cuxibambaBanner.height}},
 ]
 export const DEMO_BANNERS: Banner[] = [
  {id:'demo-banner-gacelas',sponsorId:'demo-gacelas',title:'Inscripciones abiertas · Planes Running y Running + Fuerza',start:'2026-01-01',end:'2030-12-31',placement:'explore',status:'Publicado'},

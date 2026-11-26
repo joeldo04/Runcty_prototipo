@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useState } from 'react'
 import {
   Activity,
   ArrowLeft,
@@ -43,7 +43,9 @@ import {
   formatDuration,
   formatPace,
   formatTime,
+  freeTrainingRoute,
   gpsQuality,
+  isFreeTraining,
   length,
   pointAlong,
   reportAge,
@@ -68,6 +70,46 @@ import TrainingSurvey, { feltUnsafe, isRouteRating, surveyQuestions } from './Tr
 import type { ShareCardData } from './shareCard'
 import { Security, SosButton, shareValid } from './security'
 import { SHOW_FUTURE } from './features'
+
+// Esta versión entrena en modo libre: se graba el recorrido sin elegir una ruta.
+const FREE_MODE = !SHOW_FUTURE
+
+function CheckeredFlag() {
+  const id = useId().replace(/:/g, '')
+  const cells = [0, 1, 2, 3].flatMap((col) =>
+    [0, 1, 2].map((row) => ({ col, row, dark: (col + row) % 2 === 0 })),
+  )
+  return (
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true">
+      <defs>
+        <clipPath id={`flag-${id}`}>
+          <path d="M8 5.5c3.3-1.7 6.4-1.7 9.4 0s6.1 1.7 9.1 0v13c-3 1.7-6.1 1.7-9.1 0s-6.1-1.7-9.4 0z" />
+        </clipPath>
+      </defs>
+      <g clipPath={`url(#flag-${id})`}>
+        {cells
+          .filter(({ dark }) => dark)
+          .map(({ col, row }) => (
+            <rect
+              key={`${col}-${row}`}
+              x={8 + col * 4.65}
+              y={3.6 + row * 5}
+              width={4.65}
+              height={5}
+              fill="currentColor"
+            />
+          ))}
+      </g>
+      <path
+        d="M8 5.5c3.3-1.7 6.4-1.7 9.4 0s6.1 1.7 9.1 0v13c-3 1.7-6.1 1.7-9.1 0s-6.1-1.7-9.4 0z"
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+      <path d="M8 4v24.5" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+    </svg>
+  )
+}
 
 const conditionLabels: Record<string, string> = {
   high: 'Recomendado',
@@ -101,6 +143,10 @@ export default function Training({
     [picker, setPicker] = useState(false)
   const route = session.route
   const allRoutes = useRoutes()
+  const free = isFreeTraining(route)
+  // Base del GPS simulado del modo libre: la primera ruta publicada con trazado.
+  const freeBase =
+    allRoutes.find((r) => r.geometry.length > 1 && !r.private && !isFreeTraining(r)) ?? null
   useEffect(() => {
     if (session.phase === 'permission') {
       const t = setTimeout(
@@ -129,7 +175,8 @@ export default function Training({
         () =>
           update((s) => {
             const km = s.session.km + (1 / 60 + 0.0006 * Math.sin(s.session.seconds / 12)),
-              arrived = s.session.route.km > 0 && km >= s.session.route.km
+              arrived =
+                !isFreeTraining(s.session.route) && s.session.route.km > 0 && km >= s.session.route.km
             return {
               ...s,
               session: {
@@ -146,7 +193,7 @@ export default function Training({
     }
   }, [session.phase, session.count])
   const progress = route.km > 0 ? Math.min(1, session.km / route.km) : 0
-  const completed = progress >= 1
+  const completed = !free && progress >= 1
   useEffect(() => {
     if (completed && session.phase === 'paused')
       notify('Llegaste al final de la ruta. Finaliza para ver tu resumen.')
@@ -203,6 +250,7 @@ export default function Training({
       ...s,
       session: {
         ...s.session,
+        ...(FREE_MODE ? { route: freeTrainingRoute(freeBase) } : {}),
         phase: 'permission',
         seconds: 0,
         km: 0,
@@ -216,9 +264,14 @@ export default function Training({
   }
   const finishTraining = () => {
     if (session.seconds < 1 || session.km < 0.001) {
+      setFinish(false)
       notify('Corre unos segundos antes de terminar.')
       return
     }
+    // En modo libre se guarda lo que se grabó: el trazado del GPS y la distancia recorrida.
+    const recorded: RouteData = free
+      ? { ...route, geometry: track, km: +session.km.toFixed(2), min: Math.ceil(session.seconds / 60) }
+      : route
     const id = uid()
     update((s) => ({
       ...s,
@@ -226,7 +279,7 @@ export default function Training({
       trainings: [
         {
           id,
-          route: s.session.route,
+          route: free ? recorded : s.session.route,
           date: new Date().toISOString(),
           seconds: s.session.seconds,
           km: +s.session.km.toFixed(3),
@@ -306,7 +359,7 @@ export default function Training({
           : 'Sincronizando el recorrido como ruta privada en tu cuenta.',
     )
   }
-  if (!route.id || route.geometry.length < 2 || route.km <= 0)
+  if (!FREE_MODE && (!route.id || route.geometry.length < 2 || route.km <= 0))
     return (
       <EmptyState
         title="Elige tu próximo recorrido"
@@ -350,15 +403,19 @@ export default function Training({
             )}
           </div>
           <div className="summary-map">
-            <SafetyMap
-              route={route}
-              track={track}
-              tracking={position}
-              fitRoute
-              guide
-              context={false}
-              showReports={false}
-            />
+            {free ? (
+              <SafetyMap track={track} tracking={position} fitRoute context={false} showReports={false} />
+            ) : (
+              <SafetyMap
+                route={route}
+                track={track}
+                tracking={position}
+                fitRoute
+                guide
+                context={false}
+                showReports={false}
+              />
+            )}
           </div>
           <section className="summary-main">
             <header className="summary-heading">
@@ -380,12 +437,18 @@ export default function Training({
                 {session.km.toFixed(2)}
                 <small> km</small>
               </strong>
-              <div className="summary-route-progress" aria-hidden="true">
-                <span style={{ width: `${percent}%` }} />
-              </div>
-              <small className="summary-route-note">
-                {percent} % de la ruta · {route.km.toFixed(1)} km planificados
-              </small>
+              {free ? (
+                <small className="summary-route-note">Entrenamiento libre · sin ruta asignada</small>
+              ) : (
+                <>
+                  <div className="summary-route-progress" aria-hidden="true">
+                    <span style={{ width: `${percent}%` }} />
+                  </div>
+                  <small className="summary-route-note">
+                    {percent} % de la ruta · {route.km.toFixed(1)} km planificados
+                  </small>
+                </>
+              )}
               <dl className="summary-stats">
                 <div>
                   <dt>
@@ -428,9 +491,9 @@ export default function Training({
               </div>
               <div>
                 <dt>
-                  <Navigation /> Dificultad
+                  <Navigation /> {free ? 'Modo' : 'Dificultad'}
                 </dt>
-                <dd>{route.difficulty}</dd>
+                <dd>{free ? 'Libre' : route.difficulty}</dd>
               </div>
             </dl>
             <p className="gps-quality">
@@ -439,7 +502,7 @@ export default function Training({
               30 km/h.
             </p>
             {state.trainings.some(({ id, pendingSync }) => id === session.finishedId && pendingSync) && (
-              <span className="route-flag">Pendiente de sincronizar</span>
+              <span className="route-flag">Sin internet (simulado) · pendiente de envío</span>
             )}
             {SHOW_FUTURE && (
               <Button variant="orange" className="full summary-share" onClick={openShare}>
@@ -450,9 +513,9 @@ export default function Training({
             <section className="summary-safety" aria-label="Resumen de seguridad del recorrido">
               <div className="summary-safety-heading">
                 <h2>
-                  <Shield /> Seguridad del recorrido
+                  <Shield /> {free ? 'Tu percepción de seguridad' : 'Seguridad del recorrido'}
                 </h2>
-                <Score value={score.score} />
+                {!free && <Score value={score.score} />}
               </div>
               {SHOW_FUTURE && (
                 <>
@@ -480,8 +543,9 @@ export default function Training({
                 </>
               )}
               <p>
-                Condiciones de la ruta para las {session.time}. Comprueba el entorno en tu próxima
-                salida.
+                {free
+                  ? 'Entrenaste sin una ruta asignada, por eso no se calcula un índice de seguridad. Tus respuestas no crean reportes.'
+                  : `Condiciones de la ruta para las ${session.time}. Comprueba el entorno en tu próxima salida.`}
               </p>
               {answered.length > 0 && (
                 <dl className="summary-perception">
@@ -516,6 +580,8 @@ export default function Training({
                 </p>
               </section>
             ) : (
+              SHOW_FUTURE &&
+              !free &&
               !route.private &&
               route.status === 'Aprobado' && (
                 <RouteFeedbackCard route={route} open={() => setQuestionnaire(true)} />
@@ -556,7 +622,7 @@ export default function Training({
             </button>
           </section>
         </div>
-        {surveying && <TrainingSurvey finish={closeSurvey} />}
+        {surveying && <TrainingSurvey finish={closeSurvey} rateRoute={!free} />}
         {questionnaire && <RouteQuestionnaire route={route} close={() => setQuestionnaire(false)} />}
         {share && <ShareTraining card={share} close={() => setShare(null)} />}
         {privacy && (
@@ -630,7 +696,8 @@ export default function Training({
               </button>
               <button
                 type="button"
-                aria-label="Sin señal"
+                aria-label="Simular sin internet"
+                title="Simular sin internet"
                 aria-pressed={offline}
                 onClick={() => setOffline(!offline)}
               >
@@ -638,18 +705,37 @@ export default function Training({
               </button>
             </>
           )}
-          <span className={`gps-tag ${offline ? 'offline' : ''}`}>
+          <span className="gps-tag">
             <Radio />
-            {offline ? 'Sin señal' : 'GPS'}
+            GPS
           </span>
         </div>
       </header>
       {!active ? (
         <>
           <div className="training-prepare-map">
-            <SafetyMap route={route} fitRoute guide />
+            {FREE_MODE ? (
+              <SafetyMap tracking={freeTrainingRoute(freeBase).geometry[0]} follow showReports={false} />
+            ) : (
+              <SafetyMap route={route} fitRoute guide />
+            )}
           </div>
           <section className="record-sheet">
+            {FREE_MODE ? (
+              <div className="free-ready" role="status">
+                <span className="free-ready-icon" aria-hidden="true">
+                  <LocateFixed />
+                </span>
+                <div>
+                  <strong>Listo para grabar tu entrenamiento</strong>
+                  <p>
+                    Corre por donde quieras. Grabamos tu recorrido con el GPS y al terminar verás
+                    distancia, tiempo y ritmo.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <>
             <button type="button" className="route-picker" onClick={() => setPicker(true)}>
               <span className="route-picker-icon">
                 <RouteIcon />
@@ -664,6 +750,8 @@ export default function Training({
               <Score value={score.score} />
             </button>
             <ClubAlerts item={route} hours={route.recommended} />
+              </>
+            )}
             <div className="record-dock">
               <button type="button" className="dock-side" onClick={() => setSecurity(true)}>
                 <span>
@@ -682,12 +770,16 @@ export default function Training({
                 </span>
                 Iniciar
               </button>
-              <button type="button" className="dock-side" onClick={() => setPicker(true)}>
-                <span>
-                  <RouteIcon />
-                </span>
-                Cambiar ruta
-              </button>
+              {FREE_MODE ? (
+                <span className="dock-side dock-spacer" aria-hidden="true" />
+              ) : (
+                <button type="button" className="dock-side" onClick={() => setPicker(true)}>
+                  <span>
+                    <RouteIcon />
+                  </span>
+                  Cambiar ruta
+                </button>
+              )}
             </div>
           </section>
         </>
@@ -723,7 +815,7 @@ export default function Training({
               </>
             ) : (
               // Distancia, tiempo y ritmo se muestran solo en el resumen final.
-              <div className={`recording-gps ${offline ? 'offline' : ''}`} role="status">
+              <div className={`recording-gps ${offline ? 'no-internet' : ''}`} role="status">
                 <span className="gps-bars" aria-hidden="true">
                   <i />
                   <i />
@@ -731,10 +823,16 @@ export default function Training({
                   <i />
                 </span>
                 <div>
-                  <strong>{offline ? 'Sin señal GPS' : 'Señal GPS buena'}</strong>
+                  <strong>Señal GPS buena</strong>
+                  {offline && (
+                    <span className="net-chip">
+                      <WifiOff />
+                      Sin internet
+                    </span>
+                  )}
                   <small>
                     {offline
-                      ? 'Sigues grabando. Los puntos se guardan al volver la señal.'
+                      ? 'Sin conexión a internet. Sigues grabando: los puntos se guardan en tu celular y se envían cuando vuelva la conexión.'
                       : 'Verás distancia, tiempo y ritmo al terminar.'}
                   </small>
                 </div>
@@ -742,14 +840,18 @@ export default function Training({
             )}
           </section>
           <div className="recording-map">
-            <SafetyMap
-              route={route}
-              track={track}
-              tracking={position}
-              follow={follow}
-              guide
-              showReports={false}
-            />
+            {free ? (
+              <SafetyMap track={track} tracking={position} follow={follow} showReports={false} />
+            ) : (
+              <SafetyMap
+                route={route}
+                track={track}
+                tracking={position}
+                follow={follow}
+                guide
+                showReports={false}
+              />
+            )}
             <button
               className={`follow-runner ${follow ? 'active' : ''}`}
               onClick={() => setFollow(!follow)}
@@ -758,11 +860,13 @@ export default function Training({
               {follow ? 'Siguiendo' : 'Seguir corredor'}
             </button>
           </div>
-          <div className="training-trace-legend">
-            <span>
-              <i />
-              Ruta prevista
-            </span>
+          <div className={`training-trace-legend ${free ? 'only-track' : ''}`}>
+            {!free && (
+              <span>
+                <i />
+                Ruta prevista
+              </span>
+            )}
             <span>
               <i />
               Tu recorrido
@@ -916,17 +1020,24 @@ export default function Training({
         </div>
       )}
       {finish && (
-        <Confirm
-          title="¿Finalizar entrenamiento?"
-          message={
-            isDemo
-              ? 'Guardaremos esta salida en tu historial.'
-              : 'Guardaremos esta salida en tu historial y cerraremos tus enlaces de ubicación.'
-          }
-          label="Finalizar entrenamiento"
-          onClose={() => setFinish(false)}
-          confirm={finishTraining}
-        />
+        <Modal title="¿Finalizar entrenamiento?" onClose={() => setFinish(false)} className="finish-modal">
+          <span className="finish-modal-icon" aria-hidden="true">
+            <CheckeredFlag />
+          </span>
+          <p className="finish-modal-text">
+            Tu entrenamiento se guardará en el historial para que puedas consultar tu progreso.
+            {!isDemo && ' También cerraremos tus enlaces de ubicación.'}
+          </p>
+          <div className="finish-modal-actions">
+            <Button className="full" onClick={finishTraining}>
+              <Check />
+              Finalizar y guardar
+            </Button>
+            <Button variant="secondary" className="full" onClick={() => setFinish(false)}>
+              Continuar entrenamiento
+            </Button>
+          </div>
+        </Modal>
       )}
       {security && (
         <Modal title="Seguridad del corredor" onClose={() => setSecurity(false)} wide>

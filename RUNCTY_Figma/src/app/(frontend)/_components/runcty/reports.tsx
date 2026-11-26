@@ -1,20 +1,82 @@
-import { useState } from 'react'
+import { useState, type ComponentType } from 'react'
 import {
   AlertTriangle,
   ArrowLeft,
   ArrowRight,
+  Ban,
+  Calendar,
+  Car,
   Check,
   ChevronRight,
+  Clock3,
+  CloudRain,
+  Dog,
+  Ellipsis,
   Flag,
+  LightbulbOff,
   MapPin,
+  MessageSquareWarning,
   Plus,
   Shield,
+  ShieldAlert,
+  TrafficCone,
+  TriangleAlert,
 } from 'lucide-react'
 import SafetyMap from './SafetyMap'
 import { BackButton, Button, DemoTag, EmptyState, Modal, PageTitle, Status } from './components'
-import { incidentTypes, publicIncidents, today, uid, type Coordinate, type Incident } from './data'
+import {
+  demoOnlyIncidentTypes,
+  incidentTypes,
+  publicIncidents,
+  today,
+  uid,
+  type Coordinate,
+  type Incident,
+} from './data'
 import { useDemo } from './store'
 import { SHOW_FUTURE } from './features'
+
+// Persona empujando una carretilla, para "Trabajos en la vía" (no existe en lucide).
+function WheelbarrowWorker(props: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <circle cx="5.6" cy="4" r="1.8" />
+      <path d="M6.3 6.4 8.7 11.6" />
+      <path d="M8.7 11.6 6.6 15.6 5.7 20.4" />
+      <path d="m8.7 11.6 2 4.1.3 4.7" />
+      <path d="M7.1 8.3 11.9 11.2h2.2" />
+      <path d="M13.6 12.4h8.2l-2.1 4.5h-4.8z" />
+      <path d="M18.1 16.9v1.1" />
+      <circle cx="18.1" cy="19.7" r="1.6" />
+    </svg>
+  )
+}
+const incidentIcons: Record<string, ComponentType<{ className?: string }>> = {
+  'Acoso callejero': MessageSquareWarning,
+  'Robo o asalto': ShieldAlert,
+  'Tránsito vehicular peligroso': Car,
+  'Falta de iluminación': LightbulbOff,
+  Perros: Dog,
+  'Vía en mal estado': TriangleAlert,
+  'Sendero o espacio cerrado': Ban,
+  'Trabajos en la vía': WheelbarrowWorker,
+  'Inundación o lodo': CloudRain,
+  'Obstáculos o escombros': TrafficCone,
+  Otro: Ellipsis,
+}
+export const IncidentTypeIcon = ({ type, className }: { type: string; className?: string }) => {
+  const Icon = incidentIcons[type] ?? AlertTriangle
+  return <Icon className={className} />
+}
 
 export function Reports({
   mobile = false,
@@ -131,7 +193,8 @@ export function Reports({
 }
 
 export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; close: () => void }) {
-  const { state, user, update, notify, pending, syncError } = useDemo()
+  const { state, user, update, notify, pending, syncError, isDemo } = useDemo()
+  const types = isDemo ? incidentTypes : incidentTypes.filter((item) => !demoOnlyIncidentTypes.includes(item))
   const [step, setStep] = useState(0),
     [type, setType] = useState(''),
     [coordinate, setCoordinate] = useState<Coordinate[]>([]),
@@ -182,33 +245,117 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
     setSent(true)
     notify('Reporte enviado. Estado: Pendiente de revisión.')
   }
-  if (sent)
+  const another = () => {
+    setSent(false)
+    setStep(0)
+    setType('')
+    setCoordinate([])
+    setLocation('')
+    setDescription('')
+    setError('')
+  }
+  if (sent) {
+    const reportedOn = new Date(`${date}T12:00:00`).toLocaleDateString('es', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    })
     return (
-      <div className={`report-success ${mobile ? 'mobile-padded' : ''}`}>
+      <div className={`report-success report-sent ${mobile ? 'mobile-padded' : ''}`}>
         <div className="success-mark">
           <Check />
         </div>
         <span className="eyebrow">GRACIAS POR TU APORTE</span>
-        <h1>{pending ? 'Sincronizando tu reporte.' : syncError ? 'Tu reporte está pendiente de guardado.' : 'Recibimos tu reporte.'}</h1>
-        <p>
-          {pending || syncError ? (
-            'Comprueba el estado de sincronización antes de salir.'
-          ) : SHOW_FUTURE ? (
-            <>Se guardó en Mis reportes con estado <strong>Pendiente</strong>.</>
-          ) : (
-            <>Tu reporte quedó <strong>pendiente de revisión</strong> por el club.</>
-          )}
+        <h1>
+          {pending
+            ? 'Enviando tu reporte…'
+            : syncError
+              ? 'Tu reporte está pendiente de guardado.'
+              : '¡Reporte enviado!'}
+        </h1>
+        <p className="report-sent-subtitle">
+          {pending || syncError
+            ? 'Comprueba el estado de sincronización antes de salir.'
+            : 'El club lo revisará antes de publicarlo. Gracias por ayudar a que otros corredores elijan rutas más seguras.'}
         </p>
-        <div className="info-strip">
-          <Shield />
-          No se publica en el mapa hasta que el Club Gacelas lo apruebe desde la web.
+        <article className="report-sent-card" aria-label="Detalle del reporte">
+          <div className="report-sent-head">
+            <span className="report-sent-type-icon">
+              <IncidentTypeIcon type={type} />
+            </span>
+            <div>
+              <small>Tipo de incidente</small>
+              <strong>{type}</strong>
+            </div>
+            <span className="report-sent-chip">Pendiente</span>
+          </div>
+          <dl className="report-sent-details">
+            <div>
+              <dt>
+                <MapPin /> Ubicación
+              </dt>
+              <dd>{location}</dd>
+            </div>
+            <div>
+              <dt>
+                <Calendar /> Fecha
+              </dt>
+              <dd>{reportedOn}</dd>
+            </div>
+            <div>
+              <dt>
+                <Clock3 /> Hora
+              </dt>
+              <dd>{time}</dd>
+            </div>
+          </dl>
+          {coordinate[0] && (
+            <div className="report-sent-map">
+              <SafetyMap preview points={coordinate} focus={coordinate[0]} showReports={false} />
+            </div>
+          )}
+        </article>
+        <section className="report-timeline" aria-labelledby="report-timeline-title">
+          <h2 id="report-timeline-title">Seguimiento del reporte</h2>
+          <ol>
+            <li className="done">
+              <span aria-hidden="true">
+                <Check />
+              </span>
+              <div>
+                <strong>Reporte recibido</strong>
+                <small>Hoy · {time}</small>
+              </div>
+            </li>
+            <li className="current">
+              <span aria-hidden="true" />
+              <div>
+                <strong>Pendiente de revisión</strong>
+                <small>El Club Gacelas lo revisa desde la web</small>
+              </div>
+            </li>
+            <li>
+              <span aria-hidden="true" />
+              <div>
+                <strong>Publicación en el mapa</strong>
+                <small>Solo si el club lo aprueba</small>
+              </div>
+            </li>
+          </ol>
+        </section>
+        <div className="report-sent-actions">
+          <Button className="full" onClick={close}>
+            {SHOW_FUTURE ? 'Ver mis reportes' : 'Volver a reportes'} <ArrowRight />
+          </Button>
+          <Button variant="secondary" className="full" onClick={another}>
+            <Plus />
+            Reportar otro incidente
+          </Button>
         </div>
-        <Button onClick={close}>
-          {SHOW_FUTURE ? 'Ver mis reportes' : 'Volver a reportes'} <ArrowRight />
-        </Button>
         <DemoTag />
       </div>
     )
+  }
   return (
     <div className={`report-wizard ${mobile ? 'mobile-padded' : ''}`}>
       <BackButton onClick={close}>Reportes</BackButton>
@@ -236,7 +383,7 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
             <h2>¿Qué ocurrió?</h2>
             <p>Elige la opción que mejor describe tu observación.</p>
             <div className="incident-types">
-              {incidentTypes.map((item, i) => (
+              {types.map((item) => (
                 <button
                   key={item}
                   className={type === item ? 'selected' : ''}
@@ -246,7 +393,9 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
                     setError('')
                   }}
                 >
-                  <span>0{i + 1}</span>
+                  <span className="incident-type-icon" aria-hidden="true">
+                    <IncidentTypeIcon type={item} />
+                  </span>
                   {item}
                   {type === item ? <Check /> : <ChevronRight />}
                 </button>

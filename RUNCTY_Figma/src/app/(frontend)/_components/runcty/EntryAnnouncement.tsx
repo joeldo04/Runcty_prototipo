@@ -4,8 +4,16 @@ import { useEffect, useState } from 'react'
 import Image from 'next/image'
 import announcement from '../../../../../imagenes/anuncio_rueda_prensa.png'
 import { Modal } from './components'
+import { today } from './data'
 
 const dismissedKey = 'runcty:announcement:authenticated:gacelas-prensa-2026-11-25'
+// Vigencia del anuncio, igual que los banners: solo se muestra entre estas fechas (hora de Loja).
+const announcementStart = '2026-11-18'
+const announcementEnd = '2026-11-25'
+const announcementActive = () => {
+  const current = today()
+  return current >= announcementStart && current <= announcementEnd
+}
 
 export default function EntryAnnouncement({ enabled, accountId }: { enabled: boolean; accountId: string | null }) {
   const [open, setOpen] = useState(false)
@@ -20,7 +28,7 @@ export default function EntryAnnouncement({ enabled, accountId }: { enabled: boo
       }
       return
     }
-    if (!enabled) {
+    if (!enabled || !announcementActive()) {
       setOpen(false)
       return
     }

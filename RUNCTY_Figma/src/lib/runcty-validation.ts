@@ -45,7 +45,7 @@ export const routeSchema = z.object({
   recommended: z.string().max(160).optional(),
   date: dateSchema.optional(),
   private: z.boolean().optional(),
-  baseline: z.number().min(0).max(100).optional(),
+  baseline: z.number().int().min(1).max(5).optional(),
   validated: dateSchema.optional(),
 })
 export const contactSchema = z.object({

@@ -3,7 +3,7 @@ import { isStaff, staffOnly } from '@/access/runcty'
 import { publicHooks } from '@/hooks/runcty'
 export const Sponsors: CollectionConfig = {
   slug: 'sponsors',
-  admin: { useAsTitle: 'name', group: 'RUNCTY · Aliados' },
+  admin: { useAsTitle: 'name', group: 'RUNCTY · Publicidad' },
   access: { read: () => true, create: staffOnly, update: staffOnly, delete: staffOnly },
   hooks: publicHooks,
   fields: [

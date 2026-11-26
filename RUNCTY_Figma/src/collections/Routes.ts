@@ -120,8 +120,9 @@ export const Routes: CollectionConfig = {
     {
       name: 'baseline',
       type: 'number',
-      min: 0,
-      max: 100,
+      // Valoración base del club en escala de 1 a 5 (no es el índice de seguridad).
+      min: 1,
+      max: 5,
       access: { create: staffField, update: staffField },
     },
     { name: 'validated', type: 'text', access: { create: staffField, update: staffField } },

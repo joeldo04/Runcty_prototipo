@@ -50,6 +50,7 @@ export interface RouteData {
   recommended?: string
   date?: string
   private?: boolean
+  // Valoración base del club de 1 a 5.
   baseline?: number
   validated?: string
   alert?: ClubAlert
@@ -150,8 +151,14 @@ export const incidentTypes = [
   'Perros',
   'Vía en mal estado',
   'Sendero o espacio cerrado',
+  'Trabajos en la vía',
+  'Inundación o lodo',
+  'Obstáculos o escombros',
   'Otro',
 ]
+// Tipos nuevos de la demo. La validación del backend aún no los incluye (requiere migración),
+// por eso fuera de la demo el formulario muestra solo los tipos que la API acepta.
+export const demoOnlyIncidentTypes = ['Trabajos en la vía', 'Inundación o lodo', 'Obstáculos o escombros']
 export const safety = (score: number | null | undefined) =>
   score == null
     ? { label: 'Sin datos', color: 'var(--safety-none)', key: 'none' }
@@ -242,6 +249,8 @@ export function calculatePath(
   incidents: Incident[] = [],
   risks: RiskZone[] = [],
   streets: Street[] = [],
+  // safe: penaliza los tramos con menor índice; shortest: solo cuenta los kilómetros.
+  weighting: 'safe' | 'shortest' = 'safe',
 ) {
   if (!streets.length || waypoints.length < 2) return { geometry: [], segmentIds: [], km: 0 }
   const key = (p: Coordinate) => p.join(','),
@@ -256,7 +265,7 @@ export function calculatePath(
       const from = key(s.points[i - 1]),
         km = distance(s.points[i - 1], p),
         score = segmentScore(s, time, date, incidents, risks)
-      const cost = km * (1 + (100 - (score ?? 25)) / 100)
+      const cost = weighting === 'shortest' ? km : km * (1 + (100 - (score ?? 25)) / 100)
       graph.get(from)!.push({ to: k, cost, segmentId: s.id })
       graph.get(k)!.push({ to: from, cost, segmentId: s.id })
     }),
@@ -401,3 +410,36 @@ export const withEmails = <T extends { emails: DemoEmail[] }>(
     ...state.emails,
   ],
 })
+// Entrenamiento libre: el corredor graba sin elegir ruta. En el prototipo el GPS se simula
+// sobre un recorrido de ida y vuelta por calles de Loja; ese trazado no se dibuja como guía.
+export const FREE_ROUTE_ID = 'entrenamiento-libre'
+export const isFreeTraining = (route?: Pick<RouteData, 'id'> | null) => route?.id === FREE_ROUTE_ID
+const FREE_FALLBACK: Coordinate[] = [
+  [-3.99312, -79.20448],
+  [-3.99105, -79.20391],
+  [-3.98874, -79.20322],
+  [-3.98641, -79.20255],
+  [-3.98405, -79.20201],
+  [-3.98168, -79.20152],
+]
+export function freeTrainingRoute(base?: RouteData | null): RouteData {
+  const out = base && base.geometry.length > 1 ? base.geometry : FREE_FALLBACK
+  const back = [...out].reverse().slice(1)
+  const loop = [...out.slice(1), ...back]
+  const geometry = [...out, ...back, ...loop, ...loop]
+  return {
+    id: FREE_ROUTE_ID,
+    name: 'Entrenamiento libre',
+    area: 'Loja',
+    km: +length(geometry).toFixed(2),
+    min: 0,
+    difficulty: 'Libre',
+    desc: 'Recorrido grabado sin ruta asignada.',
+    segmentIds: [],
+    geometry,
+    private: true,
+    owned: true,
+    official: false,
+    verified: false,
+  }
+}

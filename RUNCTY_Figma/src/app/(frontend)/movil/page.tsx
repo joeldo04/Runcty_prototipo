@@ -1,9 +1,12 @@
 import Script from 'next/script'
 import App from '../_components/runcty/App'
+import { CLARITY_ENABLED } from '../_components/runcty/features'
 
 export default function MobilePage() {
   return (
     <>
+      {/* Analítica pausada hasta contar con el permiso del club (ver CLARITY_ENABLED). */}
+      {CLARITY_ENABLED && (
       <Script id="runcty-clarity" strategy="afterInteractive">
         {`
           if (window.location.hostname === 'runcty-prototipo-web-movil.vercel.app') {
@@ -15,6 +18,7 @@ export default function MobilePage() {
           }
         `}
       </Script>
+      )}
       <App initialExperience="mobile" />
     </>
   )

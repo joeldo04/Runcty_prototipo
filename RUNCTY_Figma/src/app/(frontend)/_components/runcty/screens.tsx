@@ -28,7 +28,6 @@ import {
   Shield,
   SlidersHorizontal,
   Compass,
-  Handshake,
   Sun,
   Sunrise,
   Trash2,
@@ -59,6 +58,7 @@ import {
   SpaceSchedule,
   Status,
   TimeControl,
+  UserAvatar,
 } from './components'
 import {
   colorHex,
@@ -862,13 +862,16 @@ export function RouteDetail({
             <DemoTag />
           </div>
         </div>
-        {!mobile && (
+        {/* Sin "Correr esta ruta" ni guardar, la barra de acciones no se muestra en esta versión. */}
+        {!mobile && SHOW_FUTURE && (
           <div className="detail-cta">
             {SHOW_FUTURE && <SaveButton route={route} />}
-            <Button variant="orange" onClick={() => run(route)}>
-              <Activity />
-              Correr esta ruta
-            </Button>
+            {SHOW_FUTURE && (
+              <Button variant="orange" onClick={() => run(route)}>
+                <Activity />
+                Correr esta ruta
+              </Button>
+            )}
           </div>
         )}
       </div>
@@ -905,13 +908,15 @@ export function RouteDetail({
           <TimeControl compact />
           <ClubAlerts item={route} hours={route.recommended} />
           <SafetyNote />
-          {mobile && (
+          {mobile && SHOW_FUTURE && (
             <div className="mobile-detail-actions">
               {SHOW_FUTURE && <SaveButton route={route} />}
-              <Button variant="orange" onClick={() => run(route)}>
-                <Activity />
-                Correr esta ruta
-              </Button>
+              {SHOW_FUTURE && (
+                <Button variant="orange" onClick={() => run(route)}>
+                  <Activity />
+                  Correr esta ruta
+                </Button>
+              )}
             </div>
           )}
         </aside>
@@ -1087,9 +1092,11 @@ export function History({
       >
         <Button
           variant="orange"
-          disabled={!state.catalog.length}
+          disabled={SHOW_FUTURE && !state.catalog.length}
           onClick={() => {
+            // Modo libre: se entra a grabar sin ruta; la del catálogo solo se usa con SHOW_FUTURE.
             if (state.catalog[0]) run(state.catalog[0])
+            else if (!SHOW_FUTURE) run(state.session.route)
           }}
         >
           <Activity />
@@ -1098,7 +1105,7 @@ export function History({
       </PageTitle>
       {state.trainings.some((t) => t.pendingSync) && (
         <div className="sync-pending" role="status">
-          <span>Tienes entrenamientos pendientes de sincronizar.</span>
+          <span>Tienes entrenamientos guardados en tu celular, pendientes de enviar.</span>
           <button
             type="button"
             onClick={() => {
@@ -1106,10 +1113,10 @@ export function History({
                 ...s,
                 trainings: s.trainings.map((t) => ({ ...t, pendingSync: false })),
               }))
-              notify('Conexión recuperada. Tus entrenamientos se subieron sin duplicarse.')
+              notify('Simulación: al volver la conexión, cada entrenamiento se envía una sola vez.')
             }}
           >
-            Sincronizar ahora
+            Simular conexión recuperada
           </button>
         </div>
       )}
@@ -1148,7 +1155,7 @@ export function History({
                   <p>
                     {new Date(t.date).toLocaleDateString('es', { weekday: 'long' })} · GPS
                   </p>
-                  {t.pendingSync && <span className="route-flag">Pendiente de sincronizar</span>}
+                  {t.pendingSync && <span className="route-flag">Pendiente de envío</span>}
                 </div>
                 <span>
                   <strong>{t.km.toFixed(2)}</strong>km
@@ -1264,10 +1271,10 @@ export function Profile({
   return (
     <div className={`profile-screen ${mobile ? 'mobile-padded' : ''}`}>
       <div className="profile-heading">
-        <span className="profile-avatar">{user?.name.charAt(0).toUpperCase()}</span>
+        <UserAvatar size={mobile ? 56 : 64} className="profile-avatar" />
         <div>
           <span className="eyebrow">TU ESPACIO EN RUNCTY</span>
-          <h1>{user?.name ?? 'Tu perfil'}</h1>
+          <h1>{state.profile.name || user?.name || 'Tu perfil'}</h1>
           {SHOW_FUTURE && (
             <>
               <p>Corredor {state.profile.level.toLowerCase()}</p>
@@ -1419,16 +1426,6 @@ export function Profile({
                 },
               ]
             : []),
-          {
-            icon: UserX,
-            label: 'Eliminar mi cuenta',
-            desc: 'Borra tus datos de RUNCTY',
-            action: () => {
-              setPassword('')
-              setDialog('delete')
-            },
-            danger: true,
-          },
         ] as ProfileItem[]).filter((item) => SHOW_FUTURE || !item.future).map(({ icon: I, label, desc, action, danger }) => (
           <button key={label} onClick={action} className={danger ? 'profile-danger' : undefined}>
             <span>
@@ -1442,10 +1439,39 @@ export function Profile({
           </button>
         ))}
       </div>
-      <button type="button" className="logout-button" onClick={() => setDialog('logout')}>
-        <LogOut />
-        Cerrar sesión
-      </button>
+      {/* Acciones de cuenta, separadas de las opciones habituales. Solo eliminar usa rojo. */}
+      <section className="profile-account" aria-labelledby="profile-account-title">
+        <h2 id="profile-account-title">Cuenta</h2>
+        <div className="profile-account-actions">
+          <button
+            type="button"
+            className="profile-account-action is-danger"
+            onClick={() => {
+              setPassword('')
+              setDialog('delete')
+            }}
+          >
+            <span>
+              <UserX />
+            </span>
+            <div>
+              <strong>Eliminar mi cuenta</strong>
+              <p>Borra tus datos de RUNCTY</p>
+            </div>
+            <ChevronRight />
+          </button>
+          <button type="button" className="profile-account-action" onClick={() => setDialog('logout')}>
+            <span>
+              <LogOut />
+            </span>
+            <div>
+              <strong>Cerrar sesión</strong>
+              <p>Sal de tu cuenta en este dispositivo</p>
+            </div>
+            <ChevronRight />
+          </button>
+        </div>
+      </section>
       {dialog === 'personal' && (
         <Modal title="Tus datos personales" onClose={() => setDialog(null)}>
           <label className="field">
@@ -1544,12 +1570,18 @@ export function Profile({
       {dialog === 'logout' && (
         <Confirm
           title="¿Cerrar sesión?"
-          message="Tus datos sincronizados seguirán en tu cuenta. Se retirarán de esta sesión y volverás a la exploración pública."
+          message={
+            signedOut
+              ? 'Tus datos sincronizados seguirán en tu cuenta. Se retirarán de esta sesión y volverás a la pantalla de inicio.'
+              : 'Tus datos sincronizados seguirán en tu cuenta. Se retirarán de esta sesión y volverás a la exploración pública.'
+          }
           label="Cerrar sesión"
           onClose={() => setDialog(null)}
           confirm={() => {
             void logout().then((closed) => {
-              if (closed) go('explore')
+              if (!closed) return
+              if (signedOut) signedOut()
+              else go('explore')
             })
           }}
         />
@@ -1570,7 +1602,8 @@ export function PublicClub({ open, go, mobile = false }: ScreenProps) {
   const stats = [
     { label: 'Rutas oficiales', value: official.length, icon: RouteIcon, tone: 'tone-wine', target: 'routes' },
     { label: 'Espacios recomendados', value: state.spaces.length, icon: MapPin, tone: 'tone-green', target: 'spaces' },
-    { label: 'Aliados del club', value: state.sponsors.filter((s) => s.active).length, icon: Handshake, tone: 'tone-amber', target: '' },
+    // Los patrocinadores de la demo son de ejemplo: no se presentan como aliados del club.
+    { label: 'Reportes aprobados', value: state.incidents.filter((i) => i.status === 'Aprobado').length, icon: Flag, tone: 'tone-amber', target: '' },
   ]
   return (
     <div className={`club-community ${mobile ? 'mobile-padded' : ''}`}>

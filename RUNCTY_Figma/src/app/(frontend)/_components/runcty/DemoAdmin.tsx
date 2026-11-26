@@ -41,7 +41,7 @@ const clubSteps = [
   { id: 'official', target: 'admin-official', title: 'Rutas oficiales y horarios', text: 'Da el distintivo Oficial Gacelas y define a qué hora conviene correr cada ruta.' },
   { id: 'spaces', target: 'admin-adminspaces', title: 'Espacios recomendados', text: 'Registra parques, estadios y senderos con sus horarios recomendados.' },
   { id: 'risks', target: 'admin-risks', title: 'Zonas de riesgo', text: 'Registra cada zona con su fuente y vigencia. Influye en el índice mientras esté vigente.' },
-  { id: 'sponsors', target: ['admin-sponsors', 'admin-banners'], title: 'Patrocinadores y banners', text: 'Gestiona a los aliados del club y publica sus banners con fechas de vigencia.' },
+  { id: 'sponsors', target: ['admin-sponsors', 'admin-banners'], title: 'Patrocinadores y banners', text: 'Gestiona a los patrocinadores y publica sus banners con fechas de vigencia.' },
 ]
 const systemSteps = [
   { id: 'users', target: 'admin-users', title: 'Usuarios y roles', text: 'Busca cuentas, desactívalas o reactívalas y da o quita el rol de administrador.' },
