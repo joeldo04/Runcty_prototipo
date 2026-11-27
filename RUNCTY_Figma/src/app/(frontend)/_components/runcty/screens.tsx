@@ -1461,7 +1461,8 @@ export function Profile({
             <ChevronRight />
           </button>
         ))}
-        {mobile && (
+        {/* Modo oscuro: oculto con SHOW_FUTURE, no entra en esta versión. */}
+        {mobile && SHOW_FUTURE && (
           <button
             type="button"
             role="switch"

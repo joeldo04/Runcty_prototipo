@@ -496,7 +496,8 @@ function MobileApp({
   const [entry, setEntry] = useState<'welcome' | 'login' | 'register' | 'demo'>('welcome')
   // Modo oscuro elegido en Perfil: solo aplica a la app móvil con sesión iniciada.
   const [theme] = useTheme()
-  const dark = !!user && theme === 'oscuro'
+  // El modo oscuro queda para una versión futura: oculto con SHOW_FUTURE.
+  const dark = SHOW_FUTURE && !!user && theme === 'oscuro'
   useThemeColor(user ? (dark ? '#000000' : '#F7F5F7') : '#2A0A1F')
   const [page, setPage] = useState(startPage),
     [selected, setSelected] = useState<RouteData | null>(
@@ -838,10 +839,13 @@ export default function App({
         initialPage={initialPage}
         initialRoute={initialRoute}
       />
-      <EntryAnnouncement
-        accountId={user?.id ?? null}
-        enabled={initialExperience !== 'selector' && runnerOnly && !['running', 'paused', 'survey'].includes(state.session.phase)}
-      />
+      {/* Los anuncios del club quedan para una versión futura: oculto con SHOW_FUTURE. */}
+      {SHOW_FUTURE && (
+        <EntryAnnouncement
+          accountId={user?.id ?? null}
+          enabled={initialExperience !== 'selector' && runnerOnly && !['running', 'paused', 'survey'].includes(state.session.phase)}
+        />
+      )}
     </>
   )
 }

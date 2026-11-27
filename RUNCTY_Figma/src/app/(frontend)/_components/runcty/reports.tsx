@@ -196,7 +196,11 @@ export function Reports({
 
 export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; close: () => void }) {
   const { state, user, update, notify, pending, syncError, isDemo } = useDemo()
-  const types = isDemo ? incidentTypes : incidentTypes.filter((item) => !demoOnlyIncidentTypes.includes(item))
+  // Esta versión usa los 8 tipos de la base de datos y uno por reporte. Los tipos nuevos y elegir
+  // dos quedan ocultos con SHOW_FUTURE.
+  const types =
+    SHOW_FUTURE && isDemo ? incidentTypes : incidentTypes.filter((item) => !demoOnlyIncidentTypes.includes(item))
+  const maxTypes = SHOW_FUTURE ? MAX_INCIDENT_TYPES : 1
   const [step, setStep] = useState(0),
     [selectedTypes, setSelectedTypes] = useState<string[]>([]),
     [coordinate, setCoordinate] = useState<Coordinate[]>([]),
@@ -211,22 +215,27 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
   const names = ['Tipo', 'Ubicación', 'Detalles', 'Revisar']
   const [type = '', secondaryType] = selectedTypes
   const typeLabel = selectedTypes.join(' · ')
-  // Se pueden marcar hasta dos tipos; tocar uno marcado lo quita.
+  // Con SHOW_FUTURE se pueden marcar hasta dos tipos; tocar uno marcado lo quita.
+  // En esta versión es un solo tipo: elegir otro reemplaza al anterior.
   const toggleType = (item: string) => {
     setError('')
+    if (maxTypes === 1) {
+      setSelectedTypes([item])
+      return
+    }
     if (selectedTypes.includes(item)) {
       setSelectedTypes(selectedTypes.filter((value) => value !== item))
       return
     }
-    if (selectedTypes.length >= MAX_INCIDENT_TYPES) {
-      setError(`Puedes elegir hasta ${MAX_INCIDENT_TYPES} tipos. Quita uno para cambiarlo.`)
+    if (selectedTypes.length >= maxTypes) {
+      setError(`Puedes elegir hasta ${maxTypes} tipos. Quita uno para cambiarlo.`)
       return
     }
     setSelectedTypes([...selectedTypes, item])
   }
   const next = () => {
     if (step === 0 && !type) {
-      setError('Selecciona al menos un tipo de incidente.')
+      setError(maxTypes === 1 ? 'Selecciona el tipo de incidente.' : 'Selecciona al menos un tipo de incidente.')
       return
     }
     if (step === 1 && (!coordinate.length || !location.trim())) {
@@ -403,13 +412,17 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
         {step === 0 && (
           <>
             <h2>¿Qué ocurrió?</h2>
-            <p>
-              Elige hasta {MAX_INCIDENT_TYPES} opciones si en el mismo lugar pasó más de una cosa.
-              <strong className="incident-types-count" aria-live="polite">
-                {' '}
-                {selectedTypes.length} de {MAX_INCIDENT_TYPES} elegidos
-              </strong>
-            </p>
+            {maxTypes > 1 ? (
+              <p>
+                Elige hasta {maxTypes} opciones si en el mismo lugar pasó más de una cosa.
+                <strong className="incident-types-count" aria-live="polite">
+                  {' '}
+                  {selectedTypes.length} de {maxTypes} elegidos
+                </strong>
+              </p>
+            ) : (
+              <p>Elige la opción que mejor describe tu observación.</p>
+            )}
             <div className="incident-types">
               {types.map((item) => (
                 <button
