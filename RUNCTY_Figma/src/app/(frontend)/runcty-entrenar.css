@@ -938,3 +938,6 @@ html, body { overscroll-behavior: none; }
 
 /* Reportes: contador de tipos elegidos (máximo dos) */
 .runcty-app .incident-types-count { display: block; margin-top: 4px; color: var(--color-primary-pressed); font-size: 12px; font-weight: 700; }
+
+/* Inicio móvil: nota del horario bajo "Mejores para este horario" */
+.runcty-app .home-routes-note { display: block; margin-top: 2px; color: var(--color-muted); font-size: 12px; font-weight: 500; }

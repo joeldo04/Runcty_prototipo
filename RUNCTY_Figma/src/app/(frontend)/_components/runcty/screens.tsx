@@ -194,6 +194,20 @@ export function Explore({
           -1),
     )
     .slice(0, mobile ? 5 : 3)
+  // Inicio móvil: sin búsqueda ni filtros solo se muestran las 2 rutas con mejor condición en
+  // este horario (nunca las marcadas con Precaución). La lista completa está en la pestaña Rutas.
+  const searching =
+    !!query.trim() || difficulty !== 'Todos' || km !== 'Todos' || source !== 'Todas'
+  const homeRoutes =
+    mobile && !searching
+      ? list
+          .filter((r) =>
+            ['high', 'medium'].includes(
+              safety(routeScore(r, state.time, state.date, state.incidents, state.risks, state.roads).score).key,
+            ),
+          )
+          .slice(0, 2)
+      : list
   const night = state.time === '19:00' || state.time === '05:30'
   const selectedSpace = state.spaces.find((s) => s.id === spaceDetail)
   return (
@@ -486,20 +500,23 @@ export function Explore({
           )}
         </section>
         {mobile && !expanded && <ConditionsCard />}
-        {!expanded && (
+        {!expanded && !(mobile && !searching && !homeRoutes.length) && (
           <section className="recommended-panel">
             <div className="section-heading">
               <div>
                 {!mobile && <span className="eyebrow">SELECCIONADAS PARA TI</span>}
-                <h2>Rutas recomendadas</h2>
+                <h2>
+                  {!mobile ? 'Rutas recomendadas' : searching ? 'Rutas encontradas' : 'Mejores para este horario'}
+                </h2>
+                {mobile && !searching && <small className="home-routes-note">Condiciones a las {state.time}</small>}
               </div>
               <button className="text-action" onClick={() => go('routes')}>
                 Ver todas <ArrowRight />
               </button>
             </div>
             <div className={mobile ? 'home-route-list' : 'recommended-list'}>
-              {list.length ? (
-                list.map((r) =>
+              {homeRoutes.length ? (
+                homeRoutes.map((r) =>
                   mobile ? (
                     <HomeRouteRow key={r.id} route={r} onOpen={open} />
                   ) : (
@@ -541,11 +558,11 @@ export function Explore({
       <SafetyNote />
       {!full && !expanded && (
         <>
-          <AdCarousel />
+          {!mobile && <AdCarousel />}
           <section className="places-section">
             <div className="section-heading">
               <div>
-                <span className="eyebrow">RECOMENDADOS POR GACELAS</span>
+                <span className="eyebrow">ESPACIOS DEL CLUB</span>
                 <h2>Espacios para moverte</h2>
               </div>
               <button className="text-action" onClick={() => go('spaces')}>
@@ -590,6 +607,8 @@ export function Explore({
             </div>
             <ArrowRight />
           </button>
+          {/* En móvil la publicidad va al final para no tapar lo que se usa antes de salir. */}
+          {mobile && <AdCarousel />}
         </>
       )}
       {selectedSpace && (
