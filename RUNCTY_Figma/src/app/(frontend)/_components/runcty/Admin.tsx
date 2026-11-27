@@ -45,6 +45,7 @@ import {
   OfficialBadge,
 } from './components'
 import {
+  incidentLabel,
   routeScore,
   scheduleStatus,
   today,
@@ -149,7 +150,7 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
     })),
     ...pending.map((i) => ({
       id: i.id,
-      title: `Nuevo reporte · ${i.type}`,
+      title: `Nuevo reporte · ${incidentLabel(i)}`,
       time: i.createdAt,
       icon: Flag,
     })),
@@ -222,7 +223,7 @@ export function ClubAdmin({ page, go }: { page: string; go: (page: string) => vo
                   <Flag />
                 </span>
                 <div>
-                  <strong>{i.type}</strong>
+                  <strong>{incidentLabel(i)}</strong>
                   <p>
                     {i.location} · {i.owner}
                   </p>
@@ -332,7 +333,7 @@ function Moderation({ kind }: { kind: 'incidents' | 'routes' }) {
     if (!item) return
     if (!update((s) => ({
       ...s,
-      moderation: isDemo ? [{ id: uid(), date: new Date().toISOString(), item: 'type' in item ? item.type : item.name, decision: status, reason: status === 'Rechazado' ? reason : '' }, ...s.moderation] : s.moderation,
+      moderation: isDemo ? [{ id: uid(), date: new Date().toISOString(), item: 'type' in item ? incidentLabel(item) : item.name, decision: status, reason: status === 'Rechazado' ? reason : '' }, ...s.moderation] : s.moderation,
       incidents:
         kind === 'incidents'
           ? s.incidents.map((i) =>

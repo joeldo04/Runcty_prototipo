@@ -18,6 +18,7 @@ import {
   type Coordinate,
   type RouteData,
   type Street,
+  incidentLabel,
 } from './data'
 import { useDemo } from './store'
 
@@ -354,7 +355,7 @@ export default function SafetyMap(props: Props) {
         }).addTo(group)
         const content = document.createElement('div')
         const title = document.createElement('strong')
-        title.textContent = incident.type
+        title.textContent = incidentLabel(incident)
         const detail = document.createElement('p')
         detail.textContent = `${incident.location} · ${incident.date}`
         const note = document.createElement('small')

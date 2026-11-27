@@ -62,6 +62,8 @@ export const geometryFor = (ids: string[], streets: Street[] = []): Coordinate[]
 export interface Incident {
   id: string
   type: string
+  // En una misma zona puede pasar más de una cosa: el reporte admite un segundo tipo.
+  secondaryType?: string
   location: string
   coordinate: Coordinate
   date: string
@@ -158,6 +160,10 @@ export const incidentTypes = [
 ]
 // Tipos nuevos de la demo. La validación del backend aún no los incluye (requiere migración),
 // por eso fuera de la demo el formulario muestra solo los tipos que la API acepta.
+// Hasta dos tipos por reporte, mostrados juntos donde aparece el incidente.
+export const MAX_INCIDENT_TYPES = 2
+export const incidentLabel = (incident: Pick<Incident, 'type' | 'secondaryType'>) =>
+  [incident.type, incident.secondaryType].filter(Boolean).join(' · ')
 export const demoOnlyIncidentTypes = ['Trabajos en la vía', 'Inundación o lodo', 'Obstáculos o escombros']
 export const safety = (score: number | null | undefined) =>
   score == null

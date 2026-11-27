@@ -935,3 +935,6 @@ html, body { overscroll-behavior: none; }
 @media (max-width: 700px) {
   .runcty-app .official-records tbody > tr { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* Reportes: contador de tipos elegidos (máximo dos) */
+.runcty-app .incident-types-count { display: block; margin-top: 4px; color: var(--color-primary-pressed); font-size: 12px; font-weight: 700; }

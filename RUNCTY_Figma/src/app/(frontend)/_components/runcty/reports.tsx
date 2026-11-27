@@ -25,7 +25,9 @@ import {
 import SafetyMap from './SafetyMap'
 import { BackButton, Button, DemoTag, EmptyState, Modal, PageTitle, Status } from './components'
 import {
+  MAX_INCIDENT_TYPES,
   demoOnlyIncidentTypes,
+  incidentLabel,
   incidentTypes,
   publicIncidents,
   today,
@@ -133,7 +135,7 @@ export function Reports({
                 </span>
                 <div className="incident-item-main">
                   <div>
-                    <h3>{i.type}</h3>
+                    <h3>{incidentLabel(i)}</h3>
                     <Status value={i.status} />
                   </div>
                   <p>
@@ -175,7 +177,7 @@ export function Reports({
         </>
       )}
       {detail && (
-        <Modal title={detail.type} onClose={() => setDetail(null)}>
+        <Modal title={incidentLabel(detail)} onClose={() => setDetail(null)}>
           <Status value={detail.status} />
           <p>
             {detail.location} · {detail.date} · {detail.time}
@@ -196,7 +198,7 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
   const { state, user, update, notify, pending, syncError, isDemo } = useDemo()
   const types = isDemo ? incidentTypes : incidentTypes.filter((item) => !demoOnlyIncidentTypes.includes(item))
   const [step, setStep] = useState(0),
-    [type, setType] = useState(''),
+    [selectedTypes, setSelectedTypes] = useState<string[]>([]),
     [coordinate, setCoordinate] = useState<Coordinate[]>([]),
     [location, setLocation] = useState(''),
     [date, setDate] = useState(today()),
@@ -207,9 +209,24 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
     [error, setError] = useState(''),
     [sent, setSent] = useState(false)
   const names = ['Tipo', 'Ubicación', 'Detalles', 'Revisar']
+  const [type = '', secondaryType] = selectedTypes
+  const typeLabel = selectedTypes.join(' · ')
+  // Se pueden marcar hasta dos tipos; tocar uno marcado lo quita.
+  const toggleType = (item: string) => {
+    setError('')
+    if (selectedTypes.includes(item)) {
+      setSelectedTypes(selectedTypes.filter((value) => value !== item))
+      return
+    }
+    if (selectedTypes.length >= MAX_INCIDENT_TYPES) {
+      setError(`Puedes elegir hasta ${MAX_INCIDENT_TYPES} tipos. Quita uno para cambiarlo.`)
+      return
+    }
+    setSelectedTypes([...selectedTypes, item])
+  }
   const next = () => {
     if (step === 0 && !type) {
-      setError('Selecciona el tipo de incidente.')
+      setError('Selecciona al menos un tipo de incidente.')
       return
     }
     if (step === 1 && (!coordinate.length || !location.trim())) {
@@ -231,11 +248,16 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
     const incident: Incident = {
       id: uid(),
       type,
+      ...(secondaryType && isDemo ? { secondaryType } : {}),
       coordinate: coordinate[0],
       location: location.trim(),
       date,
       time,
-      description,
+      // La API guarda un solo tipo: fuera de la demo el segundo se conserva en la descripción.
+      description:
+        secondaryType && !isDemo
+          ? `También: ${secondaryType}.${description ? ' ' + description : ''}`
+          : description,
       status: 'Pendiente',
       owner: user?.name ?? 'Corredor',
       owned: true,
@@ -248,7 +270,7 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
   const another = () => {
     setSent(false)
     setStep(0)
-    setType('')
+    setSelectedTypes([])
     setCoordinate([])
     setLocation('')
     setDescription('')
@@ -284,8 +306,8 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
               <IncidentTypeIcon type={type} />
             </span>
             <div>
-              <small>Tipo de incidente</small>
-              <strong>{type}</strong>
+              <small>{secondaryType ? 'Tipos de incidente' : 'Tipo de incidente'}</small>
+              <strong>{typeLabel}</strong>
             </div>
             <span className="report-sent-chip">Pendiente</span>
           </div>
@@ -381,23 +403,26 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
         {step === 0 && (
           <>
             <h2>¿Qué ocurrió?</h2>
-            <p>Elige la opción que mejor describe tu observación.</p>
+            <p>
+              Elige hasta {MAX_INCIDENT_TYPES} opciones si en el mismo lugar pasó más de una cosa.
+              <strong className="incident-types-count" aria-live="polite">
+                {' '}
+                {selectedTypes.length} de {MAX_INCIDENT_TYPES} elegidos
+              </strong>
+            </p>
             <div className="incident-types">
               {types.map((item) => (
                 <button
                   key={item}
-                  className={type === item ? 'selected' : ''}
-                  aria-pressed={type === item}
-                  onClick={() => {
-                    setType(item)
-                    setError('')
-                  }}
+                  className={selectedTypes.includes(item) ? 'selected' : ''}
+                  aria-pressed={selectedTypes.includes(item)}
+                  onClick={() => toggleType(item)}
                 >
                   <span className="incident-type-icon" aria-hidden="true">
                     <IncidentTypeIcon type={item} />
                   </span>
                   {item}
-                  {type === item ? <Check /> : <ChevronRight />}
+                  {selectedTypes.includes(item) ? <Check /> : <ChevronRight />}
                 </button>
               ))}
             </div>
@@ -483,8 +508,8 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
             <h2>Revisa tu aporte.</h2>
             <dl className="review-definition">
               <div>
-                <dt>Tipo</dt>
-                <dd>{type}</dd>
+                <dt>{secondaryType ? 'Tipos' : 'Tipo'}</dt>
+                <dd>{typeLabel}</dd>
               </div>
               <div>
                 <dt>Ubicación</dt>

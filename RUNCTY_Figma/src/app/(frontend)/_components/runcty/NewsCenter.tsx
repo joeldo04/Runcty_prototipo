@@ -1,6 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import { incidentLabel } from './data'
 import { ArrowRight, Bell, LockKeyhole, Navigation, Shield, Users, type LucideIcon } from 'lucide-react'
 import { Button, Modal, activeBanners } from './components'
 import { useDemo } from './store'
@@ -80,7 +81,7 @@ export default function NewsCenter({
       .sort((a, b) => b.createdAt - a.createdAt)
       .map((incident) => ({
         id: incident.id,
-        title: `Reporte: ${incident.type}`,
+        title: `Reporte: ${incidentLabel(incident)}`,
         text: `Estado: ${incident.status}`,
         page: 'reports',
       })),

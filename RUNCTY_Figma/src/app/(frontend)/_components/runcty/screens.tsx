@@ -78,6 +78,7 @@ import {
   type RouteData,
   type Training,
   freeTrainingRoute,
+  incidentLabel,
 } from './data'
 import { useDemo, useRoutes } from './store'
 import { Reports } from './reports'
@@ -981,7 +982,7 @@ export function RouteDetail({
               <div className="nearby-report" key={i.id}>
                 <Flag />
                 <div>
-                  <strong>{i.type}</strong>
+                  <strong>{incidentLabel(i)}</strong>
                   <p>
                     {i.location} · {i.date}
                   </p>

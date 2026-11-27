@@ -57,6 +57,7 @@ import {
   uid,
   type RouteData,
   type SurveyAnswers,
+  incidentLabel,
 } from './data'
 import { useDemo, useRoutes } from './store'
 import RouteQuestionnaire, {
@@ -975,7 +976,7 @@ export default function Training({
           <ul className="report-warning-list">
             {nearbyReports.map((incident) => (
               <li key={incident.id}>
-                {incident.type}
+                {incidentLabel(incident)}
                 <small>{reportAge(incident.createdAt)}</small>
               </li>
             ))}
