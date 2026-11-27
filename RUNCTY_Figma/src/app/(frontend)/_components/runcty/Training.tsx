@@ -1331,12 +1331,12 @@ export default function Training({
         </div>
       )}
       {finish && (
-        <Modal title="¿Finalizar entrenamiento?" onClose={() => setFinish(false)} className="finish-modal">
+        <Modal title="Finalizar entrenamiento" onClose={() => setFinish(false)} className="finish-modal">
           <span className="finish-modal-icon" aria-hidden="true">
             <CheckeredFlag />
           </span>
           <p className="finish-modal-text">
-            Tu entrenamiento se guardará en el historial para que puedas consultar tu progreso.
+            Tu entrenamiento se guardará en el historial.
             {!isDemo && ' También cerraremos tus enlaces de ubicación.'}
           </p>
           <div className="finish-modal-actions">
@@ -1344,8 +1344,8 @@ export default function Training({
               <Check />
               Finalizar y guardar
             </Button>
-            <Button variant="secondary" className="full" onClick={() => setFinish(false)}>
-              Continuar entrenamiento
+            <Button variant="ghost" className="full" onClick={() => setFinish(false)}>
+              Seguir entrenando
             </Button>
           </div>
         </Modal>

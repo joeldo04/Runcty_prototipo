@@ -103,3 +103,4 @@
 
 /* Métricas en vivo: en modo oscuro (oculto en esta versión) el panel sigue el fondo neutro */
 .runcty-app .phone-frame[data-theme='dark'] .recording-metrics:not(.recording-status) { background: var(--color-shell); }
+.runcty-app .phone-frame[data-theme='dark'] .finish-modal-actions .button-ghost { color: #FF4FA3; }

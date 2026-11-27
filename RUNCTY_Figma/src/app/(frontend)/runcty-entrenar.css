@@ -1157,3 +1157,42 @@ html, body { overscroll-behavior: none; }
 @media (prefers-reduced-motion: reduce) {
   .runcty-app .phone-frame .recording-dock .dock-report > span { transition: none; }
 }
+
+/* ===== Modal de finalizar entrenamiento: versión minimalista =====
+   Sin adornos: ícono simple sin contenedor, título y texto cortos, acción principal sólida
+   y "Seguir entrenando" como acción discreta. */
+.runcty-app .modal.finish-modal {
+  max-width: 360px;
+  padding: 28px 24px 16px;
+  border-radius: 24px;
+  box-shadow: 0 18px 48px rgb(26 10 22 / 22%);
+}
+.runcty-app .modal.finish-modal::before,
+.runcty-app .modal.finish-modal::after { content: none; display: none; }
+.runcty-app .finish-modal-icon {
+  width: auto;
+  height: auto;
+  margin: 6px 0 14px;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-primary);
+}
+.runcty-app .finish-modal-icon svg { width: 40px; height: 40px; }
+.runcty-app .modal.finish-modal > h2 { padding: 0 8px; font-size: 22px; font-weight: 800; letter-spacing: -.01em; }
+.runcty-app .finish-modal-text { max-width: none; margin: 8px 0 22px; font-size: 14px; line-height: 1.45; text-wrap: balance; }
+.runcty-app .finish-modal-actions { gap: 4px; }
+.runcty-app .finish-modal-actions .button { min-height: 52px; border-radius: 16px; font-size: 16px; font-weight: 700; }
+.runcty-app .finish-modal-actions .button svg { width: 19px; height: 19px; }
+.runcty-app .finish-modal-actions .button-ghost {
+  min-height: 46px;
+  border-color: transparent;
+  background: transparent;
+  color: var(--color-primary);
+  font-size: 15px;
+  font-weight: 650;
+  box-shadow: none;
+}
+.runcty-app .finish-modal-actions .button-ghost:hover { border-color: transparent; background: transparent; color: var(--color-primary-pressed); }
+@media (hover: hover) and (pointer: fine) {
+  .runcty-app .finish-modal-actions .button-ghost:hover { background: var(--color-primary-soft); }
+}
