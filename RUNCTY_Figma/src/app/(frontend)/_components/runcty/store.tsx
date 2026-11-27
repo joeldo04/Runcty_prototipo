@@ -33,7 +33,9 @@ import {
   type RouteRating,
   type Street,
   type SurveyAnswers,
+  freeTrainingRoute,
 } from './data'
+import { SHOW_FUTURE } from './features'
 import type { PublicRuncty } from '@/lib/runcty-queries'
 import { DEMO_CITY, DEMO_ROADS, DEMO_ROUTES, DEMO_SPACES, DEMO_SPONSORS, DEMO_BANNERS, DEMO_USERS, DEMO_ACCESS_PASSWORD, DEMO_LOGINS, demoReport } from './demo-seed'
 import type { User } from '@/payload-types'
@@ -134,7 +136,8 @@ function initialState(data: PublicRuncty | DemoState): DemoState {
     routeOverrides: {},
     session: {
       phase: 'ready',
-      route: data.catalog[0] ?? EMPTY_ROUTE,
+      // Sin ruta elegida se entrena en modo libre; la ruta se puede elegir antes de iniciar.
+      route: SHOW_FUTURE ? (data.catalog[0] ?? EMPTY_ROUTE) : freeTrainingRoute(data.catalog[0]),
       seconds: 0,
       km: 0,
       count: 3,

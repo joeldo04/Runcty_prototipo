@@ -250,7 +250,6 @@ export default function Training({
       ...s,
       session: {
         ...s.session,
-        ...(FREE_MODE ? { route: freeTrainingRoute(freeBase) } : {}),
         phase: 'permission',
         seconds: 0,
         km: 0,
@@ -359,7 +358,7 @@ export default function Training({
           : 'Sincronizando el recorrido como ruta privada en tu cuenta.',
     )
   }
-  if (!FREE_MODE && (!route.id || route.geometry.length < 2 || route.km <= 0))
+  if (!free && (!route.id || route.geometry.length < 2 || route.km <= 0))
     return (
       <EmptyState
         title="Elige tu próximo recorrido"
@@ -714,14 +713,14 @@ export default function Training({
       {!active ? (
         <>
           <div className="training-prepare-map">
-            {FREE_MODE ? (
-              <SafetyMap tracking={freeTrainingRoute(freeBase).geometry[0]} follow showReports={false} />
+            {free ? (
+              <SafetyMap tracking={route.geometry[0]} follow showReports={false} />
             ) : (
               <SafetyMap route={route} fitRoute guide />
             )}
           </div>
           <section className="record-sheet">
-            {FREE_MODE ? (
+            {free ? (
               <div className="free-ready" role="status">
                 <span className="free-ready-icon" aria-hidden="true">
                   <LocateFixed />
@@ -729,8 +728,8 @@ export default function Training({
                 <div>
                   <strong>Listo para grabar tu entrenamiento</strong>
                   <p>
-                    Corre por donde quieras. Grabamos tu recorrido con el GPS y al terminar verás
-                    distancia, tiempo y ritmo.
+                    Corre por donde quieras: grabamos tu recorrido con el GPS. Si prefieres seguir
+                    una ruta del club, elígela con «Elegir ruta».
                   </p>
                 </div>
               </div>
@@ -770,16 +769,13 @@ export default function Training({
                 </span>
                 Iniciar
               </button>
-              {FREE_MODE ? (
-                <span className="dock-side dock-spacer" aria-hidden="true" />
-              ) : (
-                <button type="button" className="dock-side" onClick={() => setPicker(true)}>
-                  <span>
-                    <RouteIcon />
-                  </span>
-                  Cambiar ruta
-                </button>
-              )}
+              {/* Elegir una ruta es opcional: sin ruta se graba en modo libre. */}
+              <button type="button" className="dock-side" onClick={() => setPicker(true)}>
+                <span>
+                  <RouteIcon />
+                </span>
+                {free ? 'Elegir ruta' : 'Cambiar ruta'}
+              </button>
             </div>
           </section>
         </>
@@ -929,6 +925,19 @@ export default function Training({
       {picker && (
         <Modal title="Elige tu ruta" onClose={() => setPicker(false)}>
           <div className="route-pick-list">
+            {FREE_MODE && (
+              <button
+                type="button"
+                aria-pressed={free}
+                onClick={() => choose(freeTrainingRoute(freeBase))}
+              >
+                <span>
+                  <strong>Entrenamiento libre</strong>
+                  <small>Sin ruta · corre por donde quieras</small>
+                </span>
+                {free && <Check />}
+              </button>
+            )}
             {allRoutes
               .filter(
                 (r) =>

@@ -77,6 +77,7 @@ import {
   type Coordinate,
   type RouteData,
   type Training,
+  freeTrainingRoute,
 } from './data'
 import { useDemo, useRoutes } from './store'
 import { Reports } from './reports'
@@ -1095,8 +1096,8 @@ export function History({
           disabled={SHOW_FUTURE && !state.catalog.length}
           onClick={() => {
             // Modo libre: se entra a grabar sin ruta; la del catálogo solo se usa con SHOW_FUTURE.
-            if (state.catalog[0]) run(state.catalog[0])
-            else if (!SHOW_FUTURE) run(state.session.route)
+            if (!SHOW_FUTURE) run(freeTrainingRoute(state.catalog[0]))
+            else if (state.catalog[0]) run(state.catalog[0])
           }}
         >
           <Activity />
