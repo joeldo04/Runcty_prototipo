@@ -1,15 +1,22 @@
-import { useId, useMemo, useState } from 'react'
+import { useEffect, useId, useMemo, useRef, useState } from 'react'
 import {
   Check,
+  ChevronRight,
+  CloudSun,
   Eraser,
   Flag,
+  MapPin,
+  Moon,
   Navigation,
   Play,
   Plus,
   Route,
   Save,
   Compass,
+  Sun,
+  Sunrise,
   Undo2,
+  type LucideIcon,
 } from 'lucide-react'
 import SafetyMap from './SafetyMap'
 import {
@@ -34,8 +41,10 @@ import { SHOW_FUTURE } from './features'
 import {
   Button,
   EmptyState,
+  OfficialBadge,
   PageTitle,
   RouteCard,
+  RoutePreview,
   SafetyNote,
   Score,
   TimeControl,
@@ -50,6 +59,25 @@ const plannerModes = {
 const plannerOrder: PlannerMode[] = ['manual', 'calculate', 'recommend']
 // Esta versión entrega dos modos: primero la recomendación y, como extra, entre dos puntos.
 const deliveredOrder: PlannerMode[] = ['recommend', 'calculate']
+// Planificador móvil: nombres cortos de los modos, accesos rápidos de distancia, niveles y horarios.
+const mobileModeLabels: Record<PlannerMode, string> = {
+  manual: 'Trazar',
+  calculate: 'Entre dos puntos',
+  recommend: 'Recomendaciones',
+}
+const QUICK_DISTANCES = [3, 5, 10, 21]
+const LEVEL_OPTIONS = [
+  { value: 'Todos', label: 'Todos', bars: 0 },
+  { value: 'Principiante', label: 'Principiante', bars: 1 },
+  { value: 'Intermedio', label: 'Intermedio', bars: 2 },
+  { value: 'Avanzado', label: 'Avanzado', bars: 3 },
+]
+const DAY_PARTS: { time: TimeSlot; label: string; icon: LucideIcon }[] = [
+  { time: '05:30', label: 'Amanecer', icon: Sunrise },
+  { time: '08:00', label: 'Mañana', icon: Sun },
+  { time: '14:00', label: 'Tarde', icon: CloudSun },
+  { time: '19:00', label: 'Noche', icon: Moon },
+]
 
 // Trazado punto a punto: une los puntos por la red vial y, si no hay red, los ajusta al nodo
 // más cercano. Lo usan el modo manual del planificador y la gestión de rutas del club.
@@ -92,6 +120,18 @@ export default function Planner({
     [savedId, setSavedId] = useState<string | null>(null)
   const [origin, setOrigin] = useState('jipiro'),
     [destination, setDestination] = useState('centro')
+  // Cada búsqueda en móvil desplaza la vista hasta los resultados y les pasa el foco.
+  const [searchKey, setSearchKey] = useState(0)
+  const resultsRef = useRef<HTMLElement>(null),
+    resultsHeading = useRef<HTMLHeadingElement>(null)
+  useEffect(() => {
+    if (!mobile || !searchKey) return
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    resultsRef.current?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' })
+    resultsHeading.current?.focus({ preventScroll: true })
+  }, [searchKey, mobile])
+  const distanceValid = desired >= 1 && desired <= 42
+  const dayPart = DAY_PARTS.find(({ time }) => time === state.time)
   const computed = useMemo(
     () => calculatePath(draft.points, state.time, state.date, state.incidents, state.risks, state.roads),
     [draft.points, state.time, state.date, state.incidents, state.risks, state.roads],
@@ -257,11 +297,11 @@ export default function Planner({
               aria-controls={`${tabId}-content`}
               tabIndex={draft.mode === id ? 0 : -1}
               aria-selected={draft.mode === id}
-              className={draft.mode === id ? 'active' : ''}
+              className={`${draft.mode === id ? 'active' : ''} mode-${id}`}
               onClick={() => mode(id)}
             >
               <Icon />
-              {label}
+              {mobile ? mobileModeLabels[id] : label}
             </button>
           )
         })}
@@ -285,11 +325,44 @@ export default function Planner({
                 Usar ruta sugerida
               </Button>
             )}
-            <span>{state.roads.length ? `${state.roads.length} tramos disponibles · Loja` : 'Sin red vial publicada · trazado manual sin puntuación'}</span>
+            <span>
+              {mobile && state.roads.length
+                ? 'Colores según la seguridad de cada tramo'
+                : state.roads.length
+                  ? `${state.roads.length} tramos disponibles · Loja`
+                  : 'Sin red vial publicada · trazado manual sin puntuación'}
+            </span>
           </div>
           <SafetyNote />
         </section>
-        <aside className="planner-panel">
+        <aside className={`planner-panel ${mobile ? `planner-panel-${draft.mode}` : ''}`}>
+          {mobile ? (
+            <div className="planner-mode-intro">
+              <span className="planner-mode-icon" aria-hidden="true">
+                {draft.mode === 'calculate' ? <Navigation /> : draft.mode === 'manual' ? <Plus /> : <Compass />}
+              </span>
+              <div>
+                <h2>
+                  {draft.mode === 'calculate'
+                    ? 'Ve de un punto a otro'
+                    : draft.mode === 'manual'
+                      ? 'Dibuja tu recorrido'
+                      : 'Encuentra tu próxima ruta'}
+                </h2>
+                <p>
+                  {draft.mode === 'calculate'
+                    ? 'Compara la ruta más segura con la más corta.'
+                    : draft.mode === 'manual'
+                      ? 'Toca el mapa para marcar cada punto.'
+                      : 'Dinos cuánto quieres correr y te sugerimos rutas.'}
+                </p>
+              </div>
+              <span className="planner-location">
+                <MapPin aria-hidden="true" />
+                Loja, Ecuador
+              </span>
+            </div>
+          ) : (
           <div className="planner-panel-heading">
             <span className="step-number">
               {SHOW_FUTURE
@@ -313,12 +386,15 @@ export default function Planner({
               </p>
             </div>
           </div>
-          <label className="field">
-            Ciudad
-            <select disabled aria-label="Ciudad del planificador">
-              <option>Loja, Ecuador</option>
-            </select>
-          </label>
+          )}
+          {!mobile && (
+            <label className="field">
+              Ciudad
+              <select disabled aria-label="Ciudad del planificador">
+                <option>Loja, Ecuador</option>
+              </select>
+            </label>
+          )}
           {draft.mode === 'calculate' && (
             <div className="origin-destination">
               <label className="field">
@@ -368,7 +444,78 @@ export default function Planner({
               />
             </label>
           )}
-          {draft.mode === 'recommend' && (
+          {draft.mode === 'recommend' && mobile && (
+            <>
+              <fieldset className="planner-choice">
+                <legend>
+                  Distancia
+                  <strong>{distanceValid ? `${desired.toLocaleString('es')} km` : '—'}</strong>
+                </legend>
+                <div className="distance-chips">
+                  {QUICK_DISTANCES.map((km) => (
+                    <button
+                      key={km}
+                      type="button"
+                      aria-pressed={desired === km}
+                      className={desired === km ? 'selected' : ''}
+                      onClick={() => {
+                        setDesired(km)
+                        setRecommend(false)
+                      }}
+                    >
+                      {km}
+                      <small>km</small>
+                    </button>
+                  ))}
+                </div>
+                <label className={`distance-custom ${QUICK_DISTANCES.includes(desired) ? '' : 'is-custom'}`}>
+                  <span>Otra distancia</span>
+                  <input
+                    aria-label="Otra distancia en kilómetros"
+                    type="number"
+                    inputMode="decimal"
+                    min={1}
+                    max={42}
+                    step=".1"
+                    value={desired}
+                    aria-invalid={!distanceValid}
+                    onChange={(e) => {
+                      setDesired(+e.target.value)
+                      setRecommend(false)
+                    }}
+                  />
+                  <em>km</em>
+                </label>
+                {!distanceValid && (
+                  <small className="field-error" role="alert">
+                    Elige una distancia entre 1 y 42 km.
+                  </small>
+                )}
+              </fieldset>
+              <fieldset className="planner-choice">
+                <legend>Nivel</legend>
+                <div className="level-options">
+                  {LEVEL_OPTIONS.map(({ value, label, bars }) => (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={level === value}
+                      className={level === value ? 'selected' : ''}
+                      onClick={() => setLevel(value)}
+                    >
+                      <span className={`level-bars bars-${bars}`} aria-hidden="true">
+                        <i />
+                        <i />
+                        <i />
+                      </span>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            </>
+          )}
+          {draft.mode === 'recommend' && !mobile && (
             <div className="form-grid">
               <label className="field">
                 Distancia deseada (km)
@@ -397,10 +544,34 @@ export default function Planner({
               </label>
             </div>
           )}
-          <div className="field scenario-field">
-            <span>Fecha y hora de consulta</span>
-            <TimeControl compact />
-          </div>
+          {mobile ? (
+            <fieldset className="planner-choice">
+              <legend>
+                Horario
+                <strong>{dayPart?.label}</strong>
+              </legend>
+              <div className="day-parts">
+                {DAY_PARTS.map(({ time, label, icon: Icon }) => (
+                  <button
+                    key={time}
+                    type="button"
+                    aria-pressed={state.time === time}
+                    className={state.time === time ? 'selected' : ''}
+                    onClick={() => update((s) => ({ ...s, time }))}
+                  >
+                    <Icon aria-hidden="true" />
+                    <span>{label}</span>
+                    <small>{time}</small>
+                  </button>
+                ))}
+              </div>
+            </fieldset>
+          ) : (
+            <div className="field scenario-field">
+              <span>Fecha y hora de consulta</span>
+              <TimeControl compact />
+            </div>
+          )}
           {draft.mode === 'manual' && (
             <div className="point-list">
               {draft.points.length === 0 ? (
@@ -440,12 +611,15 @@ export default function Planner({
           )}
           {draft.mode === 'recommend' && (
             <Button
-              className="full"
+              className={`full ${mobile ? 'planner-cta' : ''}`}
               disabled={desired < 1 || desired > 42}
-              onClick={() => setRecommend(true)}
+              onClick={() => {
+                setRecommend(true)
+                setSearchKey((key) => key + 1)
+              }}
             >
               <Compass />
-              Buscar recomendaciones
+              {mobile ? 'Encontrar rutas para mí' : 'Buscar recomendaciones'}
             </Button>
           )}
           {draft.mode !== 'recommend' && (
@@ -475,7 +649,10 @@ export default function Planner({
                 <div className="route-result" aria-live="polite">
                   <div className="result-label">
                     <Check />
-                    {computed.segmentIds.length ? 'Ruta sobre la red vial' : 'Trazado manual sin validar'}<span>{state.time}</span>
+                    {computed.segmentIds.length
+                      ? mobile ? 'Tu ruta' : 'Ruta sobre la red vial'
+                      : 'Trazado manual sin validar'}
+                    <span>{mobile && dayPart ? `${dayPart.label} · ${state.time}` : state.time}</span>
                   </div>
                   {draft.mode === 'calculate' && shortestRoute && shortestResult ? (
                     <div className="route-compare">
@@ -563,7 +740,9 @@ export default function Planner({
                   <p>
                     {draft.mode === 'manual'
                       ? 'Añade al menos dos puntos para calcular.'
-                      : 'Selecciona dos puntos o calcula con los lugares disponibles.'}
+                      : mobile
+                        ? 'Elige origen y destino, o toca dos puntos en el mapa.'
+                        : 'Selecciona dos puntos o calcula con los lugares disponibles.'}
                   </p>
                 </div>
               )}
@@ -572,7 +751,22 @@ export default function Planner({
         </aside>
       </div>
       {draft.mode === 'recommend' && recommend && (
-        <section className="recommendation-results">
+        <section className="recommendation-results" ref={resultsRef}>
+          {mobile ? (
+            <div className="planner-results-head">
+              <h2 ref={resultsHeading} tabIndex={-1}>
+                {matches.length === 0
+                  ? 'Sin resultados'
+                  : matches.length === 1
+                    ? '1 ruta para ti'
+                    : `${matches.length} rutas para ti`}
+              </h2>
+              <p>
+                {desired.toLocaleString('es')} km · {level === 'Todos' ? 'Todos los niveles' : level} ·{' '}
+                {dayPart?.label} {state.time}
+              </p>
+            </div>
+          ) : (
           <div className="section-heading">
             <div>
               <span className="eyebrow">PARA LAS {state.time}</span>
@@ -580,7 +774,41 @@ export default function Planner({
             </div>
             <span>Según tus preferencias y el horario</span>
           </div>
-          {matches.length ? (
+          )}
+          {matches.length && mobile ? (
+            <ol className="planner-results-list">
+              {matches.map((r, index) => {
+                const condition = routeScore(r, state.time, state.date, state.incidents, state.risks, state.roads)
+                const schedule = scheduleStatus(r.recommended, state.time)
+                return (
+                  <li key={r.id}>
+                    <button type="button" className="planner-result" onClick={() => open(r)}>
+                      <span className="planner-result-thumb">
+                        <RoutePreview route={r} />
+                      </span>
+                      <span className="planner-result-body">
+                        {index === 0 && <span className="planner-result-best">Mejor opción</span>}
+                        <strong>{r.name}</strong>
+                        <span className="planner-result-meta">
+                          {r.km.toLocaleString('es', { maximumFractionDigits: 1 })} km · {r.min} min · {r.difficulty}
+                        </span>
+                        <span className="planner-result-tags">
+                          <Score value={condition.score} coverage={condition.coverage} />
+                          {r.official && <OfficialBadge />}
+                          {schedule && (
+                            <span className={`planner-result-schedule ${schedule.inside ? 'is-inside' : ''}`}>
+                              {schedule.inside ? 'En su horario' : `Mejor desde las ${schedule.from}`}
+                            </span>
+                          )}
+                        </span>
+                      </span>
+                      <ChevronRight className="planner-result-arrow" aria-hidden="true" />
+                    </button>
+                  </li>
+                )
+              })}
+            </ol>
+          ) : matches.length ? (
             <div className="route-grid">
               {matches.map((r) => (
                 <RouteCard key={r.id} route={r} onOpen={open} editorial showSchedule />
@@ -588,12 +816,16 @@ export default function Planner({
             </div>
           ) : (
             <EmptyState
-              title="Sin coincidencias para esta distancia"
-              description="Prueba una distancia diferente o cambia de nivel."
+              title={mobile ? 'Aún no hay rutas así' : 'Sin coincidencias para esta distancia'}
+              description={
+                mobile
+                  ? 'Prueba otra distancia, otro nivel u otro horario.'
+                  : 'Prueba una distancia diferente o cambia de nivel.'
+              }
             />
           )}
           <div className="recommended-spaces">
-            <h3>Espacios que coinciden con el horario</h3>
+            <h3>{mobile ? 'Espacios abiertos a esta hora' : 'Espacios que coinciden con el horario'}</h3>
             {state.spaces
               .filter((s) => !s.alert && scheduleStatus(s.hours, state.time)?.inside)
               .map((s) => (

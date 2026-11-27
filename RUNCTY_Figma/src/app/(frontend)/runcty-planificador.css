@@ -1,0 +1,135 @@
+/*
+ * Planificador móvil (Planner.tsx con mobile): controles visuales de distancia, nivel y horario,
+ * modos diferenciados y resultados compactos. Todo va bajo .planner-mobile: la web no cambia.
+ * Usa los tokens existentes, así el modo oscuro se adapta sin reglas extra.
+ */
+
+.runcty-app .planner-mobile {
+  --planner-route: #5A0E3D; /* morado de marca para "Entre dos puntos" */
+}
+
+/* Modos como control segmentado: fucsia para recomendaciones, morado para entre dos puntos */
+.runcty-app .planner-mobile .mode-tabs {
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  grid-template-columns: none;
+  gap: 4px;
+  margin-bottom: 16px;
+  padding: 4px;
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  background: var(--color-shell);
+}
+.runcty-app .planner-mobile .mode-tabs > button {
+  flex-direction: row;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--color-muted);
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.2;
+  box-shadow: none;
+}
+.runcty-app .planner-mobile .mode-tabs > button svg { width: 18px; height: 18px; flex: none; }
+.runcty-app .planner-mobile .mode-tabs > button.active.mode-recommend { background: var(--color-primary); color: #fff; }
+.runcty-app .planner-mobile .mode-tabs > button.active.mode-calculate { background: var(--planner-route); color: #fff; }
+.runcty-app .planner-mobile .mode-tabs > button.active.mode-manual { background: var(--color-copy); color: var(--color-ink); }
+
+/* Texto bajo el mapa más corto y sin cifras técnicas */
+.runcty-app .planner-mobile .map-bottom-tools > span { font-size: 12px; color: var(--color-muted); }
+
+/* Panel sin aspecto de formulario: secciones separadas por espacio, sin tarjetas extra */
+.runcty-app .planner-mobile .planner-panel { display: flex; flex-direction: column; gap: 20px; padding: 4px 0 0; border: 0; background: transparent; box-shadow: none; }
+.runcty-app .planner-mobile .planner-panel > * { margin: 0; }
+
+/* Encabezado del modo */
+.runcty-app .planner-mobile .planner-mode-intro { display: grid; grid-template-columns: 44px minmax(0, 1fr); align-items: center; gap: 4px 12px; }
+.runcty-app .planner-mobile .planner-mode-icon { display: grid; grid-row: span 1; place-items: center; width: 44px; height: 44px; border-radius: 14px; background: var(--color-primary-soft); color: var(--color-primary); }
+.runcty-app .planner-mobile .planner-panel-calculate .planner-mode-icon { background: rgb(90 14 61 / 10%); color: var(--planner-route); }
+.runcty-app .planner-mobile .planner-mode-icon svg { width: 22px; height: 22px; }
+.runcty-app .planner-mobile .planner-mode-intro h2 { margin: 0; color: var(--color-copy); font-size: 20px; font-weight: 750; line-height: 1.2; letter-spacing: -.01em; }
+.runcty-app .planner-mobile .planner-mode-intro p { margin: 2px 0 0; color: var(--color-muted); font-size: 13px; line-height: 1.4; }
+.runcty-app .planner-mobile .planner-location { display: inline-flex; grid-column: 2; align-items: center; justify-self: start; gap: 4px; margin-top: 4px; color: var(--color-muted); font-size: 12px; font-weight: 600; }
+.runcty-app .planner-mobile .planner-location svg { width: 14px; height: 14px; color: var(--color-primary); }
+
+/* Bloques de elección (distancia, nivel, horario) */
+.runcty-app .planner-mobile .planner-choice { min-width: 0; margin: 0; padding: 0; border: 0; }
+.runcty-app .planner-mobile .planner-choice legend { display: flex; align-items: baseline; justify-content: space-between; width: 100%; margin-bottom: 10px; padding: 0; color: var(--color-muted); font-size: 13px; font-weight: 600; }
+.runcty-app .planner-mobile .planner-choice legend strong { color: var(--color-copy); font-size: 15px; font-weight: 750; font-variant-numeric: tabular-nums; }
+.runcty-app .planner-mobile .planner-choice button { -webkit-tap-highlight-color: transparent; transition: background-color .15s, border-color .15s, color .15s; }
+.runcty-app .planner-mobile .planner-choice button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/* Distancia: accesos rápidos y distancia personalizada */
+.runcty-app .planner-mobile .distance-chips { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.runcty-app .planner-mobile .distance-chips button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; min-height: 58px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-panel); color: var(--color-copy); font-size: 20px; font-weight: 750; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.runcty-app .planner-mobile .distance-chips button small { color: var(--color-muted); font-size: 11px; font-weight: 600; }
+.runcty-app .planner-mobile .distance-chips button.selected { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
+.runcty-app .planner-mobile .distance-chips button.selected small { color: rgb(255 255 255 / 80%); }
+.runcty-app .planner-mobile .distance-custom { display: flex; align-items: center; gap: 10px; margin: 10px 0 0; }
+.runcty-app .planner-mobile .distance-custom span { color: var(--color-muted); font-size: 13px; font-weight: 600; }
+.runcty-app .planner-mobile .distance-custom input { width: 84px; height: 40px; margin-left: auto; padding: 0 10px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-panel); color: var(--color-copy); font-size: 15px; font-weight: 650; text-align: center; font-variant-numeric: tabular-nums; }
+.runcty-app .planner-mobile .distance-custom.is-custom input { border-color: var(--color-primary); }
+.runcty-app .planner-mobile .distance-custom input[aria-invalid='true'] { border-color: var(--color-risk); }
+.runcty-app .planner-mobile .distance-custom em { color: var(--color-muted); font-size: 13px; font-style: normal; font-weight: 600; }
+.runcty-app .planner-mobile .planner-choice .field-error { display: block; margin-top: 6px; }
+
+/* Nivel: opciones visuales con barras de intensidad */
+.runcty-app .planner-mobile .level-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.runcty-app .planner-mobile .level-options button { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-panel); color: var(--color-copy); font-size: 14px; font-weight: 600; text-align: left; }
+.runcty-app .planner-mobile .level-options button.selected { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .planner-mobile .level-bars { display: inline-flex; flex: none; align-items: flex-end; gap: 2px; height: 14px; }
+.runcty-app .planner-mobile .level-bars i { display: block; width: 4px; border-radius: 2px; background: var(--color-line); }
+.runcty-app .planner-mobile .level-bars i:nth-child(1) { height: 6px; }
+.runcty-app .planner-mobile .level-bars i:nth-child(2) { height: 10px; }
+.runcty-app .planner-mobile .level-bars i:nth-child(3) { height: 14px; }
+.runcty-app .planner-mobile .level-bars.bars-0 i { background: var(--color-muted); opacity: .55; }
+.runcty-app .planner-mobile .level-bars.bars-1 i:nth-child(-n + 1),
+.runcty-app .planner-mobile .level-bars.bars-2 i:nth-child(-n + 2),
+.runcty-app .planner-mobile .level-bars.bars-3 i { background: var(--color-primary); }
+
+/* Horario: icono, nombre y hora */
+.runcty-app .planner-mobile .day-parts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.runcty-app .planner-mobile .day-parts button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-height: 78px; padding: 8px 2px; border: 1px solid var(--color-line); border-radius: 14px; background: var(--color-panel); color: var(--color-copy); }
+.runcty-app .planner-mobile .day-parts button svg { width: 20px; height: 20px; color: var(--color-primary); }
+.runcty-app .planner-mobile .day-parts button span { font-size: 12px; font-weight: 650; }
+.runcty-app .planner-mobile .day-parts button small { color: var(--color-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.runcty-app .planner-mobile .day-parts button.selected { border-color: var(--color-primary); background: var(--color-primary); color: #fff; }
+.runcty-app .planner-mobile .day-parts button.selected :is(svg, small) { color: rgb(255 255 255 / 85%); }
+
+/* Botón principal */
+.runcty-app .planner-mobile .planner-cta { min-height: 54px; border-radius: 16px; font-size: 16px; font-weight: 700; }
+.runcty-app .planner-mobile .planner-cta svg { width: 19px; height: 19px; }
+
+/* Resultados: el desplazamiento deja espacio para el encabezado de la app */
+.runcty-app .planner-mobile .recommendation-results { scroll-margin-top: 72px; margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--color-line); }
+.runcty-app .planner-mobile .planner-results-head { margin-bottom: 14px; }
+.runcty-app .planner-mobile .planner-results-head h2 { margin: 0; color: var(--color-copy); font-size: 22px; font-weight: 750; line-height: 1.2; outline: none; }
+.runcty-app .planner-mobile .planner-results-head p { margin: 4px 0 0; color: var(--color-muted); font-size: 13px; }
+.runcty-app .planner-mobile .planner-results-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.runcty-app .planner-mobile .planner-result { display: grid; grid-template-columns: 76px minmax(0, 1fr) 16px; align-items: center; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--color-line); border-radius: 16px; background: var(--color-panel); color: var(--color-copy); text-align: left; -webkit-tap-highlight-color: transparent; }
+.runcty-app .planner-mobile .planner-result:active { background: var(--color-shell); }
+.runcty-app .planner-mobile .planner-result:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.runcty-app .planner-mobile .planner-results-list li:first-child .planner-result { border-color: rgb(209 16 111 / 45%); }
+.runcty-app .planner-mobile .planner-result-thumb { display: block; width: 76px; height: 76px; overflow: hidden; border-radius: 12px; background: var(--color-shell); }
+.runcty-app .planner-mobile .planner-result-thumb > * { width: 100%; height: 100%; }
+.runcty-app .planner-mobile .planner-result-body { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.runcty-app .planner-mobile .planner-result-best { align-self: flex-start; color: var(--color-primary); font-size: 11px; font-weight: 750; letter-spacing: .06em; text-transform: uppercase; }
+.runcty-app .planner-mobile .planner-result-body > strong { overflow: hidden; font-size: 15px; font-weight: 700; line-height: 1.25; text-overflow: ellipsis; white-space: nowrap; }
+.runcty-app .planner-mobile .planner-result-meta { color: var(--color-muted); font-size: 12px; }
+.runcty-app .planner-mobile .planner-result-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 3px; }
+.runcty-app .planner-mobile .planner-result-schedule { padding: 3px 8px; border-radius: 999px; background: var(--color-raised); color: var(--color-muted); font-size: 11px; font-weight: 600; }
+.runcty-app .planner-mobile .planner-result-schedule.is-inside { background: rgb(23 131 74 / 12%); color: var(--color-safe-ink); }
+.runcty-app .planner-mobile .planner-result-arrow { width: 16px; height: 16px; color: var(--color-muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .runcty-app .planner-mobile .planner-choice button { transition: none; }
+}
+
+/* Miniatura de resultados: solo el trazado, sin la etiqueta de ubicación */
+.runcty-app .planner-mobile .planner-result-thumb .route-preview > span { display: none; }
