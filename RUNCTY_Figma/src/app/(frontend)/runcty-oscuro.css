@@ -1,0 +1,95 @@
+/*
+ * Modo oscuro de la app móvil del corredor (Perfil → Modo oscuro).
+ * Capa independiente: solo actúa con .phone-frame[data-theme='dark'] y no modifica los estilos
+ * claros. Fondo negro con superficies en grises neutros (sin tinte morado); los colores de marca
+ * (fucsia) y de seguridad se mantienen.
+ */
+
+.runcty-app .phone-frame[data-theme='dark'] {
+  color-scheme: dark;
+  /* Superficies */
+  --color-ink: #000000;
+  --color-shell: #0B0B0C;
+  --color-panel: #161618;
+  --color-raised: #222225;
+  --color-line: #2C2C30;
+  /* Texto */
+  --color-copy: #F4F4F5;
+  --color-muted: #A1A1AA;
+  --color-dim: #8A8A93;
+  /* Acentos de marca más claros para que se lean sobre negro */
+  --color-primary-soft: rgb(255 79 163 / 14%);
+  --color-lilac: #FF4FA3;
+  --color-info: #FF4FA3;
+  --color-accent: #FF4FA3;
+  --color-sport-ink: #FF8CC6;
+  --color-primary-pressed: #FF8CC6;
+  /* Tintas de seguridad aclaradas solo para texto; los colores base no cambian */
+  --color-safe-ink: #5FD394;
+  --color-caution-ink: #FCD34D;
+  --color-risk-ink: #FF8A7F;
+  background: var(--color-ink);
+  color: var(--color-copy);
+}
+
+/* ===== Superficies que en modo claro tienen blanco fijo ===== */
+.runcty-app .phone-frame[data-theme='dark'] .mobile-scroll,
+.runcty-app .phone-frame[data-theme='dark'] .mobile-scroll:has(> .explore-mobile) { background: var(--color-ink); }
+.runcty-app .phone-frame[data-theme='dark'] :is(.mobile-app-header, .mobile-nav) { border-color: var(--color-line); background: var(--color-shell); }
+.runcty-app .phone-frame[data-theme='dark'] .mobile-nav button:not(.active) { color: var(--color-muted); }
+.runcty-app .phone-frame[data-theme='dark'] :is(
+  .edit-profile,
+  .profile-numbers > span,
+  .profile-navigation > button,
+  .profile-account-action,
+  .official-toggle,
+  .sponsor-banner,
+  .dashboard-hero-action,
+  .dashboard-kpi,
+  .community-poster
+) { border-color: var(--color-line); background: var(--color-panel); color: var(--color-copy); box-shadow: none; }
+.runcty-app .phone-frame[data-theme='dark'] :is(.profile-navigation > button, .profile-account-action, .edit-profile):hover { border-color: var(--color-line); background: var(--color-panel); }
+.runcty-app .phone-frame[data-theme='dark'] :is(.profile-navigation > button, .profile-account-action):active { background: var(--color-raised); }
+.runcty-app .phone-frame[data-theme='dark'] .profile-account-action:not(.is-danger) > span { background: var(--color-raised); color: var(--color-copy); }
+.runcty-app .phone-frame[data-theme='dark'] .profile-account-action.is-danger { border-color: rgb(255 138 127 / 35%); }
+.runcty-app .phone-frame[data-theme='dark'] .profile-account-action.is-danger > span { background: rgb(255 138 127 / 12%); color: #FF8A7F; }
+.runcty-app .phone-frame[data-theme='dark'] .profile-account-action.is-danger :is(strong, > svg) { color: #FF8A7F; }
+.runcty-app .phone-frame[data-theme='dark'] .sponsor-art-image { background: var(--color-raised); }
+.runcty-app .phone-frame[data-theme='dark'] .status i { background: var(--color-raised); }
+
+/* Íconos del panel del club con fondos tenues sobre oscuro */
+.runcty-app .phone-frame[data-theme='dark'] .dashboard-icon:is(.tone-wine, .tone-brand) { background: rgb(255 79 163 / 14%); color: #FF8CC6; }
+.runcty-app .phone-frame[data-theme='dark'] .dashboard-icon.tone-green { background: rgb(95 211 148 / 14%); color: #5FD394; }
+.runcty-app .phone-frame[data-theme='dark'] .dashboard-icon.tone-amber { background: rgb(252 211 77 / 14%); color: #FCD34D; }
+
+/* Chips de estado con texto claro */
+.runcty-app .phone-frame[data-theme='dark'] .report-sent-chip { background: rgb(252 211 77 / 16%); color: #FCD34D; }
+
+/* ===== Mapa: base oscurecida; rutas, tramos y marcadores conservan sus colores ===== */
+.runcty-app .phone-frame[data-theme='dark'] .maplibregl-canvas { filter: invert(.9) hue-rotate(180deg) brightness(.95) contrast(.88) saturate(.55); }
+.runcty-app .phone-frame[data-theme='dark'] :is(.map-location, .map-actions button, .safety-legend, .cartography-status) {
+  border-color: var(--color-line); background: rgb(22 22 24 / 92%); color: var(--color-copy); box-shadow: 0 2px 10px rgb(0 0 0 / 35%);
+}
+.runcty-app .phone-frame[data-theme='dark'] .leaflet-control-attribution { background: rgb(0 0 0 / 70%); color: var(--color-muted); }
+.runcty-app .phone-frame[data-theme='dark'] .leaflet-control-attribution a { color: var(--color-copy); }
+
+/* Encuesta y resumen del entrenamiento */
+.runcty-app .phone-frame[data-theme='dark'] :is(.survey-sheet, .summary-details > div, .summary-safety) { border-color: var(--color-line); background: var(--color-panel); color: var(--color-copy); box-shadow: none; }
+.runcty-app .phone-frame[data-theme='dark'] .survey-options button { border-color: var(--color-line); background: var(--color-shell); color: var(--color-copy); }
+.runcty-app .phone-frame[data-theme='dark'] .survey-options button.selected { border-color: var(--color-primary); background: rgb(255 79 163 / 14%); }
+
+/* Zonas que en modo claro son vino oscuro: en modo oscuro pasan a negro y grises neutros */
+.runcty-app .phone-frame[data-theme='dark'] :is(.recording-metrics, .summary-hero, .emergency-section, .club-editorial, .club-overview, .activity-totals > span:first-child, .news-featured) {
+  --color-ink: #000000; --color-shell: #0B0B0C; --color-panel: #161618; --color-raised: #222225; --color-line: #2C2C30;
+  --color-copy: #F4F4F5; --color-muted: #A1A1AA; --color-dim: #8A8A93; --color-primary-soft: rgb(255 79 163 / 14%);
+  border-color: var(--color-line); background: var(--color-panel);
+}
+.runcty-app .phone-frame[data-theme='dark'] .recording-metrics { background: var(--color-shell); }
+.runcty-app .phone-frame[data-theme='dark'] .recording-gps { border-color: var(--color-line); background: var(--color-panel); }
+.runcty-app .phone-frame[data-theme='dark'] .dock-main:not(.dock-go) > span { background: var(--color-raised); }
+
+/* Texto pequeño en fucsia: tono claro de la marca para que se lea sobre negro */
+.runcty-app .phone-frame[data-theme='dark'] :is(.eyebrow, .wizard-progress .completed, .mobile-nav button.active, .finish-modal-actions .button-secondary) { color: #FF4FA3; }
+.runcty-app .phone-frame[data-theme='dark'] .finish-modal-actions .button-secondary { border-color: #FF4FA3; }
+/* Pestañas del planificador: gris neutro sin tinte; la activa conserva el fucsia */
+.runcty-app .phone-frame[data-theme='dark'] .mode-tabs button:not(.active) { background: var(--color-panel); color: var(--color-muted); }

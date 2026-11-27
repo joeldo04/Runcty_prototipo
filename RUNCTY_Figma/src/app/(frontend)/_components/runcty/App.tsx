@@ -39,6 +39,7 @@ import {
   X,
 } from 'lucide-react'
 import { BackButton, Button, EmptyState, IconButton, Logo, Modal, PageTitle, RunnerIcon, UserAvatar, useThemeColor } from './components'
+import { useTheme } from './theme'
 import { isAdminUser, type Role, type RouteData } from './data'
 import { useDemo, useRoutes } from './store'
 import SafetyMap from './SafetyMap'
@@ -493,7 +494,10 @@ function MobileApp({
     all = useRoutes()
   const router = useRouter()
   const [entry, setEntry] = useState<'welcome' | 'login' | 'register' | 'demo'>('welcome')
-  useThemeColor(user ? '#F7F5F7' : '#2A0A1F')
+  // Modo oscuro elegido en Perfil: solo aplica a la app móvil con sesión iniciada.
+  const [theme] = useTheme()
+  const dark = !!user && theme === 'oscuro'
+  useThemeColor(user ? (dark ? '#000000' : '#F7F5F7') : '#2A0A1F')
   const [page, setPage] = useState(startPage),
     [selected, setSelected] = useState<RouteData | null>(
       startPage === 'explore' ? (initialRoute ?? null) : null,
@@ -636,7 +640,10 @@ function MobileApp({
         <button onClick={() => leave(toWeb)}>Vista web <Monitor className="size-4" /></button>
       </nav>
       <div className="phone-container">
-        <div className={`phone-frame ${recording ? 'phone-recording' : ''} ${user ? '' : 'phone-auth'}`}>
+        <div
+          className={`phone-frame ${recording ? 'phone-recording' : ''} ${user ? '' : 'phone-auth'}`}
+          data-theme={dark ? 'dark' : undefined}
+        >
           <div className="android-status">
             <span>9:41</span>
             <div className="camera-dot" />

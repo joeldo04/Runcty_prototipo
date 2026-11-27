@@ -80,6 +80,7 @@ import {
   freeTrainingRoute,
   incidentLabel,
 } from './data'
+import { useTheme } from './theme'
 import { useDemo, useRoutes } from './store'
 import { Reports } from './reports'
 import { Security } from './security'
@@ -1263,6 +1264,7 @@ export function Profile({
   signedOut?: () => void
 }) {
   const { state, user, update, notify, logout, isDemo } = useDemo()
+  const [theme, setTheme] = useTheme()
   const [dialog, setDialog] = useState<'privacy' | 'personal' | 'logout' | 'mail' | 'delete' | null>(null),
     [email, setEmail] = useState(state.profile.email),
     [name, setName] = useState(state.profile.name),
@@ -1459,6 +1461,24 @@ export function Profile({
             <ChevronRight />
           </button>
         ))}
+        {mobile && (
+          <button
+            type="button"
+            role="switch"
+            aria-checked={theme === 'oscuro'}
+            className="profile-theme-toggle"
+            onClick={() => setTheme(theme === 'oscuro' ? 'claro' : 'oscuro')}
+          >
+            <span>{theme === 'oscuro' ? <Moon /> : <Sun />}</span>
+            <div>
+              <strong>Modo oscuro</strong>
+              <p>{theme === 'oscuro' ? 'Activado en este dispositivo' : 'Ideal para correr de noche'}</p>
+            </div>
+            <i className="theme-switch" aria-hidden="true">
+              <b />
+            </i>
+          </button>
+        )}
       </div>
       {/* Acciones de cuenta, separadas de las opciones habituales. Solo eliminar usa rojo. */}
       <section className="profile-account" aria-labelledby="profile-account-title">

@@ -7,6 +7,7 @@
 @import './runcty-avisos.css';
 @import './runcty-entrenar.css';
 @import './runcty-campaign.css';
+@import './runcty-oscuro.css';
 
 .figma-custom-code-fragment {
   display: contents;
