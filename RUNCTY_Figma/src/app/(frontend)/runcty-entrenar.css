@@ -950,3 +950,7 @@ html, body { overscroll-behavior: none; }
 @media (prefers-reduced-motion: reduce) {
   .runcty-app .profile-theme-toggle :is(.theme-switch, .theme-switch b) { transition: none; }
 }
+
+/* Inicio móvil: la pregunta completa en un solo color (rosado de la paleta), sin el "?" aparte */
+.runcty-app .explore-mobile .home-intro h1 { color: var(--color-primary); }
+.runcty-app .explore-mobile .home-intro h1 > span { color: inherit; }

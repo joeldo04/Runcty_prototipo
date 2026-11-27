@@ -72,7 +72,9 @@ import type { ShareCardData } from './shareCard'
 import { Security, SosButton, shareValid } from './security'
 import { SHOW_FUTURE } from './features'
 
-// Esta versión entrena en modo libre: se graba el recorrido sin elegir una ruta.
+// Esta versión entrena solo en modo libre: se graba el recorrido sin elegir una ruta.
+// Elegir ruta ("Elegir ruta", "Cambiar ruta", la ventana "Elige tu ruta") queda oculto, no borrado:
+// vuelve con SHOW_FUTURE = true.
 const FREE_MODE = !SHOW_FUTURE
 
 function CheckeredFlag() {
@@ -148,6 +150,8 @@ export default function Training({
   // Base del GPS simulado del modo libre: la primera ruta publicada con trazado.
   const freeBase =
     allRoutes.find((r) => r.geometry.length > 1 && !r.private && !isFreeTraining(r)) ?? null
+  // Pantalla de inicio en modo libre: siempre en esta entrega, o cuando no hay ruta elegida.
+  const freeReady = FREE_MODE || free
   useEffect(() => {
     if (session.phase === 'permission') {
       const t = setTimeout(
@@ -251,6 +255,7 @@ export default function Training({
       ...s,
       session: {
         ...s.session,
+        ...(FREE_MODE && !isFreeTraining(s.session.route) ? { route: freeTrainingRoute(freeBase) } : {}),
         phase: 'permission',
         seconds: 0,
         km: 0,
@@ -714,14 +719,18 @@ export default function Training({
       {!active ? (
         <>
           <div className="training-prepare-map">
-            {free ? (
-              <SafetyMap tracking={route.geometry[0]} follow showReports={false} />
+            {freeReady ? (
+              <SafetyMap
+                tracking={(free ? route : freeTrainingRoute(freeBase)).geometry[0]}
+                follow
+                showReports={false}
+              />
             ) : (
               <SafetyMap route={route} fitRoute guide />
             )}
           </div>
           <section className="record-sheet">
-            {free ? (
+            {freeReady ? (
               <div className="free-ready" role="status">
                 <span className="free-ready-icon" aria-hidden="true">
                   <LocateFixed />
@@ -729,8 +738,9 @@ export default function Training({
                 <div>
                   <strong>Listo para grabar tu entrenamiento</strong>
                   <p>
-                    Corre por donde quieras: grabamos tu recorrido con el GPS. Si prefieres seguir
-                    una ruta del club, elígela con «Elegir ruta».
+                    {SHOW_FUTURE
+                      ? 'Corre por donde quieras: grabamos tu recorrido con el GPS. Si prefieres seguir una ruta del club, elígela con «Elegir ruta».'
+                      : 'Corre por donde quieras: grabamos tu recorrido con el GPS y al terminar verás distancia, tiempo y ritmo.'}
                   </p>
                 </div>
               </div>
@@ -770,13 +780,18 @@ export default function Training({
                 </span>
                 Iniciar
               </button>
-              {/* Elegir una ruta es opcional: sin ruta se graba en modo libre. */}
-              <button type="button" className="dock-side" onClick={() => setPicker(true)}>
-                <span>
-                  <RouteIcon />
-                </span>
-                {free ? 'Elegir ruta' : 'Cambiar ruta'}
-              </button>
+              {SHOW_FUTURE ? (
+                // Elegir una ruta es opcional: sin ruta se graba en modo libre.
+                <button type="button" className="dock-side" onClick={() => setPicker(true)}>
+                  <span>
+                    <RouteIcon />
+                  </span>
+                  {free ? 'Elegir ruta' : 'Cambiar ruta'}
+                </button>
+              ) : (
+                // Mantiene Iniciar centrado sin el botón de ruta.
+                <span className="dock-side dock-spacer" aria-hidden="true" />
+              )}
             </div>
           </section>
         </>
@@ -785,7 +800,7 @@ export default function Training({
           <section className={`recording-metrics ${SHOW_FUTURE ? '' : 'recording-status'}`}>
             <span className="recording-state">
               <i className={session.phase === 'running' ? '' : 'is-paused'} />
-              {completed
+              {SHOW_FUTURE && completed
                 ? 'RUTA COMPLETADA'
                 : session.phase === 'running'
                   ? SHOW_FUTURE ? 'EN MOVIMIENTO' : 'GRABANDO'
@@ -923,7 +938,7 @@ export default function Training({
           </div>
         </>
       )}
-      {picker && (
+      {SHOW_FUTURE && picker && (
         <Modal title="Elige tu ruta" onClose={() => setPicker(false)}>
           <div className="route-pick-list">
             {FREE_MODE && (

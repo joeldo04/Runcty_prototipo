@@ -2,14 +2,16 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
-import announcement from '../../../../../imagenes/anuncio_rueda_prensa.png'
+import announcement from '../../../../../imagenes/anuncio_carrera.png'
 import { Modal } from './components'
 import { today } from './data'
 
-const dismissedKey = 'runcty:announcement:authenticated:gacelas-prensa-2026-11-25'
-// Vigencia del anuncio, igual que los banners: solo se muestra entre estas fechas (hora de Loja).
-const announcementStart = '2026-11-18'
-const announcementEnd = '2026-11-25'
+// Carrera Gacelas 5K: domingo 20 de diciembre de 2026, 07h30, Plaza de San Sebastián.
+const dismissedKey = 'runcty:announcement:authenticated:carrera-gacelas-5k-2026-12-20'
+// Vigencia del anuncio, igual que los banners: solo se muestra entre estas fechas (hora de Loja)
+// y deja de salir solo después del día de la carrera.
+const announcementStart = '2026-11-26'
+const announcementEnd = '2026-12-20'
 const announcementActive = () => {
   const current = today()
   return current >= announcementStart && current <= announcementEnd
@@ -53,11 +55,11 @@ export default function EntryAnnouncement({ enabled, accountId }: { enabled: boo
 
   return (
     <div className="entry-announcement">
-      <Modal title="Invitación de Gacelas Running Team" onClose={dismiss}>
+      <Modal title="Carrera Gacelas 5K" onClose={dismiss}>
         <Image
           className="entry-announcement-image"
           src={announcement}
-          alt="Invitación oficial a la rueda de prensa de Carrera Gacelas 2026. Miércoles 25 de noviembre, a las 10:00, en el Octógono de la Prefectura de Loja."
+          alt="Carrera Gacelas 5K 2026. Domingo 20 de diciembre de 2026 a las 07h30 en la Plaza de San Sebastián. Categorías Gacelas 5K, Gacelitos, Gacelas Doradas 1K y Gacelas Inclusivas 1K. Inscripción de 8 dólares; lo recaudado se dona al Centro El Ángel de la Prefectura de Loja."
           unoptimized
           loading="eager"
           sizes="(max-width: 520px) calc(100vw - 48px), 480px"

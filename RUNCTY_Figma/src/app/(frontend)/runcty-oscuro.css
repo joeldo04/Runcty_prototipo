@@ -93,3 +93,6 @@
 .runcty-app .phone-frame[data-theme='dark'] .finish-modal-actions .button-secondary { border-color: #FF4FA3; }
 /* Pestañas del planificador: gris neutro sin tinte; la activa conserva el fucsia */
 .runcty-app .phone-frame[data-theme='dark'] .mode-tabs button:not(.active) { background: var(--color-panel); color: var(--color-muted); }
+
+/* Inicio: en oscuro la pregunta completa va en blanco */
+.runcty-app .phone-frame[data-theme='dark'] .explore-mobile .home-intro h1 { color: var(--color-copy); }

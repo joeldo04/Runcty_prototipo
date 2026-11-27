@@ -828,6 +828,9 @@ export default function App({
   useEffect(() => {
     if (initialSession) hydrateSession(initialSession.data, initialSession.user)
   }, [initialSession, hydrateSession])
+  // El anuncio de entrada es solo para corredores: no sale al administrador del club ni al del sistema.
+  const account = state.users.find((value) => value.id === user?.id)
+  const runnerOnly = user?.role === 'corredor' && !(account && isAdminUser(account))
   return (
     <>
       <Product
@@ -837,7 +840,7 @@ export default function App({
       />
       <EntryAnnouncement
         accountId={user?.id ?? null}
-        enabled={initialExperience !== 'selector' && user?.role === 'corredor' && !['running', 'paused', 'survey'].includes(state.session.phase)}
+        enabled={initialExperience !== 'selector' && runnerOnly && !['running', 'paused', 'survey'].includes(state.session.phase)}
       />
     </>
   )
