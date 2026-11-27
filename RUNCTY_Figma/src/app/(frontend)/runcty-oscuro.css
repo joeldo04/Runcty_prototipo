@@ -42,7 +42,7 @@
   .profile-numbers > span,
   .profile-navigation > button,
   .profile-account-action,
-  .official-toggle,
+  .official-toggle:not(.is-on),
   .sponsor-banner,
   .dashboard-hero-action,
   .dashboard-kpi,
