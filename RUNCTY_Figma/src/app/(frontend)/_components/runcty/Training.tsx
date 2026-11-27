@@ -19,6 +19,7 @@ import {
   Save,
   Share2,
   Shield,
+  ShieldAlert,
   Square,
   Timer,
   Users,
@@ -1177,7 +1178,7 @@ export default function Training({
             ) : SHOW_TRAINING_REPORT ? (
               <button type="button" className="dock-side dock-report" onClick={startQuickReport}>
                 <span>
-                  <Flag />
+                  <ShieldAlert aria-hidden="true" />
                 </span>
                 Reportar
                 {reportDrafts.length > 0 && <i className="dock-badge">{reportDrafts.length}</i>}

@@ -100,3 +100,6 @@
 /* Planificador móvil: el ícono de "Entre dos puntos" se lee sobre negro */
 .runcty-app .phone-frame[data-theme='dark'] .planner-mobile .planner-panel-calculate .planner-mode-icon { background: rgb(255 255 255 / 8%); color: var(--color-copy); }
 .runcty-app .phone-frame[data-theme='dark'] .planner-mobile .mode-tabs > button.active.mode-calculate { box-shadow: inset 0 0 0 1px rgb(255 255 255 / 14%); }
+
+/* Métricas en vivo: en modo oscuro (oculto en esta versión) el panel sigue el fondo neutro */
+.runcty-app .phone-frame[data-theme='dark'] .recording-metrics:not(.recording-status) { background: var(--color-shell); }

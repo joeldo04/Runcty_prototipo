@@ -991,3 +991,169 @@ html, body { overscroll-behavior: none; }
 /* Resumen: % del recorrido por condición */
 .runcty-app .summary-breakdown { display: grid; gap: 8px; }
 .runcty-app .summary-breakdown-label { color: var(--color-muted); font-size: 12px; font-weight: 600; }
+
+/* ===== Entrenar: panel de métricas en vivo (grabando y en pausa) =====
+   Vino profundo con un degradado casi imperceptible; valores en blanco puro, etiquetas y unidades
+   en blanco atenuado y el fucsia solo en el indicador de grabación. */
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) {
+  --metric-value: #FFFFFF;
+  --metric-label: #E9DFE7;
+  /* Fucsia de RUNCTY en versión clara para que resalte sobre el vino */
+  --metric-accent: #FF4FA3;
+  padding: 12px 24px 18px;
+  background: linear-gradient(180deg, #3A1231 0%, #36102D 60%, #330F2A 100%);
+  color: var(--metric-value);
+  text-align: center;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: var(--metric-label);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-state > i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--metric-accent);
+  box-shadow: 0 0 0 4px rgb(255 79 163 / 28%);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-state > i.is-paused {
+  background: var(--metric-label);
+  box-shadow: none;
+  opacity: .55;
+  animation: none;
+}
+/* Distancia: métrica protagonista */
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .distance-numeral {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  margin: 6px 0 0;
+  color: var(--metric-value);
+  font-size: clamp(58px, 16vw, 68px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.03em;
+  font-variant-numeric: tabular-nums;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .distance-numeral small {
+  margin: 0;
+  color: var(--metric-accent);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+/* Tiempo y ritmo: dos columnas iguales, valor arriba y etiqueta debajo */
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-secondary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-secondary > span {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  color: var(--metric-label);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: .02em;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-secondary strong {
+  margin: 0;
+  color: var(--metric-value);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-secondary small {
+  color: var(--metric-accent);
+  font-size: 13px;
+  font-weight: 500;
+}
+@media (prefers-reduced-motion: reduce) {
+  .runcty-app .phone-frame .recording-metrics:not(.recording-status) .recording-state > i { animation: none; }
+}
+
+/* ===== Entrenar: controles inferiores mientras se graba (Reportar · Pausar · SOS) =====
+   Tres columnas simétricas; cada control tiene su círculo centrado en una franja de 76 px y la
+   etiqueta debajo, así los tres quedan en el mismo eje y las etiquetas a la misma altura. */
+.runcty-app .phone-frame .recording-dock {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: start;
+  justify-items: center;
+  gap: 0 12px;
+  padding: 12px 20px max(14px, env(safe-area-inset-bottom));
+}
+.runcty-app .phone-frame .recording-dock :is(.dock-side, .dock-main) {
+  display: grid;
+  grid-template-rows: 76px auto;
+  align-items: center;
+  justify-items: center;
+  row-gap: 6px;
+  width: auto;
+  min-width: 76px;
+  color: var(--color-copy);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.runcty-app .phone-frame .recording-dock .dock-pair { display: flex; gap: 14px; }
+/* Reportar: escudo de alerta fucsia sobre rosa suave */
+.runcty-app .phone-frame .recording-dock .dock-report { position: relative; }
+.runcty-app .phone-frame .recording-dock .dock-report > span {
+  width: 54px;
+  height: 54px;
+  border: 0;
+  border-radius: 50%;
+  background: #FBE3EF;
+  color: #D30B65;
+  transition: transform .12s;
+}
+.runcty-app .phone-frame .recording-dock .dock-report > span svg { width: 24px; height: 24px; stroke-width: 2; }
+.runcty-app .phone-frame .recording-dock .dock-report:active > span { transform: scale(.96); }
+.runcty-app .phone-frame .recording-dock .dock-report:focus-visible { outline: none; }
+.runcty-app .phone-frame .recording-dock .dock-report:focus-visible > span { outline: 2px solid #D30B65; outline-offset: 3px; }
+/* Contador de reportes por completar: pequeño, sobre el borde del círculo */
+.runcty-app .phone-frame .recording-dock .dock-badge {
+  top: 8px;
+  right: calc(50% - 33px);
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border: 2px solid var(--color-panel);
+  background: #D30B65;
+  font-size: 10px;
+  line-height: 1;
+}
+/* SOS: mismo eje y etiqueta alineada con las demás; su pulsación de 3 s no cambia */
+.runcty-app .phone-frame .recording-dock .dock-sos {
+  display: grid;
+  grid-template-rows: 76px;
+  align-items: center;
+  justify-items: center;
+  align-self: start;
+  width: auto;
+  min-width: 76px;
+  padding-bottom: 0;
+}
+.runcty-app .phone-frame .recording-dock .sos-button > small {
+  top: calc(100% + 16px);
+  color: var(--color-copy);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+@media (prefers-reduced-motion: reduce) {
+  .runcty-app .phone-frame .recording-dock .dock-report > span { transition: none; }
+}
