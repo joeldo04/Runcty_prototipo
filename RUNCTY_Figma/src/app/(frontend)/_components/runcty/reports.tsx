@@ -11,8 +11,7 @@ import {
   Clock3,
   CloudRain,
   Dog,
-  Ellipsis,
-  Flag,
+  Ellipsis,
   LightbulbOff,
   MapPin,
   MessageSquareWarning,
@@ -36,7 +35,7 @@ import {
   type Incident,
 } from './data'
 import { useDemo } from './store'
-import { SHOW_FUTURE } from './features'
+import { SHOW_FUTURE, SHOW_MY_REPORTS } from './features'
 
 // Persona empujando una carretilla, para "Trabajos en la vía" (no existe en lucide).
 function WheelbarrowWorker(props: { className?: string }) {
@@ -88,14 +87,28 @@ export function Reports({
   initialForm?: boolean
 }) {
   const { state } = useDemo(),
-    // Sin "Mis reportes" en esta versión: la pantalla muestra el mapa de reportes aprobados.
+    // La pestaña abre en el mapa de reportes aprobados; "Mis reportes" muestra el estado de los tuyos.
     [tab, setTab] = useState(SHOW_FUTURE ? 'mine' : 'map'),
     [creating, setCreating] = useState(initialForm),
     [detail, setDetail] = useState<Incident | null>(null)
   const mine = [...state.incidents]
     .filter((i) => i.owned)
     .sort((a, b) => b.createdAt - a.createdAt)
-  if (creating) return <IncidentWizard mobile={mobile} close={() => setCreating(false)} />
+  if (creating)
+    return (
+      <IncidentWizard
+        mobile={mobile}
+        close={() => setCreating(false)}
+        showMine={
+          SHOW_FUTURE || SHOW_MY_REPORTS
+            ? () => {
+                setCreating(false)
+                setTab('mine')
+              }
+            : undefined
+        }
+      />
+    )
   return (
     <div className={`reports-screen ${mobile ? 'mobile-padded' : ''}`}>
       <PageTitle
@@ -108,7 +121,7 @@ export function Reports({
           Reportar incidente
         </Button>
       </PageTitle>
-      {SHOW_FUTURE && (
+      {SHOW_FUTURE ? (
         <div className="tabs">
           <button className={tab === 'mine' ? 'active' : ''} onClick={() => setTab('mine')}>
             Mis reportes <span>{mine.length}</span>
@@ -117,6 +130,28 @@ export function Reports({
             Reportes en el mapa <span>{publicIncidents(state.incidents).length}</span>
           </button>
         </div>
+      ) : (
+        SHOW_MY_REPORTS && (
+          // El mapa sigue siendo la vista principal; "Mis reportes" se agrega como segunda pestaña.
+          <div className="tabs" role="tablist" aria-label="Reportes">
+            <button
+              role="tab"
+              aria-selected={tab === 'map'}
+              className={tab === 'map' ? 'active' : ''}
+              onClick={() => setTab('map')}
+            >
+              Reportes en el mapa <span>{publicIncidents(state.incidents).length}</span>
+            </button>
+            <button
+              role="tab"
+              aria-selected={tab === 'mine'}
+              className={tab === 'mine' ? 'active' : ''}
+              onClick={() => setTab('mine')}
+            >
+              Mis reportes <span>{mine.length}</span>
+            </button>
+          </div>
+        )
       )}
       {tab === 'mine' ? (
         <>
@@ -131,7 +166,7 @@ export function Reports({
             {mine.map((i) => (
               <button className="incident-item" key={i.id} onClick={() => setDetail(i)}>
                 <span className="incident-type-icon">
-                  <Flag />
+                  <IncidentTypeIcon type={i.type} />
                 </span>
                 <div className="incident-item-main">
                   <div>
@@ -194,7 +229,16 @@ export function Reports({
   )
 }
 
-export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; close: () => void }) {
+export function IncidentWizard({
+  mobile = false,
+  close,
+  showMine,
+}: {
+  mobile?: boolean
+  close: () => void
+  // Abre "Mis reportes" después de enviar, cuando esa pestaña está disponible.
+  showMine?: () => void
+}) {
   const { state, user, update, notify, pending, syncError, isDemo } = useDemo()
   // Esta versión usa los 8 tipos de la base de datos y uno por reporte. Los tipos nuevos y elegir
   // dos quedan ocultos con SHOW_FUTURE.
@@ -375,8 +419,8 @@ export function IncidentWizard({ mobile = false, close }: { mobile?: boolean; cl
           </ol>
         </section>
         <div className="report-sent-actions">
-          <Button className="full" onClick={close}>
-            {SHOW_FUTURE ? 'Ver mis reportes' : 'Volver a reportes'} <ArrowRight />
+          <Button className="full" onClick={showMine ?? close}>
+            {showMine ? 'Ver mis reportes' : 'Volver a reportes'} <ArrowRight />
           </Button>
           <Button variant="secondary" className="full" onClick={another}>
             <Plus />

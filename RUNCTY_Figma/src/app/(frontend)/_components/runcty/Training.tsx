@@ -9,6 +9,7 @@ import {
   Flag,
   Gauge,
   LocateFixed,
+  MapPin,
   Lock,
   Navigation,
   Pause,
@@ -40,6 +41,12 @@ import {
   averageSpeed,
   clockAfter,
   colorHex,
+  demoOnlyIncidentTypes,
+  distance,
+  incidentTypes,
+  today,
+  type Coordinate,
+  type Incident,
   formatDuration,
   formatPace,
   formatTime,
@@ -70,12 +77,42 @@ import ShareTraining from './ShareTraining'
 import TrainingSurvey, { feltUnsafe, isRouteRating, surveyQuestions } from './TrainingSurvey'
 import type { ShareCardData } from './shareCard'
 import { Security, SosButton, shareValid } from './security'
-import { SHOW_FUTURE } from './features'
+import {
+  SHOW_CONDITION_BREAKDOWN,
+  SHOW_FUTURE,
+  SHOW_LIVE_METRICS,
+  SHOW_ROUTE_TRAINING,
+  SHOW_TRAINING_REPORT,
+} from './features'
+import { IncidentTypeIcon } from './reports'
 
-// Esta versión entrena solo en modo libre: se graba el recorrido sin elegir una ruta.
-// Elegir ruta ("Elegir ruta", "Cambiar ruta", la ventana "Elige tu ruta") queda oculto, no borrado:
-// vuelve con SHOW_FUTURE = true.
+// Esta versión entrena en modo libre por defecto: se graba el recorrido sin elegir una ruta.
+// Con SHOW_ROUTE_TRAINING el corredor puede elegir una ruta del club ("Elegir ruta") y ver su línea guía.
 const FREE_MODE = !SHOW_FUTURE
+const ROUTE_CHOICE = SHOW_FUTURE || SHOW_ROUTE_TRAINING
+type ReportDraft = NonNullable<ReturnType<typeof useDemo>['state']['session']['reportDrafts']>[number]
+// Hora actual en Loja (HH:MM), la misma que usa el formulario de reportes.
+const clockNow = () =>
+  new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'America/Guayaquil',
+    hour: '2-digit',
+    minute: '2-digit',
+    hourCycle: 'h23',
+  }).format(new Date())
+// Distancia en km de un punto a un tramo (aproximación plana, suficiente a escala de calle).
+function distanceToSegment(point: Coordinate, a: Coordinate, b: Coordinate) {
+  const kx = 111.32 * Math.cos((point[0] * Math.PI) / 180),
+    ky = 110.57
+  const px = point[1] * kx,
+    py = point[0] * ky,
+    ax = a[1] * kx,
+    ay = a[0] * ky,
+    dx = b[1] * kx - ax,
+    dy = b[0] * ky - ay
+  const lengthSquared = dx * dx + dy * dy
+  const t = lengthSquared ? Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / lengthSquared)) : 0
+  return Math.hypot(px - (ax + t * dx), py - (ay + t * dy))
+}
 
 function CheckeredFlag() {
   const id = useId().replace(/:/g, '')
@@ -150,8 +187,8 @@ export default function Training({
   // Base del GPS simulado del modo libre: la primera ruta publicada con trazado.
   const freeBase =
     allRoutes.find((r) => r.geometry.length > 1 && !r.private && !isFreeTraining(r)) ?? null
-  // Pantalla de inicio en modo libre: siempre en esta entrega, o cuando no hay ruta elegida.
-  const freeReady = FREE_MODE || free
+  // Pantalla de inicio en modo libre: cuando no hay ruta elegida (o si elegir ruta está apagado).
+  const freeReady = (FREE_MODE && !ROUTE_CHOICE) || free
   useEffect(() => {
     if (session.phase === 'permission') {
       const t = setTimeout(
@@ -255,7 +292,10 @@ export default function Training({
       ...s,
       session: {
         ...s.session,
-        ...(FREE_MODE && !isFreeTraining(s.session.route) ? { route: freeTrainingRoute(freeBase) } : {}),
+        ...(FREE_MODE && !ROUTE_CHOICE && !isFreeTraining(s.session.route)
+          ? { route: freeTrainingRoute(freeBase) }
+          : {}),
+        reportDrafts: [],
         phase: 'permission',
         seconds: 0,
         km: 0,
@@ -321,6 +361,183 @@ export default function Training({
           : 'Valoración conservada en esta sesión. Tu comentario pasa a revisión.',
       )
   }
+  // % de lo que realmente se corrió por condición: cada tramo del recorrido se asocia a la calle
+  // más cercana (a menos de 50 m); lo que no coincide con ninguna cuenta como "Sin datos".
+  const trackBreakdown = useMemo(() => {
+    const totals = { high: 0, medium: 0, low: 0, none: 0 }
+    let total = 0
+    for (let i = 1; i < track.length; i++) {
+      const a = track[i - 1],
+        b = track[i],
+        km = distance(a, b)
+      if (!km) continue
+      const mid: Coordinate = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]
+      let best: (typeof state.roads)[number] | null = null,
+        bestKm = Infinity
+      for (const street of state.roads)
+        for (let j = 1; j < street.points.length; j++) {
+          const d = distanceToSegment(mid, street.points[j - 1], street.points[j])
+          if (d < bestKm) {
+            bestKm = d
+            best = street
+          }
+        }
+      const key = (
+        best && bestKm <= 0.05
+          ? safety(segmentScore(best, session.time, session.date, state.incidents, state.risks)).key
+          : 'none'
+      ) as keyof typeof totals
+      totals[key] += km
+      total += km
+    }
+    return Object.entries(totals).map(([key, value]) => ({
+      key,
+      percent: total ? Math.round((value / total) * 100) : 0,
+    }))
+  }, [track, state.roads, session.time, session.date, state.incidents, state.risks])
+  const ranBreakdown = trackBreakdown.filter(({ percent }) => percent > 0)
+
+  // Reportar durante el entrenamiento: se guarda dónde y a qué hora pasó; el tipo y la descripción
+  // se completan en ese momento o al terminar.
+  const [reportEditing, setReportEditing] = useState<ReportDraft | null>(null),
+    [reportError, setReportError] = useState('')
+  const reportDrafts = session.reportDrafts ?? []
+  const reportTypes = SHOW_FUTURE
+    ? incidentTypes
+    : incidentTypes.filter((item) => !demoOnlyIncidentTypes.includes(item))
+  const recordingNow = session.phase === 'running' || session.phase === 'paused'
+  const placeName = (point: Coordinate) => {
+    let best = '',
+      bestKm = Infinity
+    for (const street of state.roads)
+      for (let j = 1; j < street.points.length; j++) {
+        const d = distanceToSegment(point, street.points[j - 1], street.points[j])
+        if (d < bestKm) {
+          bestKm = d
+          best = street.name
+        }
+      }
+    return best && bestKm <= 0.3 ? `Cerca de ${best}` : 'En tu recorrido'
+  }
+  const setDrafts = (next: (drafts: ReportDraft[]) => ReportDraft[]) =>
+    update((s) => ({ ...s, session: { ...s.session, reportDrafts: next(s.session.reportDrafts ?? []) } }))
+  const startQuickReport = () => {
+    const draft: ReportDraft = {
+      id: uid(),
+      coordinate: position ?? route.geometry[0],
+      date: today(),
+      time: clockNow(),
+    }
+    setDrafts((drafts) => [...drafts, draft])
+    setReportError('')
+    setReportEditing(draft)
+  }
+  const keepReportForLater = () => {
+    if (!reportEditing) return
+    const draft = reportEditing
+    setDrafts((drafts) => drafts.map((item) => (item.id === draft.id ? draft : item)))
+    setReportEditing(null)
+    notify('Reporte guardado. Complétalo al terminar el entrenamiento.')
+  }
+  const discardReport = () => {
+    if (!reportEditing) return
+    const id = reportEditing.id
+    setDrafts((drafts) => drafts.filter((item) => item.id !== id))
+    setReportEditing(null)
+  }
+  const sendReport = () => {
+    if (!reportEditing) return
+    if (!reportEditing.type) {
+      setReportError('Elige el tipo de incidente.')
+      return
+    }
+    const draft = reportEditing
+    const incident: Incident = {
+      id: uid(),
+      type: draft.type!,
+      coordinate: draft.coordinate,
+      location: placeName(draft.coordinate),
+      date: draft.date,
+      time: draft.time,
+      description: (draft.description ?? '').trim(),
+      status: 'Pendiente',
+      owner: user?.name ?? 'Corredor',
+      owned: true,
+      createdAt: Date.now(),
+    }
+    update((s) => ({
+      ...s,
+      incidents: [incident, ...s.incidents],
+      session: {
+        ...s.session,
+        reportDrafts: (s.session.reportDrafts ?? []).filter((item) => item.id !== draft.id),
+      },
+    }))
+    setReportEditing(null)
+    notify('Reporte enviado. Estado: Pendiente de revisión.')
+  }
+  const quickReportModal = reportEditing && (
+    <Modal title="Reportar incidente" onClose={() => setReportEditing(null)} className="quick-report">
+      <p className="quick-report-where">
+        <MapPin aria-hidden="true" />
+        {placeName(reportEditing.coordinate)} · {reportEditing.time}
+      </p>
+      <p className="quick-report-note">
+        {recordingNow
+          ? 'Ya guardamos dónde y a qué hora pasó. Complétalo ahora o al terminar.'
+          : 'Elige qué pasó y, si quieres, agrega una descripción.'}
+      </p>
+      <div className="quick-report-types" role="radiogroup" aria-label="Tipo de incidente">
+        {reportTypes.map((item) => (
+          <button
+            key={item}
+            type="button"
+            role="radio"
+            aria-checked={reportEditing.type === item}
+            className={reportEditing.type === item ? 'selected' : ''}
+            onClick={() => {
+              setReportEditing({ ...reportEditing, type: item })
+              setReportError('')
+            }}
+          >
+            <span className="quick-report-icon" aria-hidden="true">
+              <IncidentTypeIcon type={item} />
+            </span>
+            {item}
+          </button>
+        ))}
+      </div>
+      <label className="field">
+        Descripción (opcional)
+        <textarea
+          rows={3}
+          maxLength={800}
+          value={reportEditing.description ?? ''}
+          onChange={(e) => setReportEditing({ ...reportEditing, description: e.target.value })}
+          placeholder="Describe lo ocurrido sin datos personales."
+        />
+      </label>
+      {reportError && (
+        <p className="form-error" role="alert">
+          {reportError}
+        </p>
+      )}
+      <div className="quick-report-actions">
+        <Button className="full" onClick={sendReport}>
+          <Check />
+          Enviar reporte
+        </Button>
+        {recordingNow && (
+          <Button variant="secondary" className="full" onClick={keepReportForLater}>
+            Completar al terminar
+          </Button>
+        )}
+        <button type="button" className="text-action" onClick={discardReport}>
+          Descartar reporte
+        </button>
+      </div>
+    </Modal>
+  )
   const save = (propose = false) => {
     if (savedId && !propose) {
       notify('Ya guardaste este recorrido.')
@@ -515,14 +732,42 @@ export default function Training({
                 Compartir entrenamiento
               </Button>
             )}
+            {SHOW_TRAINING_REPORT && reportDrafts.length > 0 && (
+              <section className="pending-reports" aria-label="Reportes por completar">
+                <span className="pending-reports-icon" aria-hidden="true">
+                  <Flag />
+                </span>
+                <div>
+                  <strong>
+                    {reportDrafts.length === 1
+                      ? 'Tienes 1 reporte por completar'
+                      : `Tienes ${reportDrafts.length} reportes por completar`}
+                  </strong>
+                  <p>Guardamos dónde y a qué hora pasó. Complétalo para enviarlo al club.</p>
+                </div>
+                <Button
+                  onClick={() => {
+                    setReportError('')
+                    setReportEditing(reportDrafts[0])
+                  }}
+                >
+                  Completar
+                </Button>
+              </section>
+            )}
             <section className="summary-safety" aria-label="Resumen de seguridad del recorrido">
               <div className="summary-safety-heading">
                 <h2>
-                  <Shield /> {free ? 'Tu percepción de seguridad' : 'Seguridad del recorrido'}
+                  <Shield />{' '}
+                  {free
+                    ? SHOW_CONDITION_BREAKDOWN && ranBreakdown.length
+                      ? 'Seguridad de tu recorrido'
+                      : 'Tu percepción de seguridad'
+                    : 'Seguridad del recorrido'}
                 </h2>
                 {!free && <Score value={score.score} />}
               </div>
-              {SHOW_FUTURE && (
+              {SHOW_FUTURE && !SHOW_CONDITION_BREAKDOWN && (
                 <>
                   <div className="safety-spectrum" aria-hidden="true">
                     {breakdown
@@ -547,9 +792,33 @@ export default function Training({
                   </ul>
                 </>
               )}
+              {SHOW_CONDITION_BREAKDOWN && ranBreakdown.length > 0 && (
+                <div className="summary-breakdown">
+                  <span className="summary-breakdown-label">% del recorrido por condición</span>
+                  <div className="safety-spectrum" aria-hidden="true">
+                    {ranBreakdown.map(({ key, percent }) => (
+                      <span
+                        key={key}
+                        className={key}
+                        style={{ '--segment-share': percent } as React.CSSProperties}
+                      />
+                    ))}
+                  </div>
+                  <ul className="summary-safety-legend">
+                    {ranBreakdown.map(({ key, percent }) => (
+                      <li key={key}>
+                        <i className={key} />
+                        {conditionLabels[key]} <strong>{percent} %</strong>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <p>
                 {free
-                  ? 'Entrenaste sin una ruta asignada, por eso no se calcula un índice de seguridad. Tus respuestas no crean reportes.'
+                  ? SHOW_CONDITION_BREAKDOWN && ranBreakdown.length
+                    ? `Según los tramos por los que pasaste, a las ${session.time}. Tus respuestas no crean reportes.`
+                    : 'Entrenaste sin una ruta asignada, por eso no se calcula un índice de seguridad. Tus respuestas no crean reportes.'
                   : `Condiciones de la ruta para las ${session.time}. Comprueba el entorno en tu próxima salida.`}
               </p>
               {answered.length > 0 && (
@@ -585,7 +854,7 @@ export default function Training({
                 </p>
               </section>
             ) : (
-              SHOW_FUTURE &&
+              ROUTE_CHOICE &&
               !free &&
               !route.private &&
               route.status === 'Aprobado' && (
@@ -628,6 +897,7 @@ export default function Training({
           </section>
         </div>
         {surveying && <TrainingSurvey finish={closeSurvey} rateRoute={!free} />}
+        {quickReportModal}
         {questionnaire && <RouteQuestionnaire route={route} close={() => setQuestionnaire(false)} />}
         {share && <ShareTraining card={share} close={() => setShare(null)} />}
         {privacy && (
@@ -738,7 +1008,7 @@ export default function Training({
                 <div>
                   <strong>Listo para grabar tu entrenamiento</strong>
                   <p>
-                    {SHOW_FUTURE
+                    {ROUTE_CHOICE
                       ? 'Corre por donde quieras: grabamos tu recorrido con el GPS. Si prefieres seguir una ruta del club, elígela con «Elegir ruta».'
                       : 'Corre por donde quieras: grabamos tu recorrido con el GPS y al terminar verás distancia, tiempo y ritmo.'}
                   </p>
@@ -780,7 +1050,7 @@ export default function Training({
                 </span>
                 Iniciar
               </button>
-              {SHOW_FUTURE ? (
+              {ROUTE_CHOICE ? (
                 // Elegir una ruta es opcional: sin ruta se graba en modo libre.
                 <button type="button" className="dock-side" onClick={() => setPicker(true)}>
                   <span>
@@ -797,16 +1067,16 @@ export default function Training({
         </>
       ) : (
         <>
-          <section className={`recording-metrics ${SHOW_FUTURE ? '' : 'recording-status'}`}>
+          <section className={`recording-metrics ${SHOW_LIVE_METRICS ? '' : 'recording-status'}`}>
             <span className="recording-state">
               <i className={session.phase === 'running' ? '' : 'is-paused'} />
-              {SHOW_FUTURE && completed
+              {ROUTE_CHOICE && completed
                 ? 'RUTA COMPLETADA'
                 : session.phase === 'running'
                   ? SHOW_FUTURE ? 'EN MOVIMIENTO' : 'GRABANDO'
                   : 'EN PAUSA'}
             </span>
-            {SHOW_FUTURE ? (
+            {SHOW_LIVE_METRICS ? (
               <>
                 <strong className="distance-numeral">
                   {session.km.toFixed(2)}
@@ -824,6 +1094,13 @@ export default function Training({
                     Ritmo promedio
                   </span>
                 </div>
+                {offline && (
+                  <p className="recording-offline" role="status">
+                    <WifiOff aria-hidden="true" />
+                    Sin conexión a internet. Sigues grabando: los puntos se guardan en tu celular y se
+                    envían cuando vuelva la conexión.
+                  </p>
+                )}
               </>
             ) : (
               // Distancia, tiempo y ritmo se muestran solo en el resumen final.
@@ -897,6 +1174,14 @@ export default function Training({
                 </span>
                 {shareValid(state.sharing) ? 'Compartiendo' : 'Compartir'}
               </button>
+            ) : SHOW_TRAINING_REPORT ? (
+              <button type="button" className="dock-side dock-report" onClick={startQuickReport}>
+                <span>
+                  <Flag />
+                </span>
+                Reportar
+                {reportDrafts.length > 0 && <i className="dock-badge">{reportDrafts.length}</i>}
+              </button>
             ) : (
               // Mantiene Pausar centrado sin el botón de compartir.
               <span className="dock-side dock-spacer" aria-hidden="true" />
@@ -938,7 +1223,7 @@ export default function Training({
           </div>
         </>
       )}
-      {SHOW_FUTURE && picker && (
+      {ROUTE_CHOICE && picker && (
         <Modal title="Elige tu ruta" onClose={() => setPicker(false)}>
           <div className="route-pick-list">
             {FREE_MODE && (
@@ -1030,7 +1315,7 @@ export default function Training({
             <div>
               <strong>RUNCTY está grabando</strong>
               <p>
-                {SHOW_FUTURE
+                {SHOW_LIVE_METRICS
                   ? `${formatTime(session.seconds)} · ${session.km.toFixed(2)} km`
                   : session.phase === 'running'
                     ? 'Grabando tu recorrido'
@@ -1064,6 +1349,7 @@ export default function Training({
           </div>
         </Modal>
       )}
+      {quickReportModal}
       {security && (
         <Modal title="Seguridad del corredor" onClose={() => setSecurity(false)} wide>
           <Security mobile />

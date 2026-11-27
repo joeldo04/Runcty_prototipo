@@ -954,3 +954,40 @@ html, body { overscroll-behavior: none; }
 /* Inicio móvil: la pregunta completa en un solo color (rosado de la paleta), sin el "?" aparte */
 .runcty-app .explore-mobile .home-intro h1 { color: var(--color-primary); }
 .runcty-app .explore-mobile .home-intro h1 > span { color: inherit; }
+
+/* Entrenar: botón Reportar en el dock de grabación */
+.runcty-app .record-dock .dock-report { position: relative; }
+.runcty-app .record-dock .dock-report > span { color: var(--color-primary); }
+.runcty-app .record-dock .dock-badge { position: absolute; top: -2px; right: 10px; display: grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 999px; background: var(--color-primary); color: #fff; font-size: 11px; font-style: normal; font-weight: 700; }
+/* Métricas en vivo: aviso de sin internet bajo los números */
+.runcty-app .recording-offline { display: flex; align-items: flex-start; gap: 8px; max-width: 330px; margin: 8px auto 0; padding: 8px 12px; border-radius: 12px; background: rgb(242 162 12 / 18%); color: #FFE2A8; font-size: 12px; line-height: 1.4; text-align: left; }
+.runcty-app .recording-offline svg { flex: none; width: 15px; height: 15px; margin-top: 1px; }
+
+/* Reporte rápido durante el entrenamiento */
+.runcty-app .modal.quick-report { display: flex; flex-direction: column; gap: 12px; }
+.runcty-app .quick-report-where { display: flex; align-items: center; gap: 6px; margin: 0; color: var(--color-copy); font-size: 14px; font-weight: 650; }
+.runcty-app .quick-report-where svg { width: 16px; height: 16px; flex: none; color: var(--color-primary); }
+.runcty-app .quick-report-note { margin: 0; color: var(--color-muted); font-size: 13px; line-height: 1.45; }
+.runcty-app .quick-report-types { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.runcty-app .quick-report-types button { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 8px 10px; border: 1px solid var(--color-line); border-radius: 12px; background: var(--color-panel); color: var(--color-copy); font-size: 12px; font-weight: 600; line-height: 1.25; text-align: left; }
+.runcty-app .quick-report-types button.selected { border-color: var(--color-primary); background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .quick-report-types button:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+.runcty-app .quick-report-icon { display: grid; flex: 0 0 30px; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--color-primary-soft); color: var(--color-primary-pressed); }
+.runcty-app .quick-report-types button.selected .quick-report-icon { background: var(--color-primary); color: #fff; }
+.runcty-app .quick-report-icon svg { width: 17px; height: 17px; }
+.runcty-app .quick-report .field { margin: 0; }
+.runcty-app .quick-report-actions { display: grid; gap: 8px; }
+.runcty-app .quick-report-actions .button { min-height: 48px; border-radius: 14px; }
+.runcty-app .quick-report-actions .text-action { justify-self: center; color: var(--color-muted); font-size: 13px; }
+
+/* Resumen: reportes por completar */
+.runcty-app .pending-reports { display: grid; grid-template-columns: 40px minmax(0, 1fr); align-items: center; gap: 10px 12px; padding: 14px 16px; border: 1px solid rgb(209 16 111 / 35%); border-radius: 16px; background: var(--color-primary-soft); }
+.runcty-app .pending-reports-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--color-primary); color: #fff; }
+.runcty-app .pending-reports-icon svg { width: 19px; height: 19px; }
+.runcty-app .pending-reports strong { display: block; color: var(--color-copy); font-size: 15px; font-weight: 700; }
+.runcty-app .pending-reports p { margin: 2px 0 0; color: var(--color-muted); font-size: 12px; line-height: 1.4; }
+.runcty-app .pending-reports .button { grid-column: 1 / -1; min-height: 44px; border-radius: 12px; }
+
+/* Resumen: % del recorrido por condición */
+.runcty-app .summary-breakdown { display: grid; gap: 8px; }
+.runcty-app .summary-breakdown-label { color: var(--color-muted); font-size: 12px; font-weight: 600; }

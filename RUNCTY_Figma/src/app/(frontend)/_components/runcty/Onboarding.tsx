@@ -7,7 +7,7 @@ import { BackButton, Button, IconButton, Modal, RunnerIcon } from './components'
 import { isAdminUser, withEmails, type DemoUser } from './data'
 import { DEMO_LOGINS, DEMO_USERS } from './demo-seed'
 import { useDemo } from './store'
-import { SHOW_FUTURE } from './features'
+import { SHOW_FUTURE, SHOW_PASSWORD_RECOVERY } from './features'
 import brandMark from '../../../../../imagenes/logo_runcty.png'
 import welcomePhoto from '../../../../../imagenes/corredores_login.webp'
 import gacelasWhite from '../../../../../imagenes/gacelas_emblema_blanco.png'
@@ -246,7 +246,7 @@ export function DemoAccess({ createInitially = false, demonstration = false, mob
         <Button type="submit" className="w-full" disabled={submitting || (create && !cities.length)}>{submitting ? 'Ingresando…' : create ? 'Crear cuenta' : 'Iniciar sesión'}<ArrowRight /></Button>
       </form>
       <div className="auth-links">
-        {SHOW_FUTURE && !create && <button type="button" onClick={() => setView('recover')}>Recuperar contraseña</button>}
+        {SHOW_PASSWORD_RECOVERY && !create && <button type="button" onClick={() => setView('recover')}>¿Olvidaste tu contraseña?</button>}
         <button type="button" onClick={switchMode}>{create ? '¿Ya tienes una cuenta? Inicia sesión' : 'Crear cuenta'}</button>
       </div>
       <div className="auth-demo-entry"><span>Prototipo interactivo · usa datos de prueba.</span><button type="button" onClick={() => { setDemoView(true); setError('') }}><Monitor aria-hidden="true" /> Acceso demostrativo</button></div>

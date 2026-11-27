@@ -90,6 +90,8 @@ export interface DemoState {
     date: string
     finishedId?: string
     survey?: SurveyAnswers
+    // Reportes iniciados con el botón Reportar durante el entrenamiento; se completan ahí o al terminar.
+    reportDrafts?: { id: string; coordinate: Coordinate; date: string; time: string; type?: string; description?: string }[]
   }
 }
 export const EMPTY_ROUTE: RouteData = {
